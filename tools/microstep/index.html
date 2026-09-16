@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="FBTHHZyoNtR43n82b3HSf7">
+<head data-page-node-id="QyOAR6E5tZeCgns1gveC5k">
+<meta charset="utf-8" data-page-node-id="1u3jMDHyxddgE3G19OzhV7">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover" data-page-node-id="zIrGtquFwkgmHKLw8SMaF2">
+<meta name="theme-color" content="#F6F7F9" data-page-node-id="1ANrDgKK83D7ghpaTWmqEm">
+<title>微步 MicroStep</title>
+<style>
+:root{
+  --bg:#F6F7F9; --card:#FFFFFF; --text:#1B1F26; --muted:#8A93A0; --line:#ECEEF2;
+  --primary:#3D6BFF; --ok:#22A06B; --warm:#FF7A45; --cool:#4C86F9; --green:#36C08A;
+  --r:16px; --shadow:0 2px 12px rgba(20,28,50,.05);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  font-size:15px; line-height:1.5; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:430px;margin:0 auto;min-height:100vh;position:relative;padding-bottom:calc(72px + env(safe-area-inset-bottom))}
+.pad{padding:14px 16px}
+.muted{color:var(--muted)}
+.small{font-size:12px}
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);padding:16px;margin-bottom:12px}
+.h1{font-size:22px;font-weight:700;margin:0}
+.h2{font-size:16px;font-weight:600;margin:0 0 10px}
+.row{display:flex;align-items:center}
+.between{display:flex;align-items:center;justify-content:space-between}
+.grow{flex:1}
+
+/* 顶部 */
+.top{padding:calc(16px + env(safe-area-inset-top)) 16px 6px}
+.top .date{font-size:13px;color:var(--muted)}
+.top .hi{font-size:21px;font-weight:700;margin-top:2px}
+
+/* 电量选择 */
+.seg{display:flex;gap:8px;margin-top:12px}
+.seg button{flex:1;border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px 0;
+  font-size:14px;color:var(--muted);cursor:pointer;font-family:inherit}
+.seg button.on{background:var(--primary);border-color:var(--primary);color:#fff;font-weight:600}
+.seg.sm button{padding:8px 0;font-size:13px}
+
+/* 任务卡 */
+.taskcard{background:#fff;border-radius:20px;box-shadow:0 6px 24px rgba(20,28,50,.07);
+  padding:18px;margin:14px 16px;position:relative;overflow:hidden}
+.taskcard .bar{position:absolute;left:0;top:0;bottom:0;width:5px}
+.tag{display:inline-flex;align-items:center;gap:5px;font-size:12px;padding:3px 9px;border-radius:99px;background:#F2F4F8;color:#5A6472}
+.taskcard .title{font-size:26px;font-weight:700;margin:14px 0 6px;letter-spacing:-.3px}
+.taskcard .desc{font-size:15px;color:#4A5462}
+.notif{background:#FFF6EF;color:#B4541F;font-size:12px;padding:8px 10px;border-radius:10px;margin:12px 0 0}
+.donebox{text-align:center;padding:40px 20px;color:var(--muted)}
+.donebox .big{font-size:34px}
+
+/* 按钮 */
+.btn{width:100%;border:none;border-radius:14px;padding:15px 0;font-size:16px;font-weight:600;
+  background:var(--primary);color:#fff;cursor:pointer;font-family:inherit}
+.btn.ok{background:var(--ok)}
+.btn.ghost{background:#fff;color:#5A6472;border:1px solid var(--line);font-weight:500}
+.btn.gray{background:#EEF0F4;color:#5A6472}
+.btn:disabled{opacity:.45}
+.btnrow{display:flex;gap:10px;margin-top:10px}
+
+/* 底部导航 */
+.nav{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);
+  border-top:1px solid var(--line);display:flex;max-width:430px;margin:0 auto;
+  padding-bottom:env(safe-area-inset-bottom)}
+.nav div{flex:1;text-align:center;padding:9px 0 7px;font-size:11px;color:var(--muted);cursor:pointer}
+.nav div .ic{font-size:19px;display:block;line-height:1.3}
+.nav div.on{color:var(--primary);font-weight:600}
+
+/* 目标 */
+.goal{display:flex;align-items:center;gap:12px;background:#fff;border-radius:var(--r);
+  padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow);cursor:pointer}
+.goal .emo{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px}
+.item{border-top:1px solid var(--line);padding:12px 0}
+.item:first-child{border-top:none}
+.tierline{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.chip{font-size:11px;padding:3px 8px;border-radius:8px;background:#F3F5F9;color:#5A6472}
+.chip.m{background:#FFF1E8;color:#B4541F}.chip.r{background:#EAF1FF;color:#2C55C9}.chip.a{background:#E9F8F0;color:#1A7F55}
+
+/* 周报 */
+.barrow{margin:10px 0}
+.barbg{height:8px;background:#F0F2F6;border-radius:99px;overflow:hidden}
+.barfill{height:8px;border-radius:99px}
+.stat{display:flex;gap:10px;text-align:center}
+.stat .box{flex:1;background:#fff;border-radius:14px;padding:14px 6px;box-shadow:var(--shadow)}
+.stat .num{font-size:24px;font-weight:700}
+.concl{background:#fff;border-radius:var(--r);padding:14px 16px;box-shadow:var(--shadow);margin-bottom:12px}
+.concl li{margin:8px 0;font-size:14px}
+
+/* 奖励 */
+.rw{display:flex;align-items:center;gap:12px;background:#fff;border-radius:var(--r);padding:12px 14px;margin-bottom:10px;box-shadow:var(--shadow)}
+.rw .emo{width:38px;height:38px;border-radius:11px;background:#FFF6EF;display:flex;align-items:center;justify-content:center;font-size:19px}
+.buy{border:none;background:var(--primary);color:#fff;border-radius:10px;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+.buy:disabled{background:#E7EAF0;color:#A6ADB8}
+.balance{background:linear-gradient(135deg,#FF8A4C,#FF6B3D);color:#fff;border-radius:20px;padding:18px;margin:14px 16px}
+.balance .n{font-size:34px;font-weight:700;line-height:1.1}
+
+/* 弹层 */
+#modal{position:fixed;inset:0;z-index:60;display:none}
+#modal.show{display:block}
+.mask{position:absolute;inset:0;background:rgba(18,22,32,.4)}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:20px 20px 0 0;
+  padding:18px 16px calc(20px + env(safe-area-inset-bottom));max-width:430px;margin:0 auto;animation:up .22s ease}
+@keyframes up{from{transform:translateY(30px);opacity:.6}to{transform:none;opacity:1}}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.grid2 button{border:1px solid var(--line);background:#fff;border-radius:14px;padding:18px 0;font-size:15px;cursor:pointer;font-family:inherit}
+.grid2 button .e{font-size:24px;display:block;margin-bottom:4px}
+.inp{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px;font-size:15px;font-family:inherit;margin-bottom:10px;background:#FAFBFC}
+#toast{position:fixed;left:50%;top:70%;transform:translateX(-50%);background:rgba(24,30,42,.92);color:#fff;
+  padding:11px 18px;border-radius:12px;font-size:14px;z-index:99;opacity:0;transition:.25s;pointer-events:none;max-width:80%;text-align:center}
+#toast.show{opacity:1;top:66%}
+</style>
+</head>
+<body data-page-node-id="7CFBpiF3sf990e3tEPFiK2">
+<div class="wrap" id="app" data-page-node-id="n6I5ZMPTQ2BknZYXrCb4Ct"></div>
+<div id="modal" data-page-node-id="gs9waAKFKajykcvPUl1DUu"><div class="mask" data-act="close" data-page-node-id="aq21VoMuJeQzbeCfbV5GUr"></div><div class="sheet" id="sheet" data-page-node-id="ldq6soW3JzOlH3ROt4zlgg"></div></div>
+<div id="toast" data-page-node-id="wYhGCtOYCbRBL5Lxhe7cFu"></div>
+
+<script>
+/* ============ 数据层 ============ */
+var KEY = 'microstep_v1';
+var DB = load();
+
+function load(){
+  try{ var r = localStorage.getItem(KEY); if(r){ var d = JSON.parse(r); if(d && d.items) return d; } }catch(e){}
+  return seed();
+}
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(DB)); }catch(e){} }
+
+function seed(){
+  var now = Date.now();
+  return {
+    day:{date:'', energy:null, extra:0},
+    goals:[
+      {id:'g1',name:'运动健身',type:'fitness',icon:'🏃',color:'#FF7A45',active:1,order:1},
+      {id:'g2',name:'自制餐食',type:'cooking',icon:'🍳',color:'#36C08A',active:1,order:2},
+      {id:'g3',name:'工具学习',type:'learning',icon:'📘',color:'#4C86F9',active:1,order:3}
+    ],
+    items:[
+      {id:'i1',gid:'g1',title:'全身力量训练',micro:'原地拉伸 / 活动 2 分钟',regular:'完整训练 30 分钟',advanced:'训练 40 分钟 + 记录组数',mm:2,rm:30,am:40,last:0,active:1},
+      {id:'i2',gid:'g1',title:'有氧（快走/跑步）',micro:'原地踏步 3 分钟',regular:'快走或跑步 25 分钟',advanced:'HIIT 20 分钟',mm:3,rm:25,am:20,last:0,active:1},
+      {id:'i3',gid:'g2',title:'自己做晚饭',micro:'洗菜 / 只把食材拿出来摆好',regular:'完整做一顿饭',advanced:'做饭 + 备好明天的食材',mm:3,rm:35,am:55,last:0,active:1},
+      {id:'i4',gid:'g2',title:'做早餐',micro:'煮个鸡蛋 / 冲一份燕麦',regular:'做一份均衡早餐',advanced:'早餐 + 备两天份',mm:2,rm:15,am:30,last:0,active:1},
+      {id:'i5',gid:'g3',title:'Python 练习',micro:'看 5 分钟教程 / 读 2 页',regular:'敲代码练习 30 分钟',advanced:'完成一个小案例',mm:5,rm:30,am:50,last:0,active:1},
+      {id:'i6',gid:'g3',title:'SQL 练习',micro:'看 5 分钟教程',regular:'练 30 分钟题',advanced:'写一条业务查询并跑通',mm:5,rm:30,am:45,last:0,active:1}
+    ],
+    instances:[], giveups:[], ledger:[],
+    rewards:[
+      {id:'r1',name:'看一集剧',cost:5,icon:'📺'},
+      {id:'r2',name:'一杯奶茶',cost:8,icon:'🧋'},
+      {id:'r3',name:'一包小零食',cost:5,icon:'🍪'},
+      {id:'r4',name:'躺平 1 小时',cost:10,icon:'🛋️'},
+      {id:'r5',name:'买个小东西',cost:50,icon:'🎁'}
+    ],
+    redeems:[], created:now
+  };
+}
+
+/* ============ 工具 ============ */
+function uid(p){ return p + Math.random().toString(36).slice(2,9); }
+function ymd(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function today(){ return ymd(new Date()); }
+function addDays(s,n){ var d=new Date(s+'T00:00:00'); d.setDate(d.getDate()+n); return ymd(d); }
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function hour(){ return new Date().getHours(); }
+function slotOf(h){ if(h<6)return 'late'; if(h<11)return 'morning'; if(h<14)return 'noon'; if(h<18)return 'afternoon'; if(h<23)return 'night'; return 'late'; }
+var SLOT={morning:'早上 6-11 点',noon:'中午 11-14 点',afternoon:'下午 14-18 点',night:'晚上 18-23 点',late:'深夜 23 点后'};
+var REASON={
+  tired:{label:'身体累',emo:'😮‍💨',advice:'本周把默认档位降一级，别跟身体硬拼'},
+  sleepy:{label:'犯困',emo:'😴',advice:'把任务挪到犯困时段之前，或先用 2 分钟微任务启动'},
+  lazy:{label:'单纯不想动',emo:'🫥',advice:'启动门槛还是太高，把它再切小一半'},
+  notime:{label:'时间不够',emo:'⏰',advice:'这类任务要提前固定时段，别留给「有空再说」'}
+};
+var TIER={micro:{n:'微任务',c:'m'},regular:{n:'常规',c:'r'},advanced:{n:'进阶',c:'a'}};
+var POINTS={micro:1,regular:3,advanced:5};
+function goal(id){ for(var i=0;i<DB.goals.length;i++) if(DB.goals[i].id===id) return DB.goals[i]; return null; }
+function item(id){ for(var i=0;i<DB.items.length;i++) if(DB.items[i].id===id) return DB.items[i]; return null; }
+function inst(id){ for(var i=0;i<DB.instances.length;i++) if(DB.instances[i].id===id) return DB.instances[i]; return null; }
+function toast(msg){ var t=document.getElementById('toast'); t.textContent=msg; t.className='show'; clearTimeout(t._x); t._x=setTimeout(function(){t.className='';},1900); }
+
+/* ============ 核心引擎 ============ */
+function newDay(){
+  var t = today();
+  if(DB.day.date === t) return;
+  DB.instances.forEach(function(i){
+    if(i.focus===1 && i.status==='pending' && i.date < t){ i.status='deferred'; i.date=t; i.focus=0; }
+  });
+  DB.day = {date:t, energy:null, extra:0};
+  createFocus();
+  save();
+}
+function energy(){ return DB.day.energy || 'normal'; }
+function giveups7d(){
+  var from = addDays(today(),-6), n=0;
+  DB.giveups.forEach(function(g){ if(g.date>=from) n++; });
+  return n;
+}
+function recommendTier(){
+  var t = {low:'micro', normal:'regular', high:'advanced'}[energy()];
+  if(hour()>=21 && t==='advanced') t='regular';
+  if(giveups7d()>=3) t = {advanced:'regular', regular:'micro', micro:'micro'}[t];
+  return t;
+}
+function pickGoal(){
+  var gs = DB.goals.filter(function(g){ return g.active; });
+  if(!gs.length) return null;
+  var best=null, bestTs=Infinity;
+  gs.forEach(function(g){
+    var ts=0;
+    DB.instances.forEach(function(i){ if(i.gid===g.id && i.doneAt && i.doneAt>ts) ts=i.doneAt; });
+    if(ts<bestTs){ bestTs=ts; best=g; }
+  });
+  return best;
+}
+function pickItem(gid){
+  var its = DB.items.filter(function(i){ return i.gid===gid && i.active; });
+  if(!its.length) return null;
+  its.sort(function(a,b){ return (a.last||0)-(b.last||0); });
+  return its[0];
+}
+function createFocus(){
+  var t = today();
+  var pending = DB.instances.filter(function(i){ return i.status==='deferred' && i.date<=t; })
+      .sort(function(a,b){ return (b.defer-a.defer) || a.date.localeCompare(b.date); })[0];
+  if(pending){
+    DB.instances.forEach(function(i){ i.focus=0; });
+    pending.focus=1; pending.date=t; pending.status='pending';
+    save(); return pending;
+  }
+  var g = pickGoal(); if(!g) return null;
+  var it = pickItem(g.id); if(!it) return null;
+  DB.instances.forEach(function(i){ i.focus=0; });
+  var o = {id:uid('t'), itemId:it.id, gid:g.id, date:t, tier:recommendTier(), status:'pending',
+           defer:0, down:0, focus:1, energy:energy(), created:Date.now()};
+  DB.instances.push(o); save(); return o;
+}
+function focusToday(){
+  var t=today();
+  for(var i=0;i<DB.instances.length;i++){
+    var o=DB.instances[i];
+    if(o.focus===1 && o.date===t && o.status==='pending') return o;
+  }
+  if(DB.day.date===t && DB.day.lastId){ var l=inst(DB.day.lastId); if(l) return l; }
+  return null;
+}
+function balance(){ var s=0; DB.ledger.forEach(function(l){ s+=l.delta; }); return s; }
+function addLedger(delta, source, memo){
+  DB.ledger.push({id:uid('p'),date:today(),delta:delta,source:source,memo:memo||'',at:Date.now()});
+}
+
+function onDone(o){
+  var pts = POINTS[o.tier]||1;
+  var first = !DB.instances.some(function(x){ return x.status==='done' && x.doneAt && ymd(new Date(x.doneAt))===today(); });
+  if(first) pts += 1;
+  if(o.energy==='low' && o.tier==='micro') pts += 1;
+  o.status='done'; o.doneAt=Date.now(); o.pts=pts;
+  DB.day.lastId=o.id;
+  var it=item(o.itemId); if(it) it.last=Date.now();
+  addLedger(pts,'task_done',TIER[o.tier].n);
+  save(); toast('+' + pts + ' 能量点 · 够了，今天这一步算数');
+}
+function onDefer(o){
+  o.defer = (o.defer||0)+1;
+  o.date = addDays(today(),1);
+  DB.day.lastId=o.id;
+  if(o.defer>=2){
+    o.tier='micro'; o.down=1; o.status='deferred'; save();
+    toast('已顺延到明天 · 这条减负成微任务了，2 分钟就能清掉');
+  } else { o.status='deferred'; save(); toast('已顺延到明天 · 不算失败'); }
+}
+function onGiveUp(o, reason, note){
+  o.status='skipped';
+  DB.day.lastId=o.id;
+  DB.giveups.push({id:uid('g'), gid:o.gid, date:today(), slot:slotOf(hour()),
+    reason:reason, note:note||'', energy:o.energy||energy(), tier:o.tier, at:Date.now()});
+  save(); toast('已记录 · 明天自动降一档');
+}
+
+/* ============ 渲染 ============ */
+var view = 'today', openGoal = null;
+
+function render(){
+  newDay();
+  var el = document.getElementById('app');
+  var h = '';
+  if(view==='today') h = vToday();
+  else if(view==='goals') h = openGoal ? vLibrary(openGoal) : vGoals();
+  else if(view==='report') h = vReport();
+  else if(view==='rewards') h = vRewards();
+  else h = vMe();
+  el.innerHTML = h + navHTML();
+}
+function navHTML(){
+  var t=[['today','今日','🏠'],['goals','目标','🎯'],['report','周报','📊'],['rewards','奖励','🎁'],['me','我的','⚙️']];
+  return '<div class="nav">' + t.map(function(x){
+    return '<div data-act="nav" data-v="'+x[0]+'" class="'+(view===x[0]?'on':'')+'"><span class="ic">'+x[1]+'</span>'+x[2]+'</div>';
+  }).join('') + '</div>';
+}
+
+/* --- 今日 --- */
+function vToday(){
+  var d = new Date(), wk = ['周日','周一','周二','周三','周四','周五','周六'][d.getDay()];
+  var o = focusToday();
+  var h = '<div class="top"><div class="date">'+ (d.getMonth()+1) +'月'+ d.getDate() +'日 '+ wk +'</div>'
+        + '<div class="hi">' + (o && o.status==='done' ? '今天这一步，算数。' : '今天只做一件事') + '</div>'
+        + energySeg() + '</div>';
+
+  if(!o){
+    h += '<div class="donebox"><div class="big">🌤</div><div>今天没有待办了</div>'
+       + '<div class="small" style="margin-top:6px">休息也是计划的一部分</div></div>';
+    return h;
+  }
+  var it = item(o.itemId), g = goal(o.gid);
+  var txt = o.tier==='micro'?it.micro : o.tier==='advanced'?it.advanced : it.regular;
+  var min = o.tier==='micro'?it.mm : o.tier==='advanced'?it.am : it.rm;
+  var pts = POINTS[o.tier];
+
+  if(o.status==='pending'){
+    h += '<div class="taskcard"><div class="bar" style="background:'+g.color+'"></div>'
+      + '<div class="between"><span class="tag">'+g.icon+' '+esc(g.name)+'</span>'
+      + '<span class="chip '+TIER[o.tier].c+'">'+TIER[o.tier].n+'</span></div>'
+      + '<div class="title">'+esc(it.title)+'</div>'
+      + '<div class="desc">'+esc(txt)+'</div>'
+      + (o.down ? '<div class="notif">已经帮你减负成微任务了，做 2 分钟就算完成</div>' : '')
+      + '<div class="seg sm" style="margin-top:16px">'
+      + ['micro','regular','advanced'].map(function(t){
+          var m = t==='micro'?it.mm : t==='advanced'?it.am : it.rm;
+          return '<button data-act="tier" data-t="'+t+'" class="'+(o.tier===t?'on':'')+'">'+TIER[t].n+' '+m+'′</button>';
+        }).join('')
+      + '</div>'
+      + '<div class="small muted" style="margin-top:10px">预计 '+min+' 分钟 · 完成 +'+pts+' 能量点 · 随时可改档，不扣分</div></div>';
+    h += '<div class="pad"><button class="btn ok" data-act="done">✅ 完成了</button>'
+      + '<div class="btnrow"><button class="btn ghost" data-act="defer">明天再说</button>'
+      + '<button class="btn ghost" data-act="giveup">这次先算了</button></div>';
+  } else if(o.status==='done'){
+    h += '<div class="donebox"><div class="big">✅</div><div style="color:var(--text);font-weight:600">'+esc(it.title)+' · '+TIER[o.tier].n+' 已完成</div>'
+      + '<div class="small" style="margin-top:6px">今日已得 ' + todayPoints() + ' 能量点</div></div>';
+    h += '<div class="pad"><button class="btn" data-act="again">还想再来一个（可选）</button>';
+  } else if(o.status==='deferred'){
+    h += '<div class="donebox"><div class="big">😌</div><div style="color:var(--text);font-weight:600">今天先到这儿</div>'
+      + '<div class="small" style="margin-top:6px">已顺延到明天，不算失败</div></div>';
+    h += '<div class="pad"><button class="btn" data-act="again">临时想做了？</button>';
+  } else {
+    var last = DB.giveups[DB.giveups.length-1];
+    h += '<div class="donebox"><div class="big">🫶</div><div style="color:var(--text);font-weight:600">已记录，不评价</div>'
+      + (last ? '<div class="small" style="margin-top:6px">原因：'+REASON[last.reason].label+' · 明天自动降一档</div>' : '')
+      + '</div>';
+    h += '<div class="pad"><button class="btn" data-act="again">又想动了？</button>';
+  }
+  h += '<div class="small muted" style="text-align:center;margin-top:16px">能量点 ' + balance() + ' · 近 7 天有记录 ' + activeDays() + ' 天</div></div>';
+  return h;
+}
+function energySeg(){
+  var e = DB.day.energy;
+  var opts=[['low','疲惫'],['normal','普通'],['high','充沛']];
+  return '<div class="seg">' + opts.map(function(x){
+    return '<button data-act="energy" data-e="'+x[0]+'" class="'+(e===x[0]?'on':'')+'">'+x[1]+'</button>';
+  }).join('') + '</div>'
+  + '<div class="small muted" style="margin-top:8px">' + (e? '已按「'+({low:'疲惫',normal:'普通',high:'充沛'})[e]+'」匹配难度，可随时改' : '选一下今天的电量，我帮你定难度（默认普通）') + '</div>';
+}
+function todayPoints(){ var s=0,t=today(); DB.ledger.forEach(function(l){ if(l.date===t&&l.delta>0) s+=l.delta; }); return s; }
+function activeDays(){
+  var set={}; DB.instances.forEach(function(i){ if(i.status==='done'&&i.doneAt) set[ymd(new Date(i.doneAt))]=1; });
+  DB.giveups.forEach(function(g){ set[g.date]=1; });
+  var n=0,from=addDays(today(),-6),to=today();
+  for(var k in set){ if(k>=from&&k<=to) n++; }
+  return n;
+}
+
+/* --- 目标 / 任务库 --- */
+function vGoals(){
+  var h = '<div class="pad" style="padding-top:calc(18px + env(safe-area-inset-top))"><div class="h1">目标</div>'
+        + '<div class="small muted">点进去管理三档任务</div></div>';
+  DB.goals.forEach(function(g){
+    var n = DB.items.filter(function(i){ return i.gid===g.id && i.active; }).length;
+    h += '<div class="pad" style="padding:0 16px"><div class="goal" data-act="open" data-id="'+g.id+'">'
+      + '<div class="emo" style="background:'+g.color+'22">'+g.icon+'</div>'
+      + '<div class="grow"><div style="font-weight:600">'+esc(g.name)+'</div>'
+      + '<div class="small muted">'+n+' 条计划 · 微/常规/进阶</div></div><div class="muted">›</div></div></div>';
+  });
+  h += '<div class="small muted" style="text-align:center;margin-top:20px">三大目标独立管理，互不打扰</div>';
+  return h;
+}
+function vLibrary(gid){
+  var g = goal(gid);
+  var its = DB.items.filter(function(i){ return i.gid===gid; });
+  var h = '<div class="pad" style="padding-top:calc(18px + env(safe-area-inset-top))">'
+        + '<div class="between"><div class="h1">'+g.icon+' '+esc(g.name)+'</div>'
+        + '<div class="small muted" data-act="back" style="cursor:pointer">返回</div></div>'
+        + '<div class="small muted" style="margin-bottom:8px">每条计划都拆成三档，累的时候自动给微任务</div>'
+        + '<button class="btn" data-act="add-item" data-g="'+gid+'">+ 新增计划（自动拆三档）</button></div>';
+  h += '<div class="card" style="margin:12px 16px">';
+  if(!its.length) h += '<div class="small muted">还没有计划，点上面新增一条</div>';
+  its.forEach(function(i){
+    h += '<div class="item"><div class="between"><div style="font-weight:600">'+esc(i.title)+(i.active?'':' <span class="chip">已停用</span>')+'</div>'
+      + '<div class="small"><span data-act="edit" data-id="'+i.id+'" style="color:var(--primary);cursor:pointer">编辑</span>'
+      + ' · <span data-act="toggle" data-id="'+i.id+'" style="color:var(--muted);cursor:pointer">'+(i.active?'停用':'启用')+'</span></div></div>'
+      + '<div class="tierline"><span class="chip m">微 '+i.mm+'′ '+esc(i.micro)+'</span>'
+      + '<span class="chip r">常规 '+i.rm+'′ '+esc(i.regular)+'</span>'
+      + '<span class="chip a">进阶 '+i.am+'′ '+esc(i.advanced||'-')+'</span></div></div>';
+  });
+  h += '</div>';
+  return h;
+}
+
+/* --- 周报 --- */
+function vReport(){
+  var from = addDays(today(),-6), to = today();
+  var logs = DB.giveups.filter(function(g){ return g.date>=from && g.date<=to; });
+  var done = DB.instances.filter(function(i){ return i.status==='done' && i.doneAt && ymd(new Date(i.doneAt))>=from; });
+  var h = '<div class="pad" style="padding-top:calc(18px + env(safe-area-inset-top))"><div class="h1">周报</div>'
+        + '<div class="small muted">'+from+' 至 '+to+' · 只找规律，不打分</div></div>';
+  h += '<div class="pad" style="padding:0 16px"><div class="stat">'
+     + '<div class="box"><div class="num" style="color:var(--ok)">'+done.length+'</div><div class="small muted">完成</div></div>'
+     + '<div class="box"><div class="num" style="color:var(--warm)">'+logs.length+'</div><div class="small muted">放弃</div></div>'
+     + '<div class="box"><div class="num">'+activeDays()+'</div><div class="small muted">有记录天数</div></div>'
+     + '<div class="box"><div class="num" style="color:var(--warm)">'+balance()+'</div><div class="small muted">能量点</div></div>'
+     + '</div></div>';
+
+  h += '<div class="card" style="margin:12px 16px"><div class="h2">最容易摆烂的原因</div>';
+  if(!logs.length) h += '<div class="small muted">本周暂时没有放弃记录 👏</div>';
+  else {
+    var byR={}; logs.forEach(function(l){ byR[l.reason]=(byR[l.reason]||0)+1; });
+    h += barList(byR, REASON, logs.length);
+  }
+  h += '</div>';
+
+  h += '<div class="card" style="margin:12px 16px"><div class="h2">高危时段</div>';
+  if(!logs.length) h += '<div class="small muted">暂无数据</div>';
+  else {
+    var byS={}; logs.forEach(function(l){ byS[l.slot]=(byS[l.slot]||0)+1; });
+    var m={}; for(var k in SLOT) m[k]={label:SLOT[k]};
+    h += barList(byS, m, logs.length);
+  }
+  h += '</div>';
+
+  h += '<div class="card" style="margin:12px 16px"><div class="h2">完成档位分布</div>';
+  if(!done.length) h += '<div class="small muted">本周还没有完成记录，下周目标：只做 3 个微任务</div>';
+  else {
+    var byT={}; done.forEach(function(i){ byT[i.tier]=(byT[i.tier]||0)+1; });
+    var tm={micro:{label:'微任务'},regular:{label:'常规'},advanced:{label:'进阶'}};
+    h += barList(byT, tm, done.length);
+  }
+  h += '</div>';
+
+  h += '<div class="concl" style="margin:0 16px 12px"><div class="h2">下周建议</div><ul style="margin:0;padding-left:18px">'
+     + conclusions(logs, done).map(function(c){ return '<li>'+esc(c)+'</li>'; }).join('') + '</ul></div>';
+  h += '<div class="small muted" style="text-align:center;margin-top:16px">周报每周日晚自动更新</div>';
+  return h;
+}
+function barList(map, meta, total){
+  var keys = Object.keys(map).sort(function(a,b){ return map[b]-map[a]; });
+  return keys.map(function(k){
+    var pct = Math.round(map[k]/total*100);
+    var col = k==='tired'||k==='micro'?'#FF7A45' : k==='sleepy'||k==='regular'?'#7C6BFF' : k==='notime'||k==='advanced'?'#36C08A':'#9AA4B2';
+    return '<div class="barrow"><div class="between small"><span>'+esc((meta[k]&&meta[k].label)||k)+'</span>'
+      + '<span class="muted">'+map[k]+' 次 · '+pct+'%</span></div>'
+      + '<div class="barbg"><div class="barfill" style="width:'+pct+'%;background:'+col+'"></div></div></div>';
+  }).join('');
+}
+function conclusions(logs, done){
+  var out=[];
+  if(!logs.length && !done.length) return ['本周还没有数据，先把任务库填好，明天只做 1 个微任务。'];
+  if(logs.length){
+    var byR={}; logs.forEach(function(l){ byR[l.reason]=(byR[l.reason]||0)+1; });
+    var top=Object.keys(byR).sort(function(a,b){ return byR[b]-byR[a]; })[0];
+    out.push('本周放弃 '+logs.length+' 次，最主要原因是「'+REASON[top].label+'」（'+Math.round(byR[top]/logs.length*100)+'%）。'+REASON[top].advice);
+    var byS={}; logs.forEach(function(l){ byS[l.slot]=(byS[l.slot]||0)+1; });
+    var ts=Object.keys(byS).sort(function(a,b){ return byS[b]-byS[a]; })[0];
+    out.push('高危时段是'+SLOT[ts]+'，这个时段只安排微任务，别放硬骨头。');
+  } else out.push('本周零放弃，状态不错。下周可以试着只把 1 个常规任务升到进阶。');
+  if(done.length){
+    var micro=done.filter(function(i){ return i.tier==='micro'; }).length;
+    if(micro/done.length>0.6) out.push('本周 '+Math.round(micro/done.length*100)+'% 靠微任务完成——系统在帮你兜底，先别急着加码。');
+  } else out.push('本周没有完成记录，下周目标只设 3 个微任务，先把「做过」的感觉找回来。');
+  return out;
+}
+
+/* --- 奖励 --- */
+function vRewards(){
+  var h = '<div class="balance"><div class="small" style="opacity:.9">能量点余额</div><div class="n">'+balance()+'</div>'
+        + '<div class="small" style="opacity:.9;margin-top:4px">完成得点，兑换奖励 · 没有断签，没有清零</div></div>';
+  h += '<div class="pad" style="padding:0 16px"><button class="btn gray" data-act="add-reward">+ 自定义奖励</button></div>';
+  h += '<div style="height:12px"></div>';
+  DB.rewards.forEach(function(r){
+    var ok = balance() >= r.cost;
+    h += '<div class="pad" style="padding:0 16px"><div class="rw"><div class="emo">'+r.icon+'</div>'
+      + '<div class="grow"><div style="font-weight:600">'+esc(r.name)+'</div><div class="small muted">'+r.cost+' 点</div></div>'
+      + '<button class="buy" data-act="redeem" data-id="'+r.id+'" '+(ok?'':'disabled')+'>'+(ok?'兑换':'差 '+(r.cost-balance()))+'</button></div></div>'
+      + '<div style="height:10px"></div>';
+  });
+  if(DB.redeems.length){
+    h += '<div class="card" style="margin:6px 16px"><div class="h2">兑换记录</div>';
+    DB.redeems.slice().reverse().slice(0,8).forEach(function(x){
+      h += '<div class="between small" style="padding:6px 0"><span>'+esc(x.name)+'</span><span class="muted">-'+x.cost+' · '+x.at.slice(5,10)+'</span></div>';
+    });
+    h += '</div>';
+  }
+  return h;
+}
+
+/* --- 我的 --- */
+function vMe(){
+  return '<div class="pad" style="padding-top:calc(18px + env(safe-area-inset-top))"><div class="h1">我的</div>'
+    + '<div class="card"><div class="h2">规则说明</div><div class="small muted" style="line-height:1.9">'
+    + '· 无断签、无连续天数、无清零，下降不提示<br>'
+    + '· 延后 2 次自动降为微任务，7 天未处理自动归档<br>'
+    + '· 放弃只记录原因，不做任何评价<br>'
+    + '· 首页永远只显示 1 个任务，避免选择困难</div></div>'
+    + '<div class="card"><div class="h2">数据</div>'
+    + '<div class="small muted">任务 '+DB.items.length+' 条 · 记录 '+DB.instances.length+' 条 · 放弃 '+DB.giveups.length+' 条</div>'
+    + '<div style="height:10px"></div><button class="btn gray" data-act="export">导出 JSON（复制到剪贴板/控制台）</button>'
+    + '<div style="height:10px"></div><button class="btn gray" data-act="reset">重置为演示数据</button></div>'
+    + '<div class="small muted" style="text-align:center;margin-top:10px">微步 MicroStep · 本地存储，不联网</div></div>';
+}
+
+/* ============ 弹层 ============ */
+function openSheet(html){ document.getElementById('sheet').innerHTML=html; document.getElementById('modal').className='show'; }
+function closeSheet(){ document.getElementById('modal').className=''; }
+function sheetGiveUp(){
+  openSheet('<div style="font-weight:600">怎么就这次没做呢？</div>'
+    + '<div class="small muted">只记录原因，不做任何评价</div>'
+    + '<div class="grid2">' + Object.keys(REASON).map(function(k){
+        return '<button data-act="reason" data-r="'+k+'"><span class="e">'+REASON[k].emo+'</span>'+REASON[k].label+'</button>';
+      }).join('') + '</div>'
+    + '<input class="inp" id="note" placeholder="备注（可选，比如「加班到 9 点」）">'
+    + '<button class="btn gray" data-act="close">先不记了</button>');
+}
+function sheetItem(id, gid){
+  var i = id ? item(id) : null;
+  var g = goal(gid || (i && i.gid));
+  var t = i ? i.title : '';
+  openSheet('<div style="font-weight:600">'+(i?'编辑计划':'新增计划')+'</div>'
+    + '<div class="small muted">填个常规任务，微/进阶自动帮你拆</div>'
+    + '<input class="inp" id="f_title" placeholder="计划名称，如：全身力量训练" value="'+esc(t)+'">'
+    + '<input class="inp" id="f_reg" placeholder="常规任务（30 分钟左右）" value="'+esc(i?i.regular:'')+'">'
+    + '<input class="inp" id="f_mic" placeholder="微任务（1-5 分钟）" value="'+esc(i?i.micro:'')+'">'
+    + '<input class="inp" id="f_adv" placeholder="进阶任务（可选）" value="'+esc(i?i.advanced:'')+'">'
+    + '<div class="btnrow"><button class="btn ghost" data-act="close">取消</button>'
+    + '<button class="btn" data-act="save-item" data-id="'+(id||'')+'" data-g="'+g.id+'">保存</button></div>');
+}
+function autoMicro(type){
+  if(type==='fitness') return '原地拉伸 / 活动 2 分钟';
+  if(type==='cooking') return '洗菜 / 只把食材拿出来摆好';
+  return '看 5 分钟教程 / 读 2 页';
+}
+function autoAdv(type, title){
+  if(type==='fitness') return '训练 40 分钟 + 记录组数';
+  if(type==='cooking') return '做饭 + 备好明天的食材';
+  return '练 30 分钟 + 完成一个小案例';
+}
+
+/* ============ 事件 ============ */
+document.addEventListener('click', function(ev){
+  var el = ev.target.closest('[data-act]'); if(!el) return;
+  var act = el.getAttribute('data-act');
+  var o = focusToday();
+
+  if(act==='nav'){ view = el.getAttribute('data-v'); if(view!=='goals') openGoal=null; render(); }
+  else if(act==='open'){ openGoal = el.getAttribute('data-id'); render(); }
+  else if(act==='back'){ openGoal=null; render(); }
+  else if(act==='energy'){ DB.day.energy = el.getAttribute('data-e'); save(); render(); }
+  else if(act==='tier'){ if(o){ o.tier = el.getAttribute('data-t'); o.down=0; save(); render(); } }
+  else if(act==='done'){ if(o){ onDone(o); render(); } }
+  else if(act==='defer'){ if(o){ onDefer(o); render(); } }
+  else if(act==='giveup'){ sheetGiveUp(); }
+  else if(act==='reason'){
+    var note = (document.getElementById('note')||{}).value || '';
+    if(o) onGiveUp(o, el.getAttribute('data-r'), note);
+    closeSheet(); render();
+  }
+  else if(act==='again'){ createFocus(); render(); }
+  else if(act==='add-item'){ sheetItem(null, el.getAttribute('data-g')); }
+  else if(act==='edit'){ sheetItem(el.getAttribute('data-id')); }
+  else if(act==='toggle'){ var it=item(el.getAttribute('data-id')); if(it){ it.active=it.active?0:1; save(); render(); } }
+  else if(act==='save-item'){
+    var id=el.getAttribute('data-id'), gid=el.getAttribute('data-g'), g=goal(gid);
+    var title=document.getElementById('f_title').value.trim();
+    var reg=document.getElementById('f_reg').value.trim();
+    var mic=document.getElementById('f_mic').value.trim() || autoMicro(g.type);
+    var adv=document.getElementById('f_adv').value.trim() || autoAdv(g.type, title);
+    if(!title){ toast('给这条计划起个名字'); return; }
+    if(id){ var x=item(id); x.title=title; x.regular=reg||title; x.micro=mic; x.advanced=adv; }
+    else DB.items.push({id:uid('i'),gid:gid,title:title,micro:mic,regular:reg||title,advanced:adv,
+      mm:2,rm:30,am:45,last:0,active:1});
+    save(); closeSheet(); render();
+  }
+  else if(act==='add-reward'){
+    var n = prompt('奖励名称，如：泡个热水澡');
+    if(n){ var c = parseInt(prompt('需要多少能量点？', '8'), 10); if(!c||c<1) c=8;
+      DB.rewards.push({id:uid('r'),name:n,cost:c,icon:'⭐'}); save(); render(); }
+  }
+  else if(act==='redeem'){
+    var r=null; DB.rewards.forEach(function(x){ if(x.id===el.getAttribute('data-id')) r=x; });
+    if(!r) return;
+    if(balance()<r.cost){ toast('点数还不够，先攒攒'); return; }
+    addLedger(-r.cost,'reward_redeem',r.name);
+    DB.redeems.push({id:uid('x'),rewardId:r.id,name:r.name,cost:r.cost,at:new Date().toISOString()});
+    save(); toast('已兑换：'+r.name+' · 去享受吧'); render();
+  }
+  else if(act==='export'){ console.log(JSON.stringify(DB)); toast('已输出到控制台（F12 查看）'); }
+  else if(act==='reset'){ if(confirm('确定重置为演示数据？当前记录会清空')){ DB=seed(); save(); render(); } }
+  else if(act==='close'){ closeSheet(); }
+});
+document.getElementById('modal').addEventListener('click', function(ev){
+  if(ev.target.classList.contains('mask')) closeSheet();
+});
+
+render();
+</script>
+</body>
+</html>

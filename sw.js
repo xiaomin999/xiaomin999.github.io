@@ -1,6 +1,6 @@
 /* 工具箱导航 · Service Worker
    策略：HTML 走网络优先（保证更新），静态资源走缓存优先 */
-const CACHE = "tools-hub-v2";
+const CACHE = "tools-hub-v3";
 const ASSETS = [
   "./",
   "./index.html",

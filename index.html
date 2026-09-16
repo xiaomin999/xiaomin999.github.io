@@ -270,6 +270,31 @@
     <g id="i-search" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
       <circle cx="11" cy="11" r="7"/><path d="M20 20l-3.9-3.9"/>
     </g>
+    <g id="i-drop" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 3.2c0 0 5.8 6.1 5.8 9.8a5.8 5.8 0 0 1-11.6 0C6.2 9.3 12 3.2 12 3.2z"/>
+      <path d="M9.4 13.6a2.6 2.6 0 0 0 2.6 2.6"/>
+    </g>
+    <g id="i-utensils" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6.5 3v6.2a1.8 1.8 0 0 0 3.6 0V3"/><path d="M8.3 11v10"/>
+      <path d="M17.2 3c-1.6 1.5-2.4 3.4-2.4 5.6 0 1.7.8 2.8 2.4 3.1V21"/>
+    </g>
+    <g id="i-megaphone" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 10.2v3.6l10 4.6V5.6L4 10.2z"/><path d="M6.8 13.8 6.8 21"/>
+      <path d="M17 8.6a4.2 4.2 0 0 1 0 6.8"/>
+    </g>
+    <g id="i-rocket" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 2.6c3.1 2.1 5.1 5.6 5.1 9.1l-2.4 2.4H9.3L6.9 11.7c0-3.5 2-7 5.1-9.1z"/>
+      <circle cx="12" cy="10" r="1.5"/>
+      <path d="M9.5 16.4 7.6 21l3.3-1.5M14.5 16.4 16.4 21l-3.3-1.5"/>
+    </g>
+    <g id="i-calendar" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3.2" y="5" width="17.6" height="16" rx="2.2"/>
+      <path d="M8 3v4M16 3v4M3.2 10h17.6"/>
+    </g>
+    <g id="i-steps" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M8.6 3.2c1.5 0 2.6 1.7 2.6 3.6s-1.1 3.6-2.6 3.6S6 8.7 6 6.8s1.1-3.6 2.6-3.6z"/>
+      <path d="M15.6 11.6c1.5 0 2.6 1.7 2.6 3.6s-1.1 3.6-2.6 3.6-2.6-1.7-2.6-3.6 1.1-3.6 2.6-3.6z"/>
+    </g>
   </defs>
 </svg>
 
@@ -317,12 +342,18 @@
 const TOOLS = [
   { cat:"健康生活", name:"肥肉减速带", desc:"双人减脂打卡 · 训练库 · 饮食工具箱", url:"https://couple-fatloss-couple-fatloss-d6ghlrds87c015969.webapps.tcloudbase.com", host:"tcloudbase.com", icon:"i-dumbbell", g:"linear-gradient(135deg,#ff9a6c,#f4511e)", live:1, tag:"PWA" },
   { cat:"健康生活", name:"配料表风险扫描", desc:"拍照识别配料表与成分，标注风险等级", url:"https://xiaomin999.github.io/ingredient-risk-scanner/", host:"github.io", icon:"i-scan", g:"linear-gradient(135deg,#4dd0a7,#0d9488)", live:1 },
+  { cat:"健康生活", name:"低GI控糖 · 胰岛素友好餐", desc:"食物库 · 拍照识别升糖指数 · 定制备餐计划", url:"https://xiaomin999.github.io/lowgi-insulin/", host:"github.io", icon:"i-drop", g:"linear-gradient(135deg,#5fd6c0,#0f9d8f)", live:1, tag:"PWA" },
+  { cat:"健康生活", name:"今天吃什么 · 减脂版", desc:"按热量与口味给出当天三餐搭配建议", url:"tools/diet-picker/", host:"本站", icon:"i-utensils", g:"linear-gradient(135deg,#7ed957,#3f9c35)", live:1 },
   { cat:"健康生活", name:"情侣减脂打卡助手（初代）", desc:"已由「肥肉减速带」取代，仅作历史留档", url:"tools/couple-fatloss-legacy/", host:"归档", icon:"i-archive", g:"linear-gradient(135deg,#cbd5e1,#94a3b8)", live:0, tag:"归档" },
 
   { cat:"搞钱与财务", name:"电商作战室", desc:"选品流水线 · 素材库 · 内容生成 · 市场情报", url:"https://xiaomin999.github.io/ecom-warroom/", host:"github.io", icon:"i-cart", g:"linear-gradient(135deg,#5b9dff,#2563eb)", live:1, tag:"PWA" },
   { cat:"搞钱与财务", name:"副业收集工作台", desc:"86 条副业点子库 · 收益测算 · 决策对比", url:"https://xiaomin999.github.io/side-hustle-hub/", host:"github.io", icon:"i-bulb", g:"linear-gradient(135deg,#ffc14d,#f59e0b)", live:1, tag:"PWA" },
   { cat:"搞钱与财务", name:"基金交易判断工作台", desc:"交易信号看板，A 股配色（涨红跌绿）", url:"tools/fund-workbench/", host:"本站", icon:"i-trend", g:"linear-gradient(135deg,#ff8080,#dc2626)", live:1 },
   { cat:"搞钱与财务", name:"简记 · 记账", desc:"收支记账 · 分类占比 · Supabase 云同步", url:"https://xiaomin999.github.io/jianji/", host:"github.io", icon:"i-wallet", g:"linear-gradient(135deg,#f5c451,#d99e0b)", live:1 },
+
+  { cat:"内容运营", name:"红算子 · 小红书运营", desc:"采集雷达 · 内容工坊 · 转化路径 · 成长路线图", url:"https://xiaomin999.github.io/xhs-workbench/", host:"github.io", icon:"i-megaphone", g:"linear-gradient(135deg,#ff6b8b,#e11d48)", live:1 },
+  { cat:"内容运营", name:"公众号全栈助推助手", desc:"定位排期 · 选题 · 写稿 · 配图 · 复盘全流程", url:"https://xiaomin999.github.io/gzh-booster/", host:"github.io", icon:"i-rocket", g:"linear-gradient(135deg,#ffa94d,#f76707)", live:1, tag:"PWA" },
+  { cat:"内容运营", name:"公众号 AI 写作工作台（初版）", desc:"已被「公众号全栈助推助手」取代，留档参考", url:"tools/gzh-ai-writer/", host:"归档", icon:"i-edit", g:"linear-gradient(135deg,#cbd5e1,#94a3b8)", live:0, tag:"旧版" },
 
   { cat:"学习成长", name:"雅思学习平台", desc:"每日单词 · 影子跟读 · 口语练习 · 间隔复习", url:"tools/ielts-prep/", host:"本站", icon:"i-globe", g:"linear-gradient(135deg,#8b8cf0,#5b5bd6)", live:1 },
   { cat:"学习成长", name:"学习工作台 · 四合一", desc:"SQL / Excel / Python / Java 刷题练习", url:"tools/study-workbench/", host:"本站", icon:"i-code", g:"linear-gradient(135deg,#3ec9d6,#0891b2)", live:1 },
@@ -333,12 +364,14 @@ const TOOLS = [
   { cat:"效率工具", name:"个人办公台", desc:"今日待办 · 灵感速记 · 项目跟进 · 周复盘", url:"tools/office-workbench/", host:"本站", icon:"i-case", g:"linear-gradient(135deg,#94a3b8,#475569)", live:1 },
   { cat:"效率工具", name:"数据分析工作台", desc:"任务看板 · SQL/Python 片段库 · 指标字典", url:"tools/data-analysis-workbench/", host:"本站", icon:"i-bar", g:"linear-gradient(135deg,#4fb0e8,#0284c7)", live:1 },
   { cat:"效率工具", name:"Boardly 协作白板", desc:"Canvas 绘图白板，支持网格开关", url:"tools/whiteboard/", host:"本站", icon:"i-pen", g:"linear-gradient(135deg,#ffab6b,#ea580c)", live:1 },
-  { cat:"效率工具", name:"公众号 AI 写作工作台", desc:"知识库 → 选题 → 写稿 → 配图 → 复盘", url:"tools/gzh-ai-writer/", host:"本站", icon:"i-edit", g:"linear-gradient(135deg,#3fd0b6,#0d9488)", live:1 }
+  { cat:"效率工具", name:"个人计划表", desc:"日程与计划编排，Supabase 云同步", url:"https://xiaomin999.github.io/personal-plan/", host:"github.io", icon:"i-calendar", g:"linear-gradient(135deg,#74c0fc,#1c7ed6)", live:1 },
+  { cat:"效率工具", name:"微步 MicroStep", desc:"把大目标拆成每天可执行的一小步", url:"tools/microstep/", host:"本站", icon:"i-steps", g:"linear-gradient(135deg,#b197fc,#7048e8)", live:1 }
 ];
 
 const CAT_COLOR = {
   "健康生活":"#f4511e",
   "搞钱与财务":"#2563eb",
+  "内容运营":"#e11d48",
   "学习成长":"#7c3aed",
   "效率工具":"#0d9488"
 };

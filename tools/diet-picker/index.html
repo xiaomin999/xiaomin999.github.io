@@ -1,0 +1,740 @@
+<!doctype html>
+<html lang="zh-CN" data-page-node-id="oXTHvOd8IPOgCQ9ccMzTSm">
+<head data-page-node-id="l3eEMQkDzAqLDkuCXVgEDC">
+<meta charset="utf-8" data-page-node-id="BtpDXXmLC79neLwDNxO4cG">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" data-page-node-id="8MujBU85OlMRSpyl7SPARk">
+<meta name="apple-mobile-web-app-capable" content="yes" data-page-node-id="mG0kmJYjVFX13zUjl8XRwT">
+<meta name="apple-mobile-web-app-status-bar-style" content="default" data-page-node-id="eaVRfAO9lGJis4cuRrckG2">
+<meta name="theme-color" content="#2E9E5B" data-page-node-id="q58aX4oObEiEDtM2rnBv3P">
+<title>今天吃什么 · 减脂版</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#F5F7F4; --card:#FFFFFF; --line:#E8ECE7;
+  --tx:#1B211C; --tx2:#6B776E; --tx3:#9AA5A0;
+  --g:#2E9E5B; --g-l:#E8F5ED; --o:#FF8A3D; --o-l:#FFF1E6;
+  --r:#E5484D; --r-l:#FDECEC;
+  --sh:0 1px 2px rgba(16,32,20,.04), 0 6px 20px rgba(16,32,20,.06);
+}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--tx);
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+  font-size:15px; line-height:1.5; padding-bottom:calc(28px + env(safe-area-inset-bottom));
+}
+.wrap{max-width:520px;margin:0 auto;padding:0 14px}
+
+/* header */
+header{padding:22px 0 12px}
+.h-row{display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
+h1{font-size:23px;font-weight:800;margin:0;letter-spacing:-.3px}
+h1 .dot{color:var(--g)}
+.sub{color:var(--tx2);font-size:12.5px;margin-top:5px}
+.icon-btn{
+  width:38px;height:38px;border:1px solid var(--line);background:var(--card);border-radius:12px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:17px;flex:none;
+}
+.icon-btn:active{transform:scale(.94)}
+
+/* progress */
+.prog{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 16px;box-shadow:var(--sh)}
+.prog-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:9px}
+.prog-k{font-size:22px;font-weight:800;letter-spacing:-.5px}
+.prog-k span{font-size:12px;font-weight:600;color:var(--tx3);margin-left:3px}
+.prog-r{font-size:12px;color:var(--tx2)}
+.bar{height:7px;background:#EEF2EE;border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,#4CB87A,var(--g));border-radius:99px;transition:width .5s cubic-bezier(.3,1,.4,1)}
+.bar.warn i{background:linear-gradient(90deg,#FFA76B,var(--o))}
+.bar.over i{background:linear-gradient(90deg,#FF7A7E,var(--r))}
+.macro{display:flex;gap:14px;margin-top:10px;font-size:11.5px;color:var(--tx2)}
+.macro b{color:var(--tx);font-weight:700}
+.macro i{font-style:normal;display:inline-block;width:7px;height:7px;border-radius:2px;margin-right:4px}
+
+/* mode + meals */
+.seg{display:flex;background:#EDF1ED;padding:3px;border-radius:13px;margin:14px 0 10px}
+.seg button{
+  flex:1;border:0;background:transparent;padding:10px 4px;border-radius:11px;font-size:14px;font-weight:700;
+  color:var(--tx2);cursor:pointer;font-family:inherit;transition:.18s;
+}
+.seg button.on{background:var(--card);color:var(--tx);box-shadow:0 1px 3px rgba(16,32,20,.1)}
+.meals{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.meal{
+  background:var(--card);border:1px solid var(--line);border-radius:15px;padding:11px 4px;text-align:center;
+  cursor:pointer;transition:.18s;position:relative;
+}
+.meal .em{font-size:19px;line-height:1.2}
+.meal .nm{font-size:12.5px;font-weight:700;margin-top:3px}
+.meal .kc{font-size:10.5px;color:var(--tx3);margin-top:2px;font-variant-numeric:tabular-nums}
+.meal.on{border-color:var(--g);background:var(--g-l);box-shadow:0 0 0 2.5px rgba(46,158,91,.13)}
+.meal.on .nm{color:var(--g)}
+.meal.done::after{content:'';position:absolute;top:7px;right:7px;width:6px;height:6px;border-radius:50%;background:var(--g)}
+
+/* roll btn */
+.roll{
+  width:100%;border:0;border-radius:17px;padding:16px;font-size:16.5px;font-weight:800;color:#fff;
+  background:linear-gradient(135deg,#3EB06B,#249155);cursor:pointer;font-family:inherit;
+  box-shadow:0 6px 18px rgba(36,145,85,.28);transition:.15s;letter-spacing:.5px;
+}
+.roll:active{transform:translateY(1px) scale(.99);box-shadow:0 3px 10px rgba(36,145,85,.24)}
+.roll.shaking{animation:shake .28s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+/* result */
+.res{margin-top:14px;display:flex;flex-direction:column;gap:9px}
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:17px;padding:14px 15px;box-shadow:var(--sh);
+  display:flex;align-items:center;gap:12px;animation:pop .34s cubic-bezier(.2,1.1,.4,1) backwards;
+}
+@keyframes pop{from{opacity:0;transform:translateY(9px) scale(.98)}}
+.tag{
+  font-size:10.5px;font-weight:800;padding:4px 8px;border-radius:7px;flex:none;letter-spacing:.3px;
+  background:var(--g-l);color:var(--g);
+}
+.tag.o{background:var(--o-l);color:#D96B1E}
+.tag.b{background:#EAF2FD;color:#3B74C4}
+.card .mid{flex:1;min-width:0}
+.card .nm{font-weight:700;font-size:15.5px;letter-spacing:-.2px}
+.card .kc{font-size:12px;color:var(--tx2);margin-top:3px;font-variant-numeric:tabular-nums}
+.card .kc b{color:var(--o);font-weight:800}
+.card .tip{font-size:11.5px;color:var(--tx3);margin-top:4px;line-height:1.45}
+.acts{display:flex;flex-direction:column;gap:6px;flex:none}
+.acts button{
+  width:32px;height:32px;border:1px solid var(--line);background:#FAFBFA;border-radius:10px;cursor:pointer;
+  font-size:14px;line-height:1;display:flex;align-items:center;justify-content:center;padding:0;transition:.15s;
+}
+.acts button:active{transform:scale(.9)}
+.acts .x:active{background:var(--r-l);border-color:#F5C6C7}
+.spin{animation:flip .1s infinite}
+@keyframes flip{50%{opacity:.45}}
+
+/* combo total */
+.total{
+  background:linear-gradient(135deg,#F0F8F3,#E7F4EC);border:1px solid #D6EBDF;border-radius:17px;
+  padding:14px 16px;display:flex;align-items:center;justify-content:space-between;margin-top:4px;
+}
+.total .lb{font-size:12px;color:#3D6B4E;font-weight:700}
+.total .v{font-size:25px;font-weight:800;color:var(--g);letter-spacing:-.8px;font-variant-numeric:tabular-nums}
+.total .v span{font-size:12px;font-weight:700;margin-left:2px}
+.total .sub2{font-size:11px;color:#5F8A6E;margin-top:2px;font-weight:600}
+
+/* out mode: order script */
+.script{background:#FFFDF6;border:1px solid #F3E4C4;border-radius:15px;padding:13px 15px;
+  font-size:13px;line-height:1.65;color:#6B5426}
+.script .hd{font-weight:800;color:#9A7420;font-size:12px;margin-bottom:5px;letter-spacing:.3px}
+
+.empty{text-align:center;padding:40px 20px;color:var(--tx3);font-size:13.5px;line-height:1.8}
+.empty .big{font-size:40px;margin-bottom:10px}
+
+/* bottom bar */
+.bot{display:flex;gap:9px;margin-top:14px}
+.bot button{
+  flex:1;border:1px solid var(--line);background:var(--card);border-radius:14px;padding:12px;
+  font-size:13.5px;font-weight:700;color:var(--tx2);cursor:pointer;font-family:inherit;transition:.15s;
+}
+.bot button:active{transform:scale(.98)}
+.bot button.pri{background:var(--tx);color:#fff;border-color:var(--tx)}
+
+/* sheet */
+.mask{position:fixed;inset:0;background:rgba(15,25,18,.42);opacity:0;pointer-events:none;transition:.25s;z-index:40}
+.mask.on{opacity:1;pointer-events:auto}
+.sheet{
+  position:fixed;left:0;right:0;bottom:0;background:var(--card);z-index:50;
+  border-radius:24px 24px 0 0;padding:8px 18px calc(24px + env(safe-area-inset-bottom));
+  transform:translateY(102%);transition:transform .32s cubic-bezier(.3,1,.4,1);
+  max-width:520px;margin:0 auto;max-height:86vh;overflow-y:auto;
+}
+.sheet.on{transform:translateY(0)}
+.grab{width:38px;height:4px;background:#DDE3DE;border-radius:99px;margin:6px auto 14px}
+.sh-t{font-size:17px;font-weight:800;margin-bottom:4px}
+.sh-d{font-size:12.5px;color:var(--tx2);margin-bottom:16px;line-height:1.6}
+.fld{margin-bottom:15px}
+.fld label{display:block;font-size:12.5px;font-weight:700;color:var(--tx2);margin-bottom:7px}
+.fld input{
+  width:100%;border:1px solid var(--line);background:#FAFBFA;border-radius:12px;padding:12px 14px;
+  font-size:15px;font-family:inherit;color:var(--tx);
+}
+.fld input:focus{outline:0;border-color:var(--g);background:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{
+  border:1px solid var(--line);background:#FAFBFA;border-radius:99px;padding:8px 13px;font-size:13px;
+  cursor:pointer;font-family:inherit;color:var(--tx2);transition:.15s;
+}
+.chip.on{background:var(--g-l);border-color:var(--g);color:var(--g);font-weight:700}
+.blk{display:flex;flex-wrap:wrap;gap:7px}
+.blk .chip{border-style:dashed;color:var(--r);border-color:#F2C9CA}
+.blk .chip::after{content:' ✕';font-size:10px}
+.save{
+  width:100%;border:0;background:var(--g);color:#fff;border-radius:14px;padding:14px;font-size:15.5px;
+  font-weight:800;cursor:pointer;font-family:inherit;margin-top:4px;
+}
+.note{font-size:11px;color:var(--tx3);line-height:1.65;margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.toast{
+  position:fixed;left:50%;bottom:34px;transform:translate(-50%,20px);background:rgba(27,33,28,.94);color:#fff;
+  padding:11px 20px;border-radius:99px;font-size:13.5px;font-weight:600;opacity:0;pointer-events:none;
+  transition:.25s;z-index:70;max-width:88vw;text-align:center;
+}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body data-page-node-id="oH152r4a2NKXxljoLF301j">
+
+<div class="wrap" data-page-node-id="nkidyRzsSBAbFnBIj4mahp">
+  <header data-page-node-id="AwckeFMCnIn5l8zkVIHtYQ">
+    <div class="h-row" data-page-node-id="mFKZyr9Wa7z2k7OjUo17Pg">
+      <div data-page-node-id="Rvghz8JCm98nbStrmyXemk">
+        <h1 data-page-node-id="0SLkWVwMzEZH0TnPDOvsme">今天吃什么<span class="dot" data-page-node-id="EyNXEAR2JJxnXtQoomPusE">.</span></h1>
+        <div class="sub" data-page-node-id="7FekFQe7u2nkgEkt5MrBnb">减脂期点菜助手 · 抽到什么吃什么</div>
+      </div>
+      <button class="icon-btn" onclick="openSet()" data-page-node-id="BfO7owl62x5l6Rl0w93at4">⚙️</button>
+    </div>
+  </header>
+
+  <div class="prog" data-page-node-id="k43XlE1gTJmEVXQOt3RA5I">
+    <div class="prog-top" data-page-node-id="2K7l70RWdPIzhRD1wimVsA">
+      <div data-page-node-id="ijDFFKqA2TBki7eit2Yy85"><span class="prog-k" id="pK" data-page-node-id="2KMFUqmTfQLzsZcHpC3w1j">0</span><span data-page-node-id="JsbvEXTNceasA9j52h1nAZ">/ <span id="pT" data-page-node-id="bRXNG2ycMXQihIRywrkBQ7">1400</span> kcal</span></div>
+      <div class="prog-r" id="pR" data-page-node-id="5LLkQLw3860iJbCherbUsZ">还剩 1400</div>
+    </div>
+    <div class="bar" id="pBar" data-page-node-id="0ScgU0sYQpP09WpCbeSE1q"><i style="width:0%" data-page-node-id="nkUF6ytFFv0XrdvyVZfEs2"></i></div>
+    <div class="macro" data-page-node-id="QWpsGvN251EinsdzLhHGAd">
+      <span data-page-node-id="4DKacw3BF3GWHIBDRQrWqO"><i style="background:#2E9E5B" data-page-node-id="Vc5kkLyiKEZQEz4AjFjJ3w"></i>蛋白 <b id="mP" data-page-node-id="jbIt1WMRp0x28Jb0Q3tTFR">0</b>g</span>
+      <span data-page-node-id="wAX4WZbxvQJ6wwM8hxYtP5"><i style="background:#FF8A3D" data-page-node-id="TDumlO8WP5EQlxwZWokdyg"></i>碳水 <b id="mC" data-page-node-id="jp5urzhIuwhxuKqEPPrbFo">0</b>g</span>
+      <span data-page-node-id="sqBOMJC7xBtxBewSGSHkTA"><i style="background:#3B74C4" data-page-node-id="E0PW5c0wi2TTqhLzJP9Gfq"></i>脂肪 <b id="mF" data-page-node-id="bg906Aoq2UfgMZq3Uesi8A">0</b>g</span>
+    </div>
+  </div>
+
+  <div class="seg" data-page-node-id="ITfBOBOl932efKTl4y8uKV">
+    <button id="mHome" class="on" onclick="setMode('home')" data-page-node-id="b4YraJc4MJCojQcCnVUKCl">🍳 自己做</button>
+    <button id="mOut" onclick="setMode('out')" data-page-node-id="h6XZIkPqE5KrLLLWdrV6Eb">🛵 点外卖</button>
+  </div>
+
+  <div class="meals" id="meals" data-page-node-id="WQl2rDSQDcCnwbctZbjtEM"></div>
+
+  <button class="roll" id="rollBtn" onclick="roll()" data-page-node-id="MKYfah65zwHPC97mJsYjvD">🎲 帮我决定</button>
+
+  <div class="res" id="res" data-page-node-id="F0ZSEVDQjDJlTDJICOooh9"></div>
+
+  <div class="bot" data-page-node-id="6MpRnPpBuaUlEpxwmOnUWb">
+    <button onclick="copyDay()" data-page-node-id="jscIF83vVUaT0sk5mgCnjE">📋 复制今日菜单</button>
+    <button class="pri" onclick="clearMeal()" data-page-node-id="2spYIGfGFViLzB0LshYjUH">🔄 重置本餐</button>
+  </div>
+
+  <div style="text-align:center;font-size:11px;color:var(--tx3);margin-top:16px;line-height:1.7" data-page-node-id="xQ9C7iPUx0iTGUFlaKjxDz">
+    热量与营养为常见份量估算值，仅供参考<br data-page-node-id="m6Z14NApc9dYiagftTNr5s">减脂核心是热量缺口 · 建议配合体重记录观察趋势
+  </div>
+</div>
+
+<div class="mask" id="mask" onclick="closeSet()" data-page-node-id="zDGGwhVSTAWuHBPcUMGkfS"></div>
+<div class="sheet" id="sheet" data-page-node-id="toJgF1vEgZLSKeYn1s27Zc">
+  <div class="grab" data-page-node-id="WY1Fxbqp6tUddnaeWcO1bl"></div>
+  <div class="sh-t" data-page-node-id="nEBmMuyEWWDITPrs4BE4SI">设置</div>
+  <div class="sh-d" data-page-node-id="6ezMelfraz7pyofwkjikht">每日目标按性别给了一组常见值，也可手动改。分配比例：早 28% / 午 38% / 晚 24% / 加餐 10%。</div>
+
+  <div class="fld" data-page-node-id="UU2EMqke88M7qCb23yAAZr">
+    <label data-page-node-id="ydznJWkBHvC12D8iEEHzvm">每日目标热量 (kcal)</label>
+    <input type="number" id="iT" inputmode="numeric" data-page-node-id="TBGA8TZGZG0ECJZu4ADlEZ">
+  </div>
+  <div class="fld" data-page-node-id="vy6O7uNJQ0iqlNwtM7LF4a">
+    <label data-page-node-id="ajzzxTbEpOxNhUKvEBFo36">快捷设定</label>
+    <div class="chips" id="quickT" data-page-node-id="GyRshhMCde0FXvPSUhg99I"></div>
+  </div>
+  <div class="fld">
+    <label>忌口 / 不吃（可多选）</label>
+    <div class="chips" id="avoidList"></div>
+  </div>
+  <div class="fld" data-page-node-id="vhk3RxlgOTimWzG3eyBX4p">
+    <label data-page-node-id="WamE82DPXaoChIJyzcQmKf">不想吃的（点过 ✕ 的菜）</label>
+    <div class="blk" id="blkList" data-page-node-id="wfAfhnfZDcGb8iD7kMnKMU"></div>
+  </div>
+  <button class="save" onclick="saveSet()" data-page-node-id="ZnCPhI0KJgLhkxKBJtINRB">保存</button>
+  <div class="note" id="note"></div>
+</div>
+
+<div class="toast" id="toast" data-page-node-id="V2LWjdC6CkWmDPIE6K9w0s"></div>
+
+<script>
+/* ============ 菜品库 ============ */
+// [名称, 热量kcal, 蛋白g, 碳水g, 脂肪g, 备注]
+const raw = (a)=>({n:a[0],k:a[1],p:a[2],c:a[3],f:a[4],tip:a[5]||'',tags:(a[6]||'').split(' ').filter(Boolean)});
+
+const HOME = {
+  breakfast:{
+    carb:[[ '燕麦粥（燕麦40g）',152,5,27,3,'加几颗蓝莓更好吃',''],
+      ['全麦面包 2 片',160,8,28,2,'配料表第一位必须是全麦粉',''],
+      ['蒸红薯 150g',130,2,31,0,'微波炉 6 分钟搞定',''],
+      ['玉米 1 根',112,4,23,2,'甜玉米比糯玉米升糖慢',''],
+      ['杂粮粥 1 碗',130,4,27,1,'别加糖',''],
+      ['蒸南瓜 250g',60,2,13,0,'热量极低，管饱',''],
+      ['荞麦面（干 60g）',200,8,40,2,'煮好过凉水更筋道',''],
+      ['全麦卷饼 1 张',130,5,22,3,'卷鸡蛋生菜即食',''],
+      ['山药 150g',90,2,20,0,'替代主食，饱腹感强',''],
+      ['杂粮馒头 1 个',140,5,28,1,'比白馒头稳血糖',''],
+      ['全麦面包 2 片 + 花生酱 1 勺',250,11,30,11,'花生酱选无糖无氢化油',''],
+      ['燕麦粥 + 全麦面包 1 片',236,7,41,4,'食量大的早晨',''],],
+    protein:[[ '水煮蛋 2 个',140,13,1,10,'最省事的优质蛋白','egg'],
+      ['水煮蛋 1 个 + 无糖豆浆 300ml',155,15,7,8,'经典中式搭配','egg'],
+      ['无糖希腊酸奶 150g',90,10,6,2,'看配料表无白砂糖','dairy'],
+      ['鸡胸肉 100g',110,25,0,2,'前一晚腌好冷藏','meat'],
+      ['虾仁 80g',80,16,0,1,'水煮 2 分钟','meat seafood'],
+      ['嫩豆腐 200g',160,12,4,9,'淋生抽+葱花',''],
+      ['低脂牛奶 250ml',130,8,12,4,'乳糖不耐换无糖豆浆','dairy'],
+      ['蛋白 2 个',34,7,0,0,'搭配其他蛋白一起吃','egg'],],
+    veg:[['小番茄 150g',30,1,7,0,'',''],
+      ['黄瓜 1 根',30,1,6,0,'带皮吃',''],
+      ['苹果 1 个',90,0,24,0,'上午加餐也合适',''],
+      ['蓝莓 100g',57,1,14,0,'抗氧化',''],
+      ['生菜圣女果沙拉 150g',35,1,7,0,'别倒沙拉酱，用醋',''],
+      ['香蕉 1 根',105,1,27,0,'',''],
+      ['牛油果 半个',120,1,6,11,'脂肪高但优质，别多吃',''],
+      ['猕猴桃 1 个',60,1,14,0,'',''],
+      ['凉拌菠菜 150g',45,3,5,2,'焯水去草酸',''],],
+    drink:[['黑咖啡',2,0,0,0,'不加糖不加奶',''],
+      ['无糖豆浆 300ml',96,9,4,4,'',''],
+      ['绿茶 / 乌龙茶',0,0,0,0,'',''],
+      ['柠檬水',5,0,1,0,'',''],
+      ['无糖拿铁（脱脂奶）',100,9,10,2,'','dairy'],],
+  },
+  lunch:{
+    carb:[['糙米饭 150g',170,4,36,1,'提前泡 1 小时更好吃',''],
+      ['白米饭 130g',150,3,34,0,'减脂也能吃，控量就行',''],
+      ['杂粮饭 150g',160,5,33,1,'',''],
+      ['荞麦面（干 60g）',200,8,40,2,'',''],
+      ['蒸红薯 200g',180,3,46,0,'',''],
+      ['玉米 1 根',112,4,23,2,'',''],
+      ['藜麦饭 150g',185,7,32,3,'蛋白含量最高的主食',''],
+      ['紫薯 150g',135,2,32,0,'',''],
+      ['土豆 150g（蒸/煮）',115,3,26,0,'别做成薯条',''],
+      ['米饭半碗 80g',90,2,21,0,'想留热量给菜的时候',''],
+      ['糙米饭 200g',226,5,48,2,'',''],
+      ['全麦意面（干 80g）',280,11,56,2,'',''],],
+    protein:[['鸡胸肉 150g',200,35,0,5,'少油煎或水煮撕丝','meat'],
+      ['去皮鸡腿肉 150g',230,28,0,12,'比鸡胸嫩，去皮后不胖','meat'],
+      ['清蒸鱼 150g',180,28,0,7,'鲈鱼/鳕鱼都行','meat seafood'],
+      ['虾仁 150g',120,30,0,1,'','meat seafood'],
+      ['牛里脊 100g',200,28,0,9,'别买雪花牛','meat beef'],
+      ['瘦猪肉 100g',145,25,0,5,'里脊/后腿瘦','meat pork'],
+      ['嫩豆腐 250g',200,15,6,12,'',''],
+      ['鸡蛋 2 个',140,13,1,10,'','egg'],
+      ['三文鱼 100g',200,25,0,10,'富含 omega-3','meat seafood'],
+      ['鸡胸肉丸 150g',180,28,6,4,'','meat'],
+      ['金枪鱼罐头（水浸）100g',110,26,0,1,'拌沙拉','meat seafood'],
+      ['鸭胸去皮 100g',130,24,0,4,'','meat'],
+      ['去皮鸡腿肉 200g',305,37,0,16,'','meat'],
+      ['牛里脊 150g',300,42,0,14,'','meat beef'],],
+    veg:[['西兰花 200g',80,6,10,1,'水煮/清炒，别油炸',''],
+      ['菠菜 200g',55,5,8,1,'',''],
+      ['生菜 200g',35,2,6,0,'',''],
+      ['芦笋 150g',35,3,6,0,'',''],
+      ['秋葵 150g',60,3,12,0,'',''],
+      ['冬瓜汤 1 碗',35,1,7,0,'利水',''],
+      ['海带丝 100g',25,1,5,0,'',''],
+      ['菌菇汤 1 碗',45,3,7,1,'鲜味足，少放盐',''],
+      ['番茄 1 个',30,1,7,0,'',''],
+      ['凉拌木耳 100g',40,2,8,0,'',''],
+      ['娃娃菜 200g',45,3,8,0,'',''],
+      ['紫菜蛋花汤 1 碗',60,4,3,3,'','egg'],
+      ['苦瓜炒蛋（少油）1 份',150,10,7,9,'','egg'],
+      ['青椒 1 个',25,1,6,0,'',''],],
+    drink:[['白开水 / 气泡水',0,0,0,0,'餐前喝水能少吃点',''],
+      ['无糖可乐',0,0,0,0,'嘴馋时的救星',''],
+      ['紫菜蛋花汤 1 碗',60,4,3,3,'','egg'],
+      ['味增汤 1 碗',45,3,5,2,'',''],],
+  },
+  dinner:{
+    carb:[['糙米饭 100g',115,3,24,1,'',''],
+      ['蒸红薯 150g',130,2,31,0,'',''],
+      ['玉米 半根',56,2,12,1,'',''],
+      ['蒸南瓜 250g',60,2,13,0,'',''],
+      ['藜麦 100g',120,5,21,2,'',''],
+      ['山药 150g',90,2,20,0,'',''],
+      ['杂粮粥 1 碗',130,4,27,1,'',''],
+      ['不吃主食',0,0,0,0,'把热量留给蛋白质和菜',''],],
+    protein:[['清蒸鱼 150g',180,28,0,7,'','meat seafood'],
+      ['虾仁 120g',100,24,0,1,'','meat seafood'],
+      ['鸡胸肉 120g',165,28,0,4,'','meat'],
+      ['嫩豆腐 250g',200,15,6,12,'',''],
+      ['鸡蛋 2 个',140,13,1,10,'','egg'],
+      ['牛里脊 80g',160,22,0,7,'','meat beef'],
+      ['三文鱼 80g',160,20,0,8,'','meat seafood'],
+      ['花甲/蛤蜊 200g',120,20,6,2,'','meat seafood'],
+      ['去皮鸡腿 120g',185,22,0,10,'','meat'],
+      ['金枪鱼（水浸）100g',110,26,0,1,'','meat seafood'],],
+    veg:[['西兰花 250g',100,7,12,1,'',''],
+      ['菠菜 250g',70,6,10,1,'',''],
+      ['生菜 250g',40,3,8,0,'随便吃',''],
+      ['芦笋 200g',45,4,8,0,'',''],
+      ['秋葵 200g',80,4,16,0,'',''],
+      ['冬瓜海带汤 1 碗',50,2,9,1,'',''],
+      ['菌菇汤 1 碗',45,3,7,1,'',''],
+      ['凉拌黄瓜 200g',40,1,8,0,'',''],
+      ['番茄豆腐汤 1 碗',90,8,8,3,'',''],
+      ['烤蔬菜拼盘 1 份',120,4,18,4,'彩椒/西葫芦/茄子，少刷油',''],
+      ['凉拌木耳 150g',60,3,12,0,'',''],],
+    drink:[['白开水',0,0,0,0,'',''],
+      ['味增汤 1 碗',45,3,5,2,'',''],
+      ['海带汤 1 碗',30,2,5,1,'',''],
+      ['无糖酸奶 100g',60,6,5,2,'当餐后甜点','dairy'],],
+  },
+};
+
+// 外卖整餐方案：[名称, 热量, 蛋白, 碳水, 脂肪, 点单话术, 忌口标签]
+const OUT = {
+  breakfast:[
+    ['麦当劳 吉士蛋麦满分 + 黑咖啡',300,18,32,12,'备注：去酱，咖啡不加糖不加奶','egg dairy'],
+    ['全家/罗森 茶叶蛋 2 个 + 无糖豆浆',180,20,10,9,'最省事的便利店组合','egg'],
+    ['赛百味 6 寸火鸡/鸡排三明治',350,25,45,8,'全麦面包 + 多放菜 + 只淋油醋汁','meat'],
+    ['肯德基 皮蛋瘦肉粥 + 茶叶蛋',280,16,34,9,'粥别加香油和油条','egg pork'],
+    ['沙县 拌面（少酱）+ 炖罐',400,22,45,13,'备注：拌面酱少一半，炖罐选去皮鸡汤','meat'],
+    ['包子店 菜包 2 个 + 无糖豆浆',350,15,52,8,'肉包换成菜包/荠菜包',''],
+    ['罗森 鸡胸肉沙拉 + 无糖酸奶',280,26,20,9,'沙拉酱只放一半','meat dairy'],
+    ['星巴克 早餐卷/蛋白盒 + 美式',350,22,30,16,'选蛋白含量 >20g 的款','egg dairy meat'],
+    ['广式肠粉 1 份（瘦肉/虾仁）',380,18,48,11,'早餐吃一份刚好，备注酱汁少淋一半','meat seafood'],
+    ['茶楼早茶 虾饺 2 笼 + 普洱',380,24,40,14,'蒸点优于煎炸，避开春卷和萝卜糕','meat seafood'],
+    ['潮汕砂锅粥 小碗',300,16,42,7,'选瘦肉/海鲜粥，小碗，别加油条','meat seafood'],
+    ['真功夫 早餐粥 + 鸡蛋',320,18,42,9,'','egg meat'],
+    ['及第粥 / 艇仔粥 小碗',300,16,40,8,'广东经典，油条别配','meat pork'],
+  ],
+  lunch:[
+    ['麻辣烫（清汤版）',450,28,45,16,'只拿：叶菜+菌菇+豆腐+1 份肉+半份主食。汤底选清汤/番茄，不要麻酱和红油','spicy'],
+    ['黄焖鸡 小份 + 米饭半碗',550,35,50,20,'备注：多青椒少土豆，米饭只吃一半，汤汁别拌饭','spicy'],
+    ['兰州拉面（少面多菜）',500,30,60,14,'细面要少，加一份牛肉，多放香菜蒜苗，汤少喝（盐高）','meat beef'],
+    ['沙县 蒸饺 8 个 + 炖罐 + 拌青菜',450,26,45,17,'蒸饺优于煎饺，炖罐选鸡汤/排骨汤，撇掉浮油','meat pork'],
+    ['轻食店 自选碗',450,38,42,13,'鸡胸/牛肉 + 糙米 + 双份蔬菜 + 油醋汁（酱汁另装）','meat'],
+    ['赛百味 6 寸全麦火鸡',350,25,46,8,'多菜，酱只选蜜芥末/油醋，别加奶酪','meat'],
+    ['麦当劳 板烧鸡腿堡（去酱）+ 玉米杯',480,32,52,17,'备注去酱，可乐换无糖/白水，不加薯条','meat'],
+    ['肯德基 烤鸡腿堡（去酱）+ 玉米杯',450,30,48,16,'同上，别点奥尔良烤翅','meat'],
+    ['日料 三文鱼刺身 + 味增汤 + 半份米饭',400,32,35,13,'刺身是优质蛋白，米饭吃一半，别点天妇罗','meat seafood'],
+    ['冒菜 / 麻辣香锅（少油版）',500,32,40,22,'多菜多豆制品，肉类只选 1 种，备注少油少盐','spicy'],
+    ['潮汕牛肉火锅（清汤）',500,45,25,22,'吊龙/嫩肉/匙柄，蘸料用生抽+小米辣，别用沙茶酱','meat beef'],
+    ['烤肉（生菜包肉）',550,45,30,25,'牛肉/鸡胸/五花少量，生菜多包，不刷酱、不配含糖饮料','meat beef'],
+    ['泰餐 青柠蒸鱼 + 半份米饭',450,35,38,14,'选蒸/烤的做法，避开咖喱和椰浆类','meat seafood spicy'],
+    ['粥店 皮蛋瘦肉粥 小碗 + 凉拌木耳',300,18,42,7,'','meat pork egg'],
+    ['自选快餐 两荤一素',500,35,45,18,'荤菜选蒸/煮/白切的（蒸鸡、白切鸡去皮、清蒸鱼），避开红烧糖醋；素菜要两份，米饭半碗','meat'],
+    ['潮汕汤粉 / 粿条',480,28,58,12,'瘦肉/鱼片/鱼丸都行，汤少喝（盐高），别加油条','meat pork'],
+    ['肠粉（瘦肉/虾仁）+ 青菜',450,24,55,12,'酱汁少淋一半，不要辣椒油，配一份烫青菜','meat seafood'],
+    ['椰子鸡火锅（清汤）',450,40,20,18,'广东减脂神器：清汤底、鸡肉去皮、多涮娃娃菜和菌菇，蘸料用生抽+小金桔','meat'],
+    ['煲仔饭（滑鸡/排骨）',550,30,62,18,'选腊味少的，锅巴少吃，另加一份青菜','meat pork'],
+    ['真功夫 蒸鸡 / 排骨饭',520,32,55,17,'蒸的比炸的好，酱汁另装，米饭吃一半','meat pork'],
+    ['蒙自源 过桥米线',500,26,60,16,'汤油多，少喝汤；加一份青菜和鸡胸/鹌鹑蛋','meat egg'],
+    ['猪脚饭（偶尔解馋）',600,30,55,28,'猪脚脂肪高：尽量去皮吃瘦肉，米饭半碗，多要一份青菜','meat pork'],
+    ['烧鹅饭（去皮）',550,32,50,24,'烧腊去皮能去掉近一半脂肪，配青菜，别浇卤汁','meat'],
+    ['潮汕砂锅粥 小碗 + 凉拌菜',380,22,48,9,'选海鲜/瘦肉粥，小碗','meat seafood'],
+    ['广式早茶（虾饺+干蒸+肠粉+粥）',520,30,55,18,'蒸点优于煎炸：虾饺、干蒸、肠粉、艇仔粥都 OK，避开春卷萝卜糕','meat seafood pork'],
+    ['华莱士/肯德基 烤鸡（去皮）',450,35,20,22,'炸鸡去皮吃，配玉米杯，可乐换无糖','meat'],
+    ['日式咖喱饭（鸡胸/牛肉）',550,30,65,18,'咖喱含油，米饭半碗，多要一份沙拉','meat'],
+    ['轻食店 素食碗（豆腐+鹰嘴豆+双份菜）',420,22,48,14,'备注：主食选糙米，多加一份时蔬，酱汁另装',''],
+  ],
+  dinner:[
+    ['轻食沙拉（鸡肉/牛肉 + 油醋汁）',400,35,25,16,'酱汁另装，淋一半就够','meat'],
+    ['日料 刺身拼盘 + 味增汤 + 茶碗蒸',350,38,15,14,'不点米饭和天妇罗','meat seafood egg'],
+    ['麻辣烫（纯菜版）',300,22,28,12,'只要蔬菜+豆腐+虾，不要主食不要丸子，清汤底','seafood spicy'],
+    ['黄焖鸡 小份（不要米饭）',350,32,12,18,'只吃肉和青椒，汤汁不拌','spicy'],
+    ['关东煮（不喝汤）',250,20,25,8,'萝卜、海带、蛋、豆腐、魔芋结，别拿丸子和甜不辣','egg'],
+    ['赛百味 6 寸 / 沙拉碗',350,28,35,10,'','meat'],
+    ['烤肉（纯肉 + 生菜）',450,42,15,26,'不点主食，生菜无限量','meat beef'],
+    ['粥店 海鲜粥 小碗 + 凉拌菜',320,22,40,8,'','meat seafood'],
+    ['冒菜（纯菜 + 虾/牛肉）',350,30,22,15,'不要主食，不要丸子，少油','seafood spicy'],
+    ['潮汕牛肉粿条（少粿条多肉）',400,35,35,12,'粿条少一半，多要一份牛肉和青菜，汤少喝','meat beef'],
+    ['椰子鸡（晚餐版，不要主食）',380,42,12,16,'清汤+去皮鸡肉+大量娃娃菜菌菇，蘸料生抽小金桔','meat'],
+    ['自选快餐（一荤两素，不要米饭）',350,30,18,15,'晚上控碳水：荤菜选蒸鸡/白切鸡去皮/清蒸鱼，素菜两份','meat'],
+    ['肠粉 1 份 + 烫青菜',350,18,45,10,'','meat seafood'],
+    ['潮汕鱼饭 / 白粥配杂鱼',300,25,30,8,'白粥配鱼和杂咸，清淡但注意别加太多酱料','meat seafood'],
+    ['烧腊饭（去皮、半饭）',450,30,40,18,'叉烧选瘦叉，烧鹅去皮，米饭半碗，多要青菜','meat pork'],
+    ['广式糖水（少糖）当甜品',150,3,28,3,'选龟苓膏、无糖绿豆沙、炖蛋，别点椰汁西米露','egg'],
+    ['沙县 拌面/拌粉 + 烫青菜 + 豆干',380,16,52,10,'备注：不要肉和炖罐，加一份豆干、两份青菜',''],
+  ],
+};
+
+const SNACK = [
+  ['无糖希腊酸奶 150g',90,10,6,2,'','dairy'],
+  ['坚果 10g（约 7 颗巴旦木）',60,2,2,5,'别超量，热量密度很高',''],
+  ['小番茄 150g',30,1,7,0,'',''],
+  ['水煮蛋 1 个',70,6,0,5,'','egg'],
+  ['苹果 1 个',90,0,24,0,'',''],
+  ['黑巧克力 1 小块（10g）',55,1,5,4,'选 70% 以上',''],
+  ['低脂牛奶 200ml',105,7,10,4,'','dairy'],
+  ['毛豆 100g',130,11,10,5,'高蛋白高纤维',''],
+  ['蛋白棒 1 根',140,20,12,4,'选 <150kcal、蛋白 >15g 的','dairy'],
+  ['蓝莓 100g',57,1,14,0,'',''],
+  ['黄瓜 1 根',30,1,6,0,'',''],
+  ['无糖豆浆 300ml',96,9,4,4,'',''],
+  ['鸡胸肉肠 1 根',80,12,2,2,'','meat'],
+  ['蒸蛋 1 个',80,7,1,5,'','egg'],
+  ['低脂奶酪 1 块',70,7,1,4,'','dairy'],
+  ['龟苓膏（无糖）',60,1,14,0,'广东特产低卡甜品',''],
+  ['烧仙草 / 凉粉（少糖）',80,1,18,0,'备注少糖或去糖',''],
+  ['新鲜椰青水 1 个',45,1,10,0,'天然电解质，运动后喝',''],
+];
+
+const MEALS = [
+  {id:'breakfast', em:'🌅', nm:'早餐', rate:.28},
+  {id:'lunch',     em:'☀️', nm:'午餐', rate:.38},
+  {id:'dinner',    em:'🌙', nm:'晚餐', rate:.24},
+  {id:'snack',     em:'🍎', nm:'加餐', rate:.10},
+];
+const SLOT_NM = {carb:'主食', protein:'蛋白', veg:'蔬菜', drink:'汤饮'};
+const SLOT_CLS = {carb:'o', protein:'', veg:'b', drink:'b'};
+
+// 忌口选项
+const AVOID = [
+  {id:'spicy',   nm:'🌶️ 不吃辣'},
+  {id:'seafood', nm:'🦐 不吃海鲜'},
+  {id:'beef',    nm:'🐮 不吃牛肉'},
+  {id:'pork',    nm:'🐷 不吃猪肉'},
+  {id:'dairy',   nm:'🥛 乳糖不耐'},
+  {id:'egg',     nm:'🥚 不吃鸡蛋'},
+  {id:'meat',    nm:'🌱 蛋奶素'},
+];
+
+/* ============ 状态 ============ */
+const K = 'dietpicker.v1';
+let S = load();
+function load(){
+  try{
+    const s = JSON.parse(localStorage.getItem(K));
+    if(s && s.t) return Object.assign({t:1400, mode:'home', cur:'breakfast', pick:{}, block:[], avoid:[]}, s);
+  }catch(e){}
+  return {t:1400, mode:'home', cur:'breakfast', pick:{}, block:[], avoid:[]};
+}
+const save = ()=>localStorage.setItem(K, JSON.stringify(S));
+
+/* ============ 工具 ============ */
+const $ = id=>document.getElementById(id);
+const pick = arr => arr[Math.floor(Math.random()*arr.length)];
+const sum = a => a.reduce((x,y)=>x+y,0);
+function toast(t){ const e=$('toast'); e.textContent=t; e.classList.add('on'); clearTimeout(e._); e._=setTimeout(()=>e.classList.remove('on'),1900); }
+function blocked(n){ return S.block.includes(n); }
+function hitAvoid(x){ return (S.avoid||[]).some(t=>(x.tags||[]).includes(t)); }
+function pool(arr){
+  const all = arr.map(raw);
+  let f = all.filter(x=>!blocked(x.n) && !hitAvoid(x));
+  if(!f.length) f = all.filter(x=>!blocked(x.n));   // 忌口太严时降级
+  return f.length?f:all;
+}
+function filteredCount(){
+  const av=S.avoid||[]; if(!av.length) return 0;
+  let n=0;
+  ['breakfast','lunch','dinner'].forEach(m=>['carb','protein','veg','drink'].forEach(sl=>
+    HOME[m][sl].forEach(a=>{ if(av.some(t=>raw(a).tags.includes(t))) n++; })));
+  ['breakfast','lunch','dinner'].forEach(m=>OUT[m].forEach(a=>{ if(av.some(t=>raw(a).tags.includes(t))) n++; }));
+  SNACK.forEach(a=>{ if(av.some(t=>raw(a).tags.includes(t))) n++; });
+  return n;
+}
+
+/* ============ 渲染 ============ */
+function renderMeals(){
+  $('meals').innerHTML = MEALS.map(m=>{
+    const p = S.pick[m.id];
+    const kc = p ? Math.round(sum(p.map(x=>x.k))) : Math.round(S.t*m.rate);
+    return `<div class="meal ${S.cur===m.id?'on':''} ${p?'done':''}" onclick="setMeal('${m.id}')">
+      <div class="em">${m.em}</div><div class="nm">${m.nm}</div><div class="kc">${kc} kcal</div></div>`;
+  }).join('');
+}
+
+function renderProg(){
+  let k=0,p=0,c=0,f=0;
+  MEALS.forEach(m=>{ (S.pick[m.id]||[]).forEach(x=>{k+=x.k;p+=x.p;c+=x.c;f+=x.f;}); });
+  k=Math.round(k);
+  $('pK').textContent=k; $('pT').textContent=S.t;
+  $('pR').textContent = k>S.t ? `超出 ${k-S.t}` : `还剩 ${S.t-k}`;
+  const r = k/S.t;
+  const bar=$('pBar');
+  bar.className='bar'+(k>S.t?' over':(r>.85?' warn':''));
+  bar.firstElementChild.style.width=Math.min(100,r*100)+'%';
+  $('mP').textContent=Math.round(p); $('mC').textContent=Math.round(c); $('mF').textContent=Math.round(f);
+}
+
+function cardHTML(x, slot, i){
+  return `<div class="card" style="animation-delay:${i*60}ms">
+    <div class="tag ${SLOT_CLS[slot]||''}">${SLOT_NM[slot]}</div>
+    <div class="mid">
+      <div class="nm">${x.n}</div>
+      <div class="kc"><b>${x.k}</b> kcal · 蛋白 ${x.p}g · 碳水 ${x.c}g · 脂肪 ${x.f}g</div>
+      ${x.tip?`<div class="tip">💡 ${x.tip}</div>`:''}
+    </div>
+    <div class="acts">
+      <button onclick="swap('${slot}')" title="换一个">↻</button>
+      <button class="x" onclick="block('${x.n.replace(/'/g,"")}')" title="不想吃">✕</button>
+    </div>
+  </div>`;
+}
+
+function renderRes(){
+  const p = S.pick[S.cur];
+  const box = $('res');
+  if(!p || !p.length){
+    box.innerHTML = `<div class="empty"><div class="big">${S.mode==='out'?'🛵':'🍽️'}</div>
+      还没选${MEALS.find(m=>m.id===S.cur).nm}<br>点上面按钮，我帮你抽</div>`;
+    return;
+  }
+  let h='';
+  if(S.mode==='out' && S.cur!=='snack'){
+    const x=p[0];
+    h += `<div class="card" style="animation-delay:0ms">
+      <div class="mid"><div class="nm" style="font-size:16.5px">${x.n}</div>
+      <div class="kc"><b>${x.k}</b> kcal · 蛋白 ${x.p}g · 碳水 ${x.c}g · 脂肪 ${x.f}g</div></div>
+      <div class="acts"><button onclick="swap('all')">↻</button>
+      <button class="x" onclick="block('${x.n.replace(/'/g,"")}')">✕</button></div></div>
+      ${x.tip?`<div class="script"><div class="hd">📝 点单这样说</div>${x.tip}</div>`:''}`;
+  }else{
+    h = p.map((x,i)=>cardHTML(x,x.slot,i)).join('');
+  }
+  const k=Math.round(sum(p.map(x=>x.k)));
+  const tgt=Math.round(S.t*MEALS.find(m=>m.id===S.cur).rate);
+  const d=k-tgt;
+  h += `<div class="total"><div><div class="lb">本餐合计</div>
+    <div class="sub2">${d>60?'比建议多 '+d+' kcal':(d<-60?'比建议少 '+(-d)+' kcal':'正好在建议范围内')}（建议 ${tgt}）</div></div>
+    <div class="v">${k}<span>kcal</span></div></div>`;
+  box.innerHTML=h;
+}
+
+function render(){
+  renderMeals(); renderProg(); renderRes();
+  $('mHome').classList.toggle('on', S.mode==='home');
+  $('mOut').classList.toggle('on', S.mode==='out');
+  $('rollBtn').textContent = S.cur==='snack' ? '🍎 抽个加餐' : '🎲 帮我决定';
+}
+
+/* ============ 抽签 ============ */
+function combos(meal){
+  const src = HOME[meal];
+  const P = {carb:pool(src.carb), protein:pool(src.protein), veg:pool(src.veg), drink:pool(src.drink)};
+  const out=[];
+  for(let i=0;i<80;i++){
+    const c=[];
+    ['carb','protein','veg','drink'].forEach(s=>{ const x=pick(P[s]); c.push(Object.assign({slot:s},x)); });
+    out.push(c);
+  }
+  return out;
+}
+function best(list, tgt){
+  const scored = list.map(c=>({c, d:Math.abs(sum(c.map(x=>x.k))-tgt)})).sort((a,b)=>a.d-b.d);
+  return pick(scored.slice(0, Math.min(10, scored.length))).c;
+}
+
+let shaking=false;
+function roll(){
+  if(shaking) return; shaking=true;
+  const b=$('rollBtn'); b.classList.add('shaking');
+  setTimeout(()=>b.classList.remove('shaking'),300);
+
+  let n=0;
+  const t = setInterval(()=>{
+    try{
+      const m = MEALS.find(x=>x.id===S.cur);
+      const tgt = S.t*m.rate;
+      if(S.cur==='snack'){
+        S.pick.snack = [Object.assign({slot:'snack'}, pick(pool(SNACK)))];
+      }else if(S.mode==='out'){
+        S.pick[S.cur] = [Object.assign({slot:'all'}, pick(pool(OUT[S.cur])))];
+      }else{
+        S.pick[S.cur] = best(combos(S.cur), tgt);
+      }
+      renderRes();
+    }catch(e){ console.error(e); }
+    if(++n>=7){ clearInterval(t); shaking=false; try{ render(); }catch(e){ console.error(e); } }
+  }, 85);
+}
+
+function swap(slot){
+  const m = S.cur, cur = S.pick[m];
+  if(!cur) return;
+  if(S.cur==='snack'){ S.pick.snack=[Object.assign({slot:'snack'}, pick(pool(SNACK)))]; render(); return; }
+  if(S.mode==='out'){ S.pick[m]=[Object.assign({slot:'all'}, pick(pool(OUT[m])))]; render(); return; }
+  const src = HOME[m];
+  let ok=null, guard=0;
+  while(!ok && guard++<60){
+    const x = pick(pool(src[slot]));
+    if(x.n !== cur.find(c=>c.slot===slot).n) ok = Object.assign({slot}, x);
+  }
+  if(ok) S.pick[m] = cur.map(c=>c.slot===slot?ok:c);
+  save(); render();
+}
+
+function block(name){
+  if(!S.block.includes(name)) S.block.push(name);
+  const m=S.cur, cur=S.pick[m]||[];
+  S.pick[m] = cur.filter(x=>x.n!==name);
+  // 拉黑后自动补一个
+  const hit = cur.find(x=>x.n===name);
+  if(S.pick[m].length && S.pick[m].length < cur.length){
+    if(S.mode==='out' && m!=='snack') S.pick[m] = [Object.assign({slot:'all'}, pick(pool(OUT[m])))];
+    else if(m!=='snack' && hit){
+      const sl = hit.slot;
+      const x = pick(pool(HOME[m][sl]));
+      S.pick[m].push(Object.assign({slot:sl}, x));
+      const order = {carb:0,protein:1,veg:2,drink:3};
+      S.pick[m].sort((a,b)=>order[a.slot]-order[b.slot]);
+    }
+  }
+  if(!S.pick[m].length) delete S.pick[m];
+  save(); render(); toast('已拉黑「'+name+'」，不会再抽到');
+}
+
+function setMeal(id){ S.cur=id; save(); render(); }
+function setMode(m){ S.mode=m; delete S.pick[S.cur]; save(); render(); }
+function clearMeal(){ delete S.pick[S.cur]; save(); render(); toast('已重置'); }
+
+function copyDay(){
+  const L=[];
+  MEALS.forEach(m=>{
+    const p=S.pick[m.id];
+    if(p&&p.length){
+      L.push(`【${m.nm}】${p.map(x=>x.n).join(' + ')}  (${Math.round(sum(p.map(x=>x.k)))} kcal)`);
+      const tp=p.map(x=>x.tip).filter(Boolean);
+      if(tp.length) L.push('   · '+tp.join('；'));
+    }
+  });
+  if(!L.length){ toast('还没有选择任何餐次'); return; }
+  const k=Math.round(MEALS.reduce((a,m)=>a+sum((S.pick[m.id]||[]).map(x=>x.k)),0));
+  const txt = `今日菜单（合计 ${k} kcal / 目标 ${S.t}）\n`+L.join('\n');
+  const done = ()=>toast('已复制，去粘贴吧');
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(txt).then(done).catch(()=>fallback(txt,done));
+  } else fallback(txt,done);
+}
+function fallback(txt,cb){
+  const ta=document.createElement('textarea'); ta.value=txt; ta.style.position='fixed'; ta.style.opacity=0;
+  document.body.appendChild(ta); ta.select();
+  try{ document.execCommand('copy'); cb(); }catch(e){ toast('复制失败，请手动选择'); }
+  document.body.removeChild(ta);
+}
+
+/* ============ 设置 ============ */
+function openSet(){
+  $('iT').value=S.t;
+  $('quickT').innerHTML=[1200,1400,1600,1800,2000].map(v=>
+    `<button class="chip ${S.t===v?'on':''}" onclick="$('iT').value=${v};qset(${v})">${v}</button>`).join('');
+  $('avoidList').innerHTML = AVOID.map(a=>
+    `<button class="chip ${(S.avoid||[]).includes(a.id)?'on':''}" onclick="togAvoid('${a.id}')">${a.nm}</button>`).join('');
+  $('blkList').innerHTML = S.block.length
+    ? S.block.map(n=>`<button class="chip" onclick="unblock('${n.replace(/'/g,'')}')">${n}</button>`).join('')
+    : '<span style="font-size:12.5px;color:var(--tx3)">还没有，点卡片右上角 ✕ 可以拉黑不想吃的</span>';
+  const fc = filteredCount();
+  $('note').innerHTML = (fc?`当前忌口已屏蔽 <b style="color:var(--g)">${fc}</b> 道菜。`:'')
+    + '拉黑的菜不会再被抽到。换手机或用无痕模式会丢失记录，正常浏览器会一直记住。';
+  $('mask').classList.add('on'); $('sheet').classList.add('on');
+}
+function qset(v){ [...$('quickT').children].forEach(b=>b.classList.toggle('on', b.textContent==v)); }
+function togAvoid(id){
+  S.avoid = S.avoid||[];
+  const i = S.avoid.indexOf(id);
+  if(i>=0) S.avoid.splice(i,1); else S.avoid.push(id);
+  // 已选的菜若撞上忌口，直接清掉重抽
+  MEALS.forEach(m=>{
+    if(S.pick[m.id]) S.pick[m.id] = S.pick[m.id].filter(x=>!hitAvoid(x));
+    if(S.pick[m.id] && !S.pick[m.id].length) delete S.pick[m.id];
+  });
+  save(); render(); openSet();
+}
+function closeSet(){ $('mask').classList.remove('on'); $('sheet').classList.remove('on'); }
+function saveSet(){
+  const v=parseInt($('iT').value,10);
+  if(v&&v>=800&&v<=4000) S.t=v;
+  save(); render(); closeSet(); toast('已保存');
+}
+function unblock(n){ S.block=S.block.filter(x=>x!==n); save(); openSet(); }
+
+render();
+</script>
+</body>
+</html>
