@@ -1,297 +1,347 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-page-node-id="xYd2bhrxbBZdKfjB6xUnmM">
-<head data-page-node-id="SgZd7r4PtsbjlMYBwYzL2l">
-<meta charset="UTF-8" data-page-node-id="MUczqgGAG9oz9HAKboTf7Z">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" data-page-node-id="AZbKhqAArY04H9OUp5uvdi">
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>我的工具箱 · 入口导航</title>
-<meta name="description" content="个人工具门户：减脂、电商、副业、学习、效率、记账等自建工具统一入口。" data-page-node-id="VOivRCvuyfhcuXl3pPoFWW">
-<meta name="theme-color" content="#ffffff" data-page-node-id="Oss8D8Ppsk2pj0MbAEGQFl">
-<link rel="manifest" href="manifest.json" data-page-node-id="zPklzNLbPRf7O52L6pYl27">
-<link rel="icon" href="icons/icon-192.png" data-page-node-id="o2QBkOKRnIuO48EGkd8QmX">
-<link rel="apple-touch-icon" href="icons/icon-192.png" data-page-node-id="m8Jk1XJWibeuuf6j0OdeuA">
+<meta name="description" content="个人工具门户：减脂、电商、副业、学习、效率、记账等自建工具统一入口。">
+<meta name="theme-color" content="#ffffff">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
 <style>
   :root{
-    --bg:#f6f7f9;
+    --bg:#fbfbfd;
     --card:#ffffff;
-    --text:#1a1d23;
-    --text-2:#5c6674;
-    --text-3:#98a2b3;
-    --line:#e7eaef;
-    --shadow:0 1px 2px rgba(16,24,40,.04), 0 8px 24px rgba(16,24,40,.06);
-    --shadow-h:0 2px 4px rgba(16,24,40,.06), 0 16px 40px rgba(16,24,40,.12);
-    --r:14px;
+    --text:#15181f;
+    --text-2:#5f6875;
+    --text-3:#9aa4b2;
+    --line:#edeff3;
+    --line-2:#e2e6ec;
+    --brand:#4f46e5;
+    --rest:0 1px 2px rgba(16,24,40,.03);
+    --hover:0 4px 12px rgba(16,24,40,.06), 0 18px 44px rgba(16,24,40,.10);
+    --r:17px;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{-webkit-text-size-adjust:100%}
   body{
-    background:var(--bg);
-    color:var(--text);
+    background:var(--bg);color:var(--text);
     font-family:system-ui,-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
-    line-height:1.6;
-    -webkit-font-smoothing:antialiased;
-    padding-bottom:64px;
+    line-height:1.6;-webkit-font-smoothing:antialiased;
+    padding-bottom:56px;
   }
   a{color:inherit;text-decoration:none}
-  .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+  .wrap{max-width:1160px;margin:0 auto;padding:0 22px}
 
-  /* ---------- header ---------- */
-  header{
-    background:var(--card);
+  /* ============ HERO ============ */
+  .hero{
+    position:relative;overflow:hidden;
+    background:linear-gradient(180deg,#f5f6fc 0%,#fbfbfd 100%);
     border-bottom:1px solid var(--line);
-    position:sticky;top:0;z-index:20;
   }
-  .hd{
-    display:flex;align-items:center;gap:14px;
-    padding:18px 0 16px;flex-wrap:wrap;
+  .hero::before{
+    content:"";position:absolute;inset:-40% 0 auto 0;height:340px;
+    background:
+      radial-gradient(520px 200px at 18% 0%, rgba(99,102,241,.11), transparent 70%),
+      radial-gradient(460px 180px at 78% 10%, rgba(236,72,153,.08), transparent 70%);
+    pointer-events:none;
   }
+  .hero-in{position:relative;padding:44px 0 26px}
+  .brand{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
   .logo{
-    width:42px;height:42px;border-radius:12px;flex:none;
-    background:linear-gradient(135deg,#6366f1,#8b5cf6 55%,#ec4899);
+    width:52px;height:52px;border-radius:16px;flex:none;
+    background:linear-gradient(135deg,#6366f1,#8b5cf6 52%,#ec4899);
     display:grid;place-items:center;color:#fff;
+    box-shadow:0 6px 18px rgba(99,102,241,.28), inset 0 1px 0 rgba(255,255,255,.35);
   }
-  .logo svg{width:22px;height:22px}
-  .hd-txt{flex:1;min-width:180px}
-  h1{font-size:19px;font-weight:650;letter-spacing:-.01em;line-height:1.3}
-  .sub{font-size:13px;color:var(--text-3);margin-top:1px}
-  .search{
-    position:relative;flex:none;width:100%;max-width:280px;
+  .logo svg{width:26px;height:26px}
+  h1{font-size:29px;font-weight:680;letter-spacing:-.025em;line-height:1.2}
+  .tagline{font-size:14px;color:var(--text-2);margin-top:3px}
+  .stats{display:flex;gap:30px;margin-left:auto;flex-wrap:wrap}
+  .stat b{display:block;font-size:23px;font-weight:660;letter-spacing:-.02em;line-height:1.2}
+  .stat span{font-size:12px;color:var(--text-3)}
+
+  /* ============ 吸顶工具栏 ============ */
+  .toolbar{
+    position:sticky;top:0;z-index:30;
+    background:rgba(251,251,253,.82);
+    backdrop-filter:saturate(180%) blur(14px);
+    -webkit-backdrop-filter:saturate(180%) blur(14px);
+    border-bottom:1px solid var(--line);
   }
+  .toolbar-in{display:flex;align-items:center;gap:14px;padding:13px 0;flex-wrap:wrap}
+  .search{position:relative;flex:1;min-width:220px;max-width:340px}
   .search svg{
-    position:absolute;left:11px;top:50%;transform:translateY(-50%);
+    position:absolute;left:13px;top:50%;transform:translateY(-50%);
     width:16px;height:16px;color:var(--text-3);pointer-events:none;
   }
   #q{
-    width:100%;padding:9px 12px 9px 34px;
-    border:1px solid var(--line);border-radius:10px;
-    background:#fbfbfc;font-size:14px;color:var(--text);
-    font-family:inherit;outline:none;transition:.15s;
+    width:100%;padding:10px 14px 10px 37px;
+    border:1px solid var(--line-2);border-radius:12px;
+    background:#fff;font-size:14px;color:var(--text);
+    font-family:inherit;outline:none;transition:.16s;
+    box-shadow:0 1px 2px rgba(16,24,40,.03);
   }
-  #q:focus{border-color:#a5b4fc;background:#fff;box-shadow:0 0 0 3px rgba(99,102,241,.12)}
+  #q:focus{border-color:#a5b4fc;box-shadow:0 0 0 4px rgba(99,102,241,.13)}
   #q::placeholder{color:var(--text-3)}
   kbd{
-    position:absolute;right:9px;top:50%;transform:translateY(-50%);
-    font-size:11px;color:var(--text-3);border:1px solid var(--line);
-    border-radius:5px;padding:1px 5px;background:#fff;font-family:inherit;
+    position:absolute;right:10px;top:50%;transform:translateY(-50%);
+    font-size:11px;color:var(--text-3);border:1px solid var(--line-2);
+    border-radius:6px;padding:1px 6px;background:#fafbfc;font-family:inherit;
   }
   #q:focus + kbd{display:none}
 
-  /* ---------- filters ---------- */
-  .filters{display:flex;gap:8px;flex-wrap:wrap;padding:14px 0 2px}
+  .filters{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
   .chip{
-    border:1px solid var(--line);background:var(--card);
-    padding:6px 14px;border-radius:999px;font-size:13px;
+    border:1px solid var(--line-2);background:#fff;
+    padding:6px 15px;border-radius:999px;font-size:13px;
     color:var(--text-2);cursor:pointer;transition:.15s;
     font-family:inherit;white-space:nowrap;
+    box-shadow:0 1px 2px rgba(16,24,40,.03);
   }
   .chip:hover{border-color:#c7d2fe;color:var(--text)}
-  .chip.on{background:#4f46e5;border-color:#4f46e5;color:#fff}
-
-  /* ---------- recent ---------- */
-  .recent{padding:18px 0 4px}
-  .recent:empty{display:none}
-  .sec-t{
-    font-size:12px;font-weight:600;color:var(--text-3);
-    letter-spacing:.06em;margin-bottom:10px;text-transform:uppercase;
+  .chip.on{
+    background:var(--brand);border-color:var(--brand);color:#fff;
+    box-shadow:0 3px 10px rgba(79,70,229,.28);
   }
-  .recent-row{display:flex;gap:10px;flex-wrap:wrap}
+
+  /* ============ 最近使用 ============ */
+  .recent{padding:22px 0 2px}
+  .recent:empty{display:none}
+  .sec-t{font-size:11.5px;font-weight:600;color:var(--text-3);letter-spacing:.09em;margin-bottom:11px}
+  .recent-row{display:flex;gap:9px;flex-wrap:wrap}
   .rc{
     display:flex;align-items:center;gap:8px;
     background:var(--card);border:1px solid var(--line);
-    padding:7px 13px 7px 8px;border-radius:999px;
-    font-size:13px;transition:.15s;
+    padding:6px 14px 6px 7px;border-radius:999px;
+    font-size:13px;transition:.15s;box-shadow:var(--rest);
   }
-  .rc:hover{border-color:#c7d2fe;box-shadow:var(--shadow)}
-  .rc i{width:22px;height:22px;border-radius:7px;display:grid;place-items:center;flex:none}
-  .rc i svg{width:13px;height:13px;color:#fff}
+  .rc:hover{border-color:#c7d2fe;transform:translateY(-1px);box-shadow:0 4px 12px rgba(16,24,40,.07)}
+  .rc i{width:24px;height:24px;border-radius:8px;display:grid;place-items:center;flex:none;
+        box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
+  .rc i svg{width:14px;height:14px;color:#fff}
 
-  /* ---------- sections ---------- */
-  section{padding:22px 0 4px}
-  .sec-h{display:flex;align-items:baseline;gap:9px;margin-bottom:13px}
-  .sec-h h2{font-size:15px;font-weight:640}
-  .sec-h span{font-size:12px;color:var(--text-3)}
-  .grid{
-    display:grid;gap:13px;
-    grid-template-columns:repeat(auto-fill,minmax(258px,1fr));
+  /* ============ 分区 ============ */
+  section{padding:26px 0 2px}
+  .sec-h{display:flex;align-items:center;gap:10px;margin-bottom:15px}
+  .bar{width:3px;height:15px;border-radius:2px;flex:none}
+  .sec-h h2{font-size:15.5px;font-weight:650;letter-spacing:-.01em}
+  .count{
+    font-size:11.5px;color:var(--text-3);background:#f2f4f7;
+    padding:1px 8px;border-radius:999px;font-weight:500;
   }
+  .grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(268px,1fr))}
+
+  /* ============ 卡片 ============ */
   .card{
-    position:relative;display:block;
+    position:relative;display:flex;gap:14px;
     background:var(--card);border:1px solid var(--line);
-    border-radius:var(--r);padding:15px;
-    transition:transform .16s ease, box-shadow .16s ease, border-color .16s ease;
-    box-shadow:var(--shadow);
+    border-radius:var(--r);padding:17px;
+    transition:transform .18s cubic-bezier(.2,.7,.3,1), box-shadow .18s, border-color .18s;
+    box-shadow:var(--rest);
   }
-  .card:hover{transform:translateY(-3px);box-shadow:var(--shadow-h);border-color:#d8dde6}
+  .card:hover{transform:translateY(-4px);box-shadow:var(--hover);border-color:#dfe3ea}
   .card:active{transform:translateY(-1px)}
   .ic{
-    width:42px;height:42px;border-radius:12px;
-    display:grid;place-items:center;margin-bottom:11px;color:#fff;
+    width:50px;height:50px;border-radius:15px;flex:none;
+    display:grid;place-items:center;color:#fff;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.34), 0 3px 9px rgba(16,24,40,.10);
+    transition:transform .22s cubic-bezier(.2,.7,.3,1);
   }
-  .ic svg{width:21px;height:21px}
-  .card h3{font-size:14.5px;font-weight:620;letter-spacing:-.01em;line-height:1.4}
-  .card p{
-    font-size:12.5px;color:var(--text-2);margin-top:4px;
-    line-height:1.55;min-height:39px;
+  .ic svg{width:25px;height:25px}
+  .card:hover .ic{transform:scale(1.07) rotate(-2deg)}
+  .card-body{flex:1;min-width:0}
+  .card h3{
+    font-size:15px;font-weight:630;letter-spacing:-.012em;line-height:1.4;
+    display:flex;align-items:center;gap:5px;
   }
+  .arrow{
+    opacity:0;transform:translate(-3px,2px);transition:.18s;
+    color:var(--text-3);font-size:13px;font-weight:400;
+  }
+  .card:hover .arrow{opacity:1;transform:translate(0,1px)}
+  .card p{font-size:12.5px;color:var(--text-2);margin-top:3px;line-height:1.6;min-height:40px}
   .meta{
     display:flex;align-items:center;gap:6px;
-    margin-top:11px;padding-top:10px;border-top:1px solid #f1f3f7;
+    margin-top:11px;padding-top:10px;border-top:1px solid #f3f5f8;
     font-size:11.5px;color:var(--text-3);
   }
   .dot{width:6px;height:6px;border-radius:50%;flex:none}
-  .dot.live{background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.16)}
+  .dot.live{background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.15)}
   .dot.arch{background:#cbd5e1}
-  .meta .url{
-    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;
-  }
-  .archived .ic{filter:grayscale(1);opacity:.55}
-  .archived h3{color:var(--text-2)}
+  .meta .url{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
   .tag{
-    position:absolute;top:13px;right:13px;
+    position:absolute;top:14px;right:14px;
     font-size:10.5px;color:var(--text-3);
-    border:1px solid var(--line);border-radius:5px;padding:1px 6px;
+    background:#f5f7fa;border:1px solid var(--line);
+    border-radius:6px;padding:1px 7px;
   }
+  .archived .ic{filter:grayscale(1);opacity:.5}
+  .archived h3{color:var(--text-2)}
 
-  .empty{
-    text-align:center;padding:56px 20px;color:var(--text-3);font-size:14px;
-  }
+  .empty{text-align:center;padding:60px 20px;color:var(--text-3);font-size:14px}
   .empty b{display:block;color:var(--text-2);font-size:15px;margin-bottom:5px}
 
   footer{
-    margin-top:38px;padding:20px 0 0;border-top:1px solid var(--line);
+    margin-top:40px;padding:20px 0 0;border-top:1px solid var(--line);
     font-size:12px;color:var(--text-3);
     display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
   }
   .hidden{display:none !important}
 
+  @media (max-width:720px){
+    .hero-in{padding:32px 0 22px}
+    .stats{margin-left:0;gap:22px;width:100%}
+    .stat b{font-size:20px}
+    h1{font-size:24px}
+    .toolbar-in{gap:10px;padding:11px 0}
+    .search{max-width:none;flex-basis:100%}
+    .filters{margin-left:0;width:100%;overflow-x:auto;flex-wrap:nowrap;padding-bottom:2px}
+    .filters::-webkit-scrollbar{display:none}
+  }
   @media (max-width:640px){
-    .wrap{padding:0 14px}
-    h1{font-size:17px}
-    .search{max-width:none}
-    .grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
-    .card{padding:13px}
-    .ic{width:38px;height:38px;border-radius:10px;margin-bottom:9px}
-    .card p{min-height:0;font-size:12px;display:none}
-    .card h3{font-size:13.5px}
-    .meta{margin-top:9px;padding-top:8px}
+    .wrap{padding:0 15px}
+    .grid{grid-template-columns:1fr;gap:11px}
+    .card{padding:14px}
+    .ic{width:44px;height:44px;border-radius:13px}
+    .ic svg{width:22px;height:22px}
+    .card p{min-height:0}
   }
 </style>
 </head>
-<body data-page-node-id="Dhk40LdYdWyanmZbBOFLQ4">
+<body>
 
-<svg style="display:none" aria-hidden="true" data-page-node-id="Bn018YrDzZLzrmEF2Sqx4G">
-  <defs data-page-node-id="l58tdOoajJwwVBZt4Dh4Rh">
-    <g id="i-dumbbell" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="Z4XcI1ZAiyiVviTiqO4AuF">
-      <path d="M4 9v6M7 7v10M17 7v10M20 9v6M7 12h10" data-page-node-id="zfg5cDDqMqQYehZAB6lHWp"/>
+<svg style="display:none" aria-hidden="true">
+  <defs>
+    <g id="i-dumbbell" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 9v6M7 7v10M17 7v10M20 9v6M7 12h10"/>
     </g>
-    <g id="i-scan" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="URozAgsqKGBFrVH3PDXLiP">
-      <path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2" data-page-node-id="ebRCoKrvZtldnn3dxZw4mB"/><path d="M3 12h18" data-page-node-id="1qrjUldmmeD2RjHRj4ct4i"/>
+    <g id="i-scan" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M3 12h18"/>
     </g>
-    <g id="i-archive" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="ZIrXRReH7CNmEbd5bYBfst">
-      <path d="M3 6h18v4H3z" data-page-node-id="JSOPhwYYTkGGt9jYHFxZVi"/><path d="M5 10v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9" data-page-node-id="cWB9huLXkvyMdlNCRRCVDk"/><path d="M10 14h4" data-page-node-id="EJDKGdgkkBBp3PZHCRjeF5"/>
+    <g id="i-archive" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 6h18v4H3z"/><path d="M5 10v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9"/><path d="M10 14h4"/>
     </g>
-    <g id="i-cart" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="1HHEefDskcOBQGyM7hXjSB">
-      <path d="M2 3h2.5l2.3 11.2a1.5 1.5 0 0 0 1.5 1.2h8.9a1.5 1.5 0 0 0 1.5-1.2L21 7H5.6" data-page-node-id="c24Qum7G5cpYXa0X7BBB7u"/>
-      <circle cx="9.5" cy="20" r="1.4" data-page-node-id="KzUb5aAqvhuTAQwi2RCIGn"/><circle cx="18" cy="20" r="1.4" data-page-node-id="uWEmLuTkXZNZhfpHkitHKd"/>
+    <g id="i-cart" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2 3h2.5l2.3 11.2a1.5 1.5 0 0 0 1.5 1.2h8.9a1.5 1.5 0 0 0 1.5-1.2L21 7H5.6"/>
+      <circle cx="9.5" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/>
     </g>
-    <g id="i-bulb" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="TknkJUG7GEc9Du0zHwqIlQ">
-      <path d="M9.5 18h5M10.5 21h3" data-page-node-id="MNLhzPig0Hi03DNYSLqTGE"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.6.4.9 1 .9 1.7v.5h5.4v-.5c0-.7.3-1.3.9-1.7A6 6 0 0 0 12 3z" data-page-node-id="w0TVaOMcrGBaGRc5pI0H6f"/>
+    <g id="i-bulb" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9.5 18h5M10.5 21h3"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.6.4.9 1 .9 1.7v.5h5.4v-.5c0-.7.3-1.3.9-1.7A6 6 0 0 0 12 3z"/>
     </g>
-    <g id="i-trend" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="FwHZkNlrGAzRmp2hc6HM5B">
-      <path d="M3 17l6-6 4 4 8-8" data-page-node-id="tQbOjCAJTx0hGG7OHgssVF"/><path d="M21 7v5h-5" data-page-node-id="2RGG99whLUB3exvqYGyhYU"/>
+    <g id="i-trend" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v5h-5"/>
     </g>
-    <g id="i-globe" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="n4KEYmcvDSih0ExZ7Zp0oU">
-      <circle cx="12" cy="12" r="9" data-page-node-id="NuO7qg11iAM1rCt40umWu8"/><path d="M3 12h18" data-page-node-id="xjJcSxsSWJDOipzWXCGEbA"/><path d="M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z" data-page-node-id="yADCi5eJKfgbNVNgNq4YRw"/>
+    <g id="i-globe" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"/>
     </g>
-    <g id="i-code" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="eHgQuiPQFyC7i5CjJQQtid">
-      <path d="M8 6l-5 6 5 6M16 6l5 6-5 6" data-page-node-id="a7dSMxe1pAeFkgswYJJsax"/>
+    <g id="i-code" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M8 6l-5 6 5 6M16 6l5 6-5 6"/>
     </g>
-    <g id="i-route" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="DpGFzMwdVUeARnDAxv25GU">
-      <circle cx="6" cy="19" r="2" data-page-node-id="anRCetiQk1CwGZfRuBuesI"/><circle cx="18" cy="5" r="2" data-page-node-id="IU5p8COG4uHe6waLuOaF6t"/><path d="M8 19h5a4 4 0 0 0 0-8h-2a4 4 0 0 1 0-8h5" data-page-node-id="JJLw6OQev2c783XADmzzdw"/>
+    <g id="i-route" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M8 19h5a4 4 0 0 0 0-8h-2a4 4 0 0 1 0-8h5"/>
     </g>
-    <g id="i-target" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="UU7gMeWwTe1BQO9Inec5BA">
-      <circle cx="12" cy="12" r="9" data-page-node-id="rZT3rTNC2sZ2APe4Sbee5C"/><circle cx="12" cy="12" r="4.6" data-page-node-id="JARDMRY3D0YHL7hcOtnFkB"/><circle cx="12" cy="12" r="1.3" data-page-node-id="h47ijAZayf49oXx0ShpSx5"/>
+    <g id="i-target" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.6"/><circle cx="12" cy="12" r="1.3"/>
     </g>
-    <g id="i-check" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="O6mnM1q3MOsbaXGqJFv2eT">
-      <path d="M9 11.5l2.6 2.6L20 6" data-page-node-id="jC9i3AAke9ifiFLkYvgW6O"/><path d="M20 12.5V19a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h8" data-page-node-id="fsL8Qg70XeyHpBYruOGpE0"/>
+    <g id="i-check" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9 11.5l2.6 2.6L20 6"/><path d="M20 12.5V19a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h8"/>
     </g>
-    <g id="i-case" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="zzWyXcFLrMAlXQYESwuHmo">
-      <rect x="2.5" y="7" width="19" height="13" rx="2" data-page-node-id="TTZGKzB8mfw2XQcKkVQPCL"/><path d="M8.5 7V5.5a1.5 1.5 0 0 1 1.5-1.5h4a1.5 1.5 0 0 1 1.5 1.5V7" data-page-node-id="2hdABgw0rIpNgUHNHBTm4S"/><path d="M2.5 12.5h19" data-page-node-id="7WB9tl3HdtZzt6UqZE9taY"/>
+    <g id="i-case" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2.5" y="7" width="19" height="13" rx="2"/><path d="M8.5 7V5.5a1.5 1.5 0 0 1 1.5-1.5h4a1.5 1.5 0 0 1 1.5 1.5V7"/><path d="M2.5 12.5h19"/>
     </g>
-    <g id="i-bar" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="sd22O15PhC7UPjYKlW3va9">
-      <path d="M3 20.5h18" data-page-node-id="zneYMLqXTepHOD1wNs6eO3"/><path d="M6.5 20.5V11M12 20.5V4.5M17.5 20.5v-6" data-page-node-id="bLQH8X203b6t77C24oLfC0"/>
+    <g id="i-bar" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 20.5h18"/><path d="M6.5 20.5V11M12 20.5V4.5M17.5 20.5v-6"/>
     </g>
-    <g id="i-pen" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="3O95MxjqMFZdDQ1MnHcOWg">
-      <path d="M16.5 3.5l4 4L8 20H3.5v-4.5z" data-page-node-id="oyCEpeB2srcohXdYD4Jd2m"/><path d="M14 6l4 4" data-page-node-id="iztur9MVGOXGa9ikI6bhqC"/>
+    <g id="i-pen" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M16.5 3.5l4 4L8 20H3.5v-4.5z"/><path d="M14 6l4 4"/>
     </g>
-    <g id="i-edit" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="2qLsdmFwufGivq92weljh9">
-      <path d="M11 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5" data-page-node-id="Gpe7My8ANqpzkMhJX95vyD"/><path d="M18.4 2.6a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4z" data-page-node-id="qKD7CvlAcr8EkhbXAZK0uN"/>
+    <g id="i-edit" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M11 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"/><path d="M18.4 2.6a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4z"/>
     </g>
-    <g id="i-wallet" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="KeDt34ArF0VIHKsYpKWPMT">
-      <path d="M3 7.5A2.5 2.5 0 0 1 5.5 5H17a2 2 0 0 1 2 2v1" data-page-node-id="9o3xeBRWOKMXoJrTbt9Guf"/><path d="M3 7.5V17a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2H5.5A2.5 2.5 0 0 1 3 7.5z" data-page-node-id="Zj8aU6SAqNHFlnUyDgR86T"/><path d="M16.5 13h2" data-page-node-id="7mrFFM65WZ6MxDjFXFNEjR"/>
+    <g id="i-wallet" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 7.5A2.5 2.5 0 0 1 5.5 5H17a2 2 0 0 1 2 2v1"/><path d="M3 7.5V17a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2H5.5A2.5 2.5 0 0 1 3 7.5z"/><path d="M16.5 13h2"/>
     </g>
-    <g id="i-grid" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="DrUsRLO0cS63PcxtNGoSzo">
-      <rect x="3.2" y="3.2" width="7.2" height="7.2" rx="2" data-page-node-id="rd2gAhRAnakXPxE2hAzWdx"/><rect x="13.6" y="3.2" width="7.2" height="7.2" rx="2" data-page-node-id="02Cgyar1a602WuOeu4erD8"/>
-      <rect x="3.2" y="13.6" width="7.2" height="7.2" rx="2" data-page-node-id="AEhmcK53wNIR8zs01ozx5C"/><rect x="13.6" y="13.6" width="7.2" height="7.2" rx="2" data-page-node-id="xvn8zxedXEeB3lWomU8m88"/>
+    <g id="i-grid" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3.2" y="3.2" width="7.2" height="7.2" rx="2"/><rect x="13.6" y="3.2" width="7.2" height="7.2" rx="2"/>
+      <rect x="3.2" y="13.6" width="7.2" height="7.2" rx="2"/><rect x="13.6" y="13.6" width="7.2" height="7.2" rx="2"/>
     </g>
-    <g id="i-search" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="IzJFUdobSCANRzFGU6TBeA">
-      <circle cx="11" cy="11" r="7" data-page-node-id="49Cgg4Toz3P7E68A4J9lTr"/><path d="M20 20l-3.9-3.9" data-page-node-id="EAUupXrMONclYwiC5BCi1w"/>
+    <g id="i-search" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="7"/><path d="M20 20l-3.9-3.9"/>
     </g>
   </defs>
 </svg>
 
-<header data-page-node-id="37r9rV2pQalzECrQ8zICmO">
-  <div class="wrap" data-page-node-id="WE7MOR9rPOwgfpdwkj8Umn">
-    <div class="hd" data-page-node-id="65SjDKN6NqNQA4uRGIBnFo">
-      <div class="logo" data-page-node-id="W3GXLVWW9gHCdmxe0v8IdM"><svg viewBox="0 0 24 24" data-page-node-id="WDLJKo6AWbUwwlaQjWyuSA"><use href="#i-grid" data-page-node-id="94YNskx8T705T7byJgxJJ8"/></svg></div>
-      <div class="hd-txt" data-page-node-id="35GfbG2FkYX9udJH7zjUHZ">
-        <h1 data-page-node-id="7lIFkFUjAFacuXQUWGLifh">我的工具箱</h1>
-        <div class="sub" data-page-node-id="9g6Eo0srI06xKORtY0ArXy">自建工具统一入口 · <span id="cnt" data-page-node-id="LQ2sSaDwtukHQbUAxUlNrT">0</span> 个</div>
-      </div>
-      <div class="search" data-page-node-id="TJYYbRHNxPDUb44fY0FKLV">
-        <svg viewBox="0 0 24 24" data-page-node-id="ITVfzZEWOtEkYc99woMGyA"><use href="#i-search" data-page-node-id="hDCE9dEtAWqlTXJYzW1mL4"/></svg>
-        <input id="q" type="search" placeholder="搜索工具…" autocomplete="off" aria-label="搜索工具" data-page-node-id="49U0RZTJcDsgEK32esCAGD">
-        <kbd data-page-node-id="wLE3flwSaM8CtlOhk2N4ez">/</kbd>
+<div class="hero">
+  <div class="wrap hero-in">
+    <div class="brand">
+      <div class="logo"><svg viewBox="0 0 24 24"><use href="#i-grid"/></svg></div>
+      <div>
+        <h1>我的工具箱</h1>
+        <div class="tagline">自建工具统一入口，点图标直接开</div>
       </div>
     </div>
+    <div class="stats">
+      <div class="stat"><b id="s-total">0</b><span>个工具</span></div>
+      <div class="stat"><b id="s-cat">0</b><span>个分类</span></div>
+      <div class="stat"><b id="s-live">0</b><span>独立部署</span></div>
+    </div>
   </div>
-</header>
+</div>
 
-<main class="wrap" data-page-node-id="aBLyDNghIeAV27ayqWL9Fk">
-  <div class="filters" id="filters" data-page-node-id="0k4yk6TAytztS4UF0iQa42"></div>
-  <div class="recent" id="recent" data-page-node-id="rxBzl18wkpzGRGivOA3fMB"></div>
-  <div id="list" data-page-node-id="fqFvfWvLYtcy6jiwIori4M"></div>
-  <div class="empty hidden" id="empty" data-page-node-id="7ULO1acSMIz8JiPUfhwPZ8">
-    <b data-page-node-id="gGA4FUTsFm4NJMgIALCoaP">没找到匹配的工具</b>换个关键词试试
+<div class="toolbar">
+  <div class="wrap toolbar-in">
+    <div class="search">
+      <svg viewBox="0 0 24 24"><use href="#i-search"/></svg>
+      <input id="q" type="search" placeholder="搜索工具…" autocomplete="off" aria-label="搜索工具">
+      <kbd>/</kbd>
+    </div>
+    <div class="filters" id="filters"></div>
   </div>
-  <footer data-page-node-id="f2WhdLhIr6ixEqAdtwAqs7">
-    <span data-page-node-id="nV5g63PyNETzrVOnfNBbWc">共 <b id="cnt2" data-page-node-id="EjZ7umbNfdbCvNKWo2EpKS">0</b> 个工具 · 数据本地记录最近使用</span>
-    <span data-page-node-id="5JoK4uY7FEaWQr0BfJCayt">更新于 2026-09-16</span>
+</div>
+
+<main class="wrap">
+  <div class="recent" id="recent"></div>
+  <div id="list"></div>
+  <div class="empty hidden" id="empty">
+    <b>没找到匹配的工具</b>换个关键词，或点上方分类看看
+  </div>
+  <footer>
+    <span>共 <b id="cnt2">0</b> 个工具 · 最近使用记录在本机</span>
+    <span>更新于 2026-09-16</span>
   </footer>
 </main>
 
 <script>
 const TOOLS = [
-  { cat:"健康生活", name:"肥肉减速带", desc:"双人减脂打卡 · 训练库 · 饮食工具箱", url:"https://couple-fatloss-couple-fatloss-d6ghlrds87c015969.webapps.tcloudbase.com", host:"tcloudbase.com", icon:"i-dumbbell", g:"linear-gradient(135deg,#ff8a5b,#f43f5e)", live:1, tag:"PWA" },
-  { cat:"健康生活", name:"配料表风险扫描", desc:"拍照识别配料表与成分，标注风险等级", url:"https://xiaomin999.github.io/ingredient-risk-scanner/", host:"github.io", icon:"i-scan", g:"linear-gradient(135deg,#34d399,#059669)", live:1 },
+  { cat:"健康生活", name:"肥肉减速带", desc:"双人减脂打卡 · 训练库 · 饮食工具箱", url:"https://couple-fatloss-couple-fatloss-d6ghlrds87c015969.webapps.tcloudbase.com", host:"tcloudbase.com", icon:"i-dumbbell", g:"linear-gradient(135deg,#ff9a6c,#f4511e)", live:1, tag:"PWA" },
+  { cat:"健康生活", name:"配料表风险扫描", desc:"拍照识别配料表与成分，标注风险等级", url:"https://xiaomin999.github.io/ingredient-risk-scanner/", host:"github.io", icon:"i-scan", g:"linear-gradient(135deg,#4dd0a7,#0d9488)", live:1 },
   { cat:"健康生活", name:"情侣减脂打卡助手（初代）", desc:"已由「肥肉减速带」取代，仅作历史留档", url:"tools/couple-fatloss-legacy/", host:"归档", icon:"i-archive", g:"linear-gradient(135deg,#cbd5e1,#94a3b8)", live:0, tag:"归档" },
 
-  { cat:"搞钱与财务", name:"电商作战室", desc:"选品流水线 · 素材库 · 内容生成 · 市场情报", url:"https://xiaomin999.github.io/ecom-warroom/", host:"github.io", icon:"i-cart", g:"linear-gradient(135deg,#60a5fa,#2563eb)", live:1, tag:"PWA" },
-  { cat:"搞钱与财务", name:"副业收集工作台", desc:"86 条副业点子库 · 收益测算 · 决策对比", url:"https://xiaomin999.github.io/side-hustle-hub/", host:"github.io", icon:"i-bulb", g:"linear-gradient(135deg,#fbbf24,#f59e0b)", live:1, tag:"PWA" },
-  { cat:"搞钱与财务", name:"基金交易判断工作台", desc:"交易信号看板，A 股配色（涨红跌绿）", url:"tools/fund-workbench/", host:"本站", icon:"i-trend", g:"linear-gradient(135deg,#f87171,#dc2626)", live:1 },
-  { cat:"搞钱与财务", name:"简记 · 记账", desc:"收支记账 · 分类占比 · Supabase 云同步", url:"https://xiaomin999.github.io/jianji/", host:"github.io", icon:"i-wallet", g:"linear-gradient(135deg,#facc15,#ca8a04)", live:1 },
+  { cat:"搞钱与财务", name:"电商作战室", desc:"选品流水线 · 素材库 · 内容生成 · 市场情报", url:"https://xiaomin999.github.io/ecom-warroom/", host:"github.io", icon:"i-cart", g:"linear-gradient(135deg,#5b9dff,#2563eb)", live:1, tag:"PWA" },
+  { cat:"搞钱与财务", name:"副业收集工作台", desc:"86 条副业点子库 · 收益测算 · 决策对比", url:"https://xiaomin999.github.io/side-hustle-hub/", host:"github.io", icon:"i-bulb", g:"linear-gradient(135deg,#ffc14d,#f59e0b)", live:1, tag:"PWA" },
+  { cat:"搞钱与财务", name:"基金交易判断工作台", desc:"交易信号看板，A 股配色（涨红跌绿）", url:"tools/fund-workbench/", host:"本站", icon:"i-trend", g:"linear-gradient(135deg,#ff8080,#dc2626)", live:1 },
+  { cat:"搞钱与财务", name:"简记 · 记账", desc:"收支记账 · 分类占比 · Supabase 云同步", url:"https://xiaomin999.github.io/jianji/", host:"github.io", icon:"i-wallet", g:"linear-gradient(135deg,#f5c451,#d99e0b)", live:1 },
 
-  { cat:"学习成长", name:"雅思学习平台", desc:"每日单词 · 影子跟读 · 口语练习 · 间隔复习", url:"tools/ielts-prep/", host:"本站", icon:"i-globe", g:"linear-gradient(135deg,#818cf8,#4f46e5)", live:1 },
-  { cat:"学习成长", name:"学习工作台 · 四合一", desc:"SQL / Excel / Python / Java 刷题练习", url:"tools/study-workbench/", host:"本站", icon:"i-code", g:"linear-gradient(135deg,#22d3ee,#0891b2)", live:1 },
-  { cat:"学习成长", name:"小陈自用学习计划", desc:"岗位能力拆解 · 分阶段路线图 · 每日计划", url:"tools/career-study-plan/", host:"本站", icon:"i-route", g:"linear-gradient(135deg,#a78bfa,#7c3aed)", live:1 },
-  { cat:"学习成长", name:"学习目标管理台", desc:"今日 / 看板 / 周视图 / 我的，目标与打卡", url:"tools/goal-tracker/", host:"本站", icon:"i-target", g:"linear-gradient(135deg,#4ade80,#16a34a)", live:1 },
+  { cat:"学习成长", name:"雅思学习平台", desc:"每日单词 · 影子跟读 · 口语练习 · 间隔复习", url:"tools/ielts-prep/", host:"本站", icon:"i-globe", g:"linear-gradient(135deg,#8b8cf0,#5b5bd6)", live:1 },
+  { cat:"学习成长", name:"学习工作台 · 四合一", desc:"SQL / Excel / Python / Java 刷题练习", url:"tools/study-workbench/", host:"本站", icon:"i-code", g:"linear-gradient(135deg,#3ec9d6,#0891b2)", live:1 },
+  { cat:"学习成长", name:"小陈自用学习计划", desc:"岗位能力拆解 · 分阶段路线图 · 每日计划", url:"tools/career-study-plan/", host:"本站", icon:"i-route", g:"linear-gradient(135deg,#b39dfb,#7c3aed)", live:1 },
+  { cat:"学习成长", name:"学习目标管理台", desc:"今日 / 看板 / 周视图 / 我的，目标与打卡", url:"tools/goal-tracker/", host:"本站", icon:"i-target", g:"linear-gradient(135deg,#5fd18c,#16a34a)", live:1 },
 
-  { cat:"效率工具", name:"小助理自律工作台", desc:"待办 · 习惯 · 打卡 · 复盘 · 理财", url:"tools/self-discipline-hub/", host:"本站", icon:"i-check", g:"linear-gradient(135deg,#f472b6,#db2777)", live:1 },
+  { cat:"效率工具", name:"小助理自律工作台", desc:"待办 · 习惯 · 打卡 · 复盘 · 理财", url:"tools/self-discipline-hub/", host:"本站", icon:"i-check", g:"linear-gradient(135deg,#ff8fb1,#e5367e)", live:1 },
   { cat:"效率工具", name:"个人办公台", desc:"今日待办 · 灵感速记 · 项目跟进 · 周复盘", url:"tools/office-workbench/", host:"本站", icon:"i-case", g:"linear-gradient(135deg,#94a3b8,#475569)", live:1 },
-  { cat:"效率工具", name:"数据分析工作台", desc:"任务看板 · SQL/Python 片段库 · 指标字典", url:"tools/data-analysis-workbench/", host:"本站", icon:"i-bar", g:"linear-gradient(135deg,#38bdf8,#0284c7)", live:1 },
-  { cat:"效率工具", name:"Boardly 协作白板", desc:"Canvas 绘图白板，支持网格开关", url:"tools/whiteboard/", host:"本站", icon:"i-pen", g:"linear-gradient(135deg,#fb923c,#ea580c)", live:1 },
-  { cat:"效率工具", name:"公众号 AI 写作工作台", desc:"知识库 → 选题 → 写稿 → 配图 → 复盘", url:"tools/gzh-ai-writer/", host:"本站", icon:"i-edit", g:"linear-gradient(135deg,#2dd4bf,#0d9488)", live:1 }
+  { cat:"效率工具", name:"数据分析工作台", desc:"任务看板 · SQL/Python 片段库 · 指标字典", url:"tools/data-analysis-workbench/", host:"本站", icon:"i-bar", g:"linear-gradient(135deg,#4fb0e8,#0284c7)", live:1 },
+  { cat:"效率工具", name:"Boardly 协作白板", desc:"Canvas 绘图白板，支持网格开关", url:"tools/whiteboard/", host:"本站", icon:"i-pen", g:"linear-gradient(135deg,#ffab6b,#ea580c)", live:1 },
+  { cat:"效率工具", name:"公众号 AI 写作工作台", desc:"知识库 → 选题 → 写稿 → 配图 → 复盘", url:"tools/gzh-ai-writer/", host:"本站", icon:"i-edit", g:"linear-gradient(135deg,#3fd0b6,#0d9488)", live:1 }
 ];
 
+const CAT_COLOR = {
+  "健康生活":"#f4511e",
+  "搞钱与财务":"#2563eb",
+  "学习成长":"#7c3aed",
+  "效率工具":"#0d9488"
+};
 const CATS = [...new Set(TOOLS.map(t => t.cat))];
 const KEY = "hub_recent_v1";
 const $ = s => document.querySelector(s);
@@ -342,29 +392,38 @@ function render(){
 
   $("#list").innerHTML = groups.map(g => `
     <section>
-      <div class="sec-h"><h2>${g.c}</h2><span>${g.items.length} 个</span></div>
+      <div class="sec-h">
+        <span class="bar" style="background:${CAT_COLOR[g.c]}"></span>
+        <h2>${g.c}</h2><span class="count">${g.items.length}</span>
+      </div>
       <div class="grid">${g.items.map(t => `
         <a class="card${t.live ? "" : " archived"}" href="${t.url}" target="_blank" rel="noopener" data-name="${t.name}">
           ${t.tag ? `<span class="tag">${t.tag}</span>` : ""}
           <div class="ic" style="background:${t.g}"><svg viewBox="0 0 24 24"><use href="#${t.icon}"/></svg></div>
-          <h3>${t.name}</h3>
-          <p>${t.desc}</p>
-          <div class="meta">
-            <span class="dot ${t.live ? "live" : "arch"}"></span>
-            <span class="url">${t.host}</span>
+          <div class="card-body">
+            <h3>${t.name}<span class="arrow">↗</span></h3>
+            <p>${t.desc}</p>
+            <div class="meta">
+              <span class="dot ${t.live ? "live" : "arch"}"></span>
+              <span class="url">${t.host}</span>
+            </div>
           </div>
         </a>`).join("")}
       </div>
     </section>`).join("");
 
   $("#empty").classList.toggle("hidden", show.length > 0);
-  $("#cnt").textContent = show.length;
   $("#cnt2").textContent = show.length;
 
   $("#list").querySelectorAll(".card").forEach(a => {
     a.addEventListener("click", () => markRecent(a.dataset.name));
   });
 }
+
+/* ---- 顶部统计 ---- */
+$("#s-total").textContent = TOOLS.length;
+$("#s-cat").textContent = CATS.length;
+$("#s-live").textContent = TOOLS.filter(t => t.live && t.host !== "本站").length;
 
 /* ---- 事件 ---- */
 $("#q").addEventListener("input", render);
