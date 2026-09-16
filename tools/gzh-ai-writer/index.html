@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>公众号AI写作工作台</title>
+<link rel="stylesheet" href="style.css?v=1" />
+</head>
+<body>
+<div id="app">
+  <!-- 左侧可折叠导航 -->
+  <aside id="sidebar" class="sidebar">
+    <div class="brand">
+      <div class="brand-logo">✍️</div>
+      <div class="brand-name">公众号AI<br/>写作工作台</div>
+    </div>
+    <nav class="nav">
+      <button class="nav-item" data-route="dashboard" title="仪表盘"><span class="ni">📊</span><span class="nl">仪表盘</span></button>
+      <button class="nav-item" data-route="knowledge" title="知识库"><span class="ni">📚</span><span class="nl">知识库</span></button>
+      <button class="nav-item" data-route="factors" title="爆款因子库"><span class="ni">🔥</span><span class="nl">爆款因子</span></button>
+      <button class="nav-item" data-route="topics" title="选题"><span class="ni">💡</span><span class="nl">选题</span></button>
+      <button class="nav-item" data-route="draft" title="写稿"><span class="ni">📝</span><span class="nl">写稿</span></button>
+      <button class="nav-item" data-route="images" title="配图"><span class="ni">🎨</span><span class="nl">配图</span></button>
+      <button class="nav-item" data-route="review" title="复盘"><span class="ni">📈</span><span class="nl">复盘</span></button>
+      <button class="nav-item" data-route="rhythm" title="每日节奏"><span class="ni">⏰</span><span class="nl">每日节奏</span></button>
+    </nav>
+    <div class="nav-bottom">
+      <button class="nav-item" data-route="settings" title="设置"><span class="ni">⚙️</span><span class="nl">设置</span></button>
+      <button id="toggleSidebar" class="nav-item toggle" title="折叠/展开"><span class="ni">«</span><span class="nl">收起</span></button>
+    </div>
+  </aside>
+
+  <!-- 主区域 -->
+  <main id="main">
+    <header class="topbar">
+      <button id="mobileMenu" class="mobile-menu">☰</button>
+      <h1 id="pageTitle">仪表盘</h1>
+      <div class="topbar-right">
+        <span id="aiStatus" class="ai-status demo">DEMO 模式</span>
+        <span id="todayStamp" class="today-stamp"></span>
+      </div>
+    </header>
+    <section id="content" class="content"></section>
+  </main>
+</div>
+
+<script src="app.js?v=1"></script>
+</body>
+</html>

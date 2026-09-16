@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>数据分析工作台</title>
+<style>
+  :root{
+    --bg:#f5f7fb; --card:#ffffff; --ink:#1f2933; --muted:#7b8794;
+    --line:#e4e9f0; --primary:#4263eb; --primary-d:#3252c9;
+    --red:#e03131; --green:#2f9e44; --amber:#f08c00;
+    --soft:#eef2ff; --radius:14px; --shadow:0 1px 3px rgba(16,24,40,.06),0 1px 2px rgba(16,24,40,.04);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg); color:var(--ink); font-size:16px; line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  /* layout */
+  .app{display:flex; min-height:100vh;}
+  .sidebar{
+    width:208px; flex:none; background:var(--card); border-right:1px solid var(--line);
+    padding:18px 12px; position:sticky; top:0; height:100vh; overflow-y:auto;
+    display:flex; flex-direction:column; transition:width .18s ease;
+  }
+  .sidebar.collapsed{ width:72px; padding-left:8px; padding-right:8px; }
+  .brand{display:flex; align-items:center; gap:9px; font-weight:700; font-size:17px; padding:6px 8px 16px;}
+  .brand svg{width:26px;height:26px;flex:none;}
+  .navbtn{
+    display:flex; align-items:center; gap:10px; width:100%; text-align:left; position:relative;
+    background:none; border:none; color:var(--muted); font-size:15px; font-weight:600;
+    padding:11px 10px; border-radius:10px; cursor:pointer; margin-bottom:4px;
+  }
+  .navbtn svg{width:19px;height:19px;flex:none;}
+  .navbtn:hover{background:var(--soft); color:var(--ink);}
+  .navbtn.active{background:var(--soft); color:var(--primary);}
+  .navbtn .badge{margin-left:auto; background:var(--red); color:#fff; font-size:12px; font-weight:700;
+    min-width:20px; height:20px; border-radius:10px; display:inline-flex; align-items:center; justify-content:center; padding:0 6px;}
+  /* collapsed sidebar (72px icon bar) */
+  .sidebar.collapsed .brand{font-size:0; justify-content:center; padding:6px 0 16px;}
+  .sidebar.collapsed .navbtn{font-size:0; justify-content:center; padding:11px 0;}
+  .sidebar.collapsed .navbtn .badge{position:absolute; top:3px; right:3px; margin-left:0;}
+  .collapse-btn{
+    margin-top:auto; display:flex; align-items:center; gap:10px; width:100%;
+    min-height:44px; padding:0 10px; border:1px solid var(--line); border-radius:10px;
+    background:none; color:var(--muted); cursor:pointer; font-size:14px; font-weight:600; font-family:inherit;
+  }
+  .collapse-btn:hover{border-color:var(--primary); color:var(--primary);}
+  .collapse-btn svg{width:19px;height:19px;flex:none; transition:transform .18s ease;}
+  .sidebar.collapsed .collapse-btn{justify-content:center; padding:0; font-size:0;}
+  .sidebar.collapsed .collapse-btn svg{transform:rotate(180deg);}
+  .main{flex:1; min-width:0; padding:18px 22px 96px; max-width:1100px;}
+  .topbar{
+    position:sticky; top:0; z-index:20; background:var(--bg); padding:6px 0 12px;
+    display:flex; flex-wrap:wrap; gap:8px; align-items:center;
+  }
+  .topbar h1{font-size:20px; margin:0 12px 0 0; font-weight:700;}
+  .spacer{flex:1;}
+  .btn{
+    display:inline-flex; align-items:center; gap:7px; min-height:44px; padding:0 16px;
+    border-radius:10px; border:1px solid var(--line); background:var(--card); color:var(--ink);
+    font-size:15px; font-weight:600; cursor:pointer; font-family:inherit;
+  }
+  .btn svg{width:17px;height:17px;}
+  .btn:hover{border-color:var(--primary); color:var(--primary);}
+  .btn.primary{background:var(--primary); border-color:var(--primary); color:#fff;}
+  .btn.primary:hover{background:var(--primary-d); color:#fff;}
+  .btn.danger:hover{border-color:var(--red); color:var(--red);}
+  .tip{
+    background:#fff7e6; border:1px solid #ffe0a3; color:#a8600a; border-radius:10px;
+    padding:10px 14px; font-size:14px; margin:0 0 14px; display:flex; gap:8px; align-items:center;
+  }
+  /* today */
+  .today{
+    background:linear-gradient(180deg,#eef2ff,#ffffff); border:1px solid var(--line);
+    border-radius:var(--radius); padding:16px 18px; margin-bottom:22px; box-shadow:var(--shadow);
+  }
+  .today h2{margin:0 0 4px; font-size:16px; display:flex; align-items:center; gap:8px;}
+  .today .sub{color:var(--muted); font-size:13px; margin-bottom:14px;}
+  .today-body{display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap;}
+  .ring{flex:none; width:96px; height:96px;}
+  .td-list{flex:1; min-width:240px; display:flex; flex-direction:column; gap:8px;}
+  .td-item{
+    display:flex; align-items:center; gap:10px; background:var(--card); border:1px solid var(--line);
+    border-radius:10px; padding:10px 12px;
+  }
+  .td-item.over{ border-color:#ffc9c9; background:#fff5f5;}
+  .td-tag{font-size:12px; font-weight:700; padding:2px 8px; border-radius:6px; flex:none;}
+  .td-tag.over{background:#ffc9c9;color:var(--red);}
+  .td-tag.today{background:#d3f9d8;color:var(--green);}
+  .td-tag.soon{background:#fff3bf;color:var(--amber);}
+  .td-title{flex:1; min-width:0; font-size:15px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .td-title .pri{font-size:11px; font-weight:700; color:var(--primary); margin-right:6px;}
+  .td-empty{color:var(--muted); font-size:14px; padding:8px 2px;}
+  /* module card */
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:18px; margin-bottom:22px; box-shadow:var(--shadow); scroll-margin-top:78px;
+  }
+  .card h2{margin:0 0 2px; font-size:17px; display:flex; align-items:center; gap:8px;}
+  .card h2 svg{width:20px;height:20px;color:var(--primary);}
+  .card .desc{color:var(--muted); font-size:13px; margin:0 0 14px;}
+  .form-grid{display:grid; gap:10px; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); margin-bottom:14px;}
+  .field{display:flex; flex-direction:column; gap:5px;}
+  .field label{font-size:13px; color:var(--muted); font-weight:600;}
+  input,select,textarea{
+    font-family:inherit; font-size:16px; padding:11px 12px; border:1px solid var(--line);
+    border-radius:9px; background:#fff; color:var(--ink); width:100%;
+  }
+  textarea{resize:vertical; min-height:74px;}
+  input:focus,select:focus,textarea:focus{outline:none; border-color:var(--primary); box-shadow:0 0 0 3px rgba(66,99,235,.12);}
+  .form-actions{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:6px;}
+  /* list */
+  .item{
+    border:1px solid var(--line); border-radius:11px; padding:13px 14px; margin-bottom:10px;
+    display:flex; gap:12px; align-items:flex-start;
+  }
+  .item.done{opacity:.6;}
+  .item .main{flex:1; min-width:0;}
+  .item .t{font-weight:600; font-size:15px; margin-bottom:3px; word-break:break-word;}
+  .item.done .t{text-decoration:line-through;}
+  .item .meta{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:6px;}
+  .chip{font-size:12px; font-weight:600; padding:2px 9px; border-radius:20px; background:var(--soft); color:var(--primary);}
+  .chip.gray{background:#f1f3f5; color:var(--muted);}
+  .chip.red{background:#ffe3e3; color:var(--red);}
+  .chip.green{background:#d3f9d8; color:var(--green);}
+  .chip.amber{background:#fff3bf; color:var(--amber);}
+  .item .body{font-size:14px; color:#495057; white-space:pre-wrap; word-break:break-word; max-height:340px; overflow:auto;}
+  .item .body.code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; background:#0f172a; color:#e2e8f0; padding:11px 13px; border-radius:9px; font-size:13px; line-height:1.55;}
+  .item .acts{display:flex; flex-direction:column; gap:7px; flex:none;}
+  .iconbtn{
+    width:44px; height:44px; border-radius:10px; border:1px solid var(--line); background:#fff;
+    cursor:pointer; display:inline-flex; align-items:center; justify-content:center; color:var(--muted);
+  }
+  .iconbtn svg{width:18px;height:18px;}
+  .iconbtn:hover{border-color:var(--primary); color:var(--primary);}
+  .iconbtn.ok:hover{border-color:var(--green); color:var(--green);}
+  .iconbtn.del:hover{border-color:var(--red); color:var(--red);}
+  .item .acts.row{flex-direction:row;}
+  .empty{color:var(--muted); font-size:14px; text-align:center; padding:22px 0;}
+  .link{color:var(--primary); cursor:pointer; font-size:13px; font-weight:600;}
+  .toast{
+    position:fixed; left:50%; bottom:26px; transform:translateX(-50%); background:#1f2933; color:#fff;
+    padding:11px 18px; border-radius:10px; font-size:14px; z-index:999; opacity:0; transition:opacity .25s; pointer-events:none;
+  }
+  .toast.show{opacity:1;}
+  /* mobile bottom tab */
+  .tabbar{display:none;}
+  @media (max-width:768px){
+    .app{flex-direction:column;}
+    .sidebar{display:none;}
+    .main{padding:14px 14px 90px;}
+    .topbar{padding-top:4px;}
+    .topbar h1{font-size:18px; width:100%; margin-bottom:6px;}
+    .btn{padding:0 13px; font-size:14px;}
+    .tabbar{
+      display:flex; position:fixed; bottom:0; left:0; right:0; z-index:50;
+      background:var(--card); border-top:1px solid var(--line);
+      padding:6px 4px calc(6px + env(safe-area-inset-bottom));
+      justify-content:space-around;
+    }
+    .tab{flex:1; background:none; border:none; color:var(--muted); font-size:11px; font-weight:600;
+      display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer; padding:4px 0; min-height:44px;}
+    .tab svg{width:21px;height:21px;}
+    .tab.active{color:var(--primary);}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l3-4 3 3 4-6"/></svg>
+      数据分析台
+    </div>
+    <button class="navbtn active" data-go="today">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/><path d="M9 21h6"/></svg>
+      今天要处理<span class="badge" id="navToday" style="display:none">0</span>
+    </button>
+    <button class="navbtn" data-go="sec-tasks">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg>
+      任务看板<span class="badge" id="navTasks" style="display:none">0</span>
+    </button>
+    <button class="navbtn" data-go="sec-snippets">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 9l-4 3 4 3"/><path d="M16 9l4 3-4 3"/><path d="M13 5l-2 14"/></svg>
+      片段库
+    </button>
+    <button class="navbtn" data-go="sec-metrics">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5a2 2 0 0 1 2-2h13"/><path d="M4 19h16"/><path d="M8 16v-5M12 16V8M16 16v-3"/></svg>
+      指标字典
+    </button>
+    <button class="navbtn" data-go="sec-notes">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h11l5 5v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/><path d="M14 4v5h5"/><path d="M8 13h7M8 17h5"/></svg>
+      笔记库
+    </button>
+    <button class="collapse-btn" id="btnCollapse" title="折叠 / 展开导航">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>收起
+    </button>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <h1>数据分析工作台</h1>
+      <div class="spacer"></div>
+      <button class="btn" id="btnExport">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+        导出JSON
+      </button>
+      <button class="btn" id="btnImport">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"/><path d="M7 8l5-5 5 5"/><path d="M5 21h14"/></svg>
+        导入恢复
+      </button>
+      <button class="btn danger" id="btnClear">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/></svg>
+        清空示例数据
+      </button>
+      <input type="file" id="fileInput" accept="application/json" style="display:none">
+    </div>
+
+    <div class="tip" id="tip30" style="display:none">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#a8600a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+      数据已积累 30 条，建议点右上角「导出 JSON」备份一下。
+    </div>
+
+    <!-- 今天要处理 -->
+    <section class="today" id="today">
+      <h2>
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/><path d="M9 21h6"/></svg>
+        今天要处理
+      </h2>
+      <div class="sub">逾期未完成、今天该做、快到期的任务会自动滚到这里（昨天没做完的也会顺延显示）。</div>
+      <div class="today-body">
+        <svg class="ring" id="ring" viewBox="0 0 36 36">
+          <circle cx="18" cy="18" r="15.915" fill="none" stroke="#e9ecef" stroke-width="3.2"></circle>
+          <circle id="ringFg" cx="18" cy="18" r="15.915" fill="none" stroke="var(--primary)" stroke-width="3.2" stroke-dasharray="0 100" transform="rotate(-90 18 18)"></circle>
+          <text id="ringTxt" x="18" y="19" text-anchor="middle" font-size="8" font-weight="700" fill="var(--ink)">0%</text>
+        </svg>
+        <div class="td-list" id="tdList"></div>
+      </div>
+    </section>
+
+    <!-- 任务看板 -->
+    <section class="card" id="sec-tasks">
+      <h2>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg>
+        分析任务看板
+      </h2>
+      <p class="desc">记录分析需求/取数任务，按优先级（P0/P1/P2）推进，完成的打勾即可。</p>
+      <div class="form-grid">
+        <div class="field"><label>任务标题</label><input id="t_title" placeholder="如：完成7月成本分析报告"></div>
+        <div class="field"><label>优先级</label>
+          <select id="t_pri"><option value="P0">P0 紧急</option><option value="P1" selected>P1 重要</option><option value="P2">P2 一般</option></select>
+        </div>
+        <div class="field"><label>截止日期</label><input id="t_due" type="date"></div>
+        <div class="field" style="grid-column:1/-1"><label>备注</label><input id="t_note" placeholder="背景、口径要求、对接人…（可选）"></div>
+      </div>
+      <div class="form-actions">
+        <button class="btn primary" id="t_add">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          添加任务
+        </button>
+      </div>
+      <div id="t_list"></div>
+    </section>
+
+    <!-- 片段库 -->
+    <section class="card" id="sec-snippets">
+      <h2>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 9l-4 3 4 3"/><path d="M16 9l4 3-4 3"/><path d="M13 5l-2 14"/></svg>
+        SQL · Python 片段库
+      </h2>
+      <p class="desc">把常用查询、清洗代码存进来，分类标签 + 一键复制，常用技能焊在工作台上。</p>
+      <div class="form-grid">
+        <div class="field"><label>名称</label><input id="s_name" placeholder="如：按天统计活跃用户"></div>
+        <div class="field"><label>类型</label>
+          <select id="s_type"><option value="SQL" selected>SQL</option><option value="Python">Python</option><option value="Shell">Shell</option><option value="其他">其他</option></select>
+        </div>
+        <div class="field"><label>标签</label><input id="s_tag" placeholder="留存 / 取数 / 清洗（逗号分隔）"></div>
+        <div class="field" style="grid-column:1/-1"><label>代码</label><textarea id="s_code" placeholder="粘贴你的代码…"></textarea></div>
+        <div class="field" style="grid-column:1/-1"><label>说明（可选）</label><input id="s_desc" placeholder="用途、注意事项…"></div>
+      </div>
+      <div class="form-actions">
+        <button class="btn primary" id="s_add">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          保存片段
+        </button>
+      </div>
+      <div id="s_list"></div>
+    </section>
+
+    <!-- 指标字典 -->
+    <section class="card" id="sec-metrics">
+      <h2>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5a2 2 0 0 1 2-2h13"/><path d="M4 19h16"/><path d="M8 16v-5M12 16V8M16 16v-3"/></svg>
+        指标字典
+      </h2>
+      <p class="desc">统一管理指标定义与计算口径，避免「同名不同数」。负责人字段方便对齐。</p>
+      <div class="form-grid">
+        <div class="field"><label>指标名</label><input id="m_name" placeholder="如：获客成本 CAC"></div>
+        <div class="field"><label>单位/格式</label><input id="m_unit" placeholder="如：元 / %"></div>
+        <div class="field"><label>负责人</label><input id="m_owner" placeholder="如：成本组-张三"></div>
+        <div class="field" style="grid-column:1/-1"><label>定义</label><input id="m_def" placeholder="指标的业务含义"></div>
+        <div class="field" style="grid-column:1/-1"><label>计算口径</label><textarea id="m_cal" placeholder="如：总营销费用 / 新增付费用户数"></textarea></div>
+      </div>
+      <div class="form-actions">
+        <button class="btn primary" id="m_add">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          添加指标
+        </button>
+      </div>
+      <div id="m_list"></div>
+    </section>
+
+    <!-- 笔记库 -->
+    <section class="card" id="sec-notes">
+      <h2>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h11l5 5v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/><path d="M14 4v5h5"/><path d="M8 13h7M8 17h5"/></svg>
+        学习笔记库
+      </h2>
+      <p class="desc">沉淀知识点、踩坑技巧、分析框架，标签便于检索。</p>
+      <div class="form-grid">
+        <div class="field"><label>标题</label><input id="n_title" placeholder="如：成本分析常用拆解维度"></div>
+        <div class="field"><label>标签</label><input id="n_tag" placeholder="框架 / 踩坑 / 工具（逗号分隔）"></div>
+        <div class="field" style="grid-column:1/-1"><label>内容</label><textarea id="n_body" placeholder="记录你的思考与经验…"></textarea></div>
+      </div>
+      <div class="form-actions">
+        <button class="btn primary" id="n_add">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          添加笔记
+        </button>
+      </div>
+      <div id="n_list"></div>
+    </section>
+  </main>
+</div>
+
+<nav class="tabbar">
+  <button class="tab active" data-go="today">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/><path d="M9 21h6"/></svg>今天
+  </button>
+  <button class="tab" data-go="sec-tasks">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg>任务
+  </button>
+  <button class="tab" data-go="sec-snippets">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 9l-4 3 4 3"/><path d="M16 9l4 3-4 3"/><path d="M13 5l-2 14"/></svg>片段
+  </button>
+  <button class="tab" data-go="sec-metrics">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5a2 2 0 0 1 2-2h13"/><path d="M4 19h16"/><path d="M8 16v-5M12 16V8M16 16v-3"/></svg>指标
+  </button>
+  <button class="tab" data-go="sec-notes">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h11l5 5v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/><path d="M14 4v5h5"/><path d="M8 13h7M8 17h5"/></svg>笔记
+  </button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+  var PREFIX = "wb_dataana_";
+  var K = { tasks:PREFIX+"tasks", snippets:PREFIX+"snippets", metrics:PREFIX+"metrics", notes:PREFIX+"notes" };
+  var SAMPLE_FLAG = PREFIX+"sampled";
+
+  function load(k, def){ try{ var v=localStorage.getItem(k); return v?JSON.parse(v):def; }catch(e){ return def; } }
+  function save(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
+  function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+  function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
+  function todayStr(){
+    var d=new Date(), p=function(n){return String(n).padStart(2,"0");};
+    return d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate());
+  }
+  function addDays(dstr,n){
+    var d=new Date(dstr+"T00:00:00"); d.setDate(d.getDate()+n);
+    var p=function(x){return String(x).padStart(2,"0");};
+    return d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate());
+  }
+  function toast(msg){ var t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(t._t); t._t=setTimeout(function(){t.classList.remove("show");},1800); }
+
+  // ---- sample data ----
+  function seed(){
+    if(localStorage.getItem(SAMPLE_FLAG)) return;
+    var y = todayStr(), oy = addDays(y,-1), ty = addDays(y,1), sy = addDays(y,3);
+    save(K.tasks, [
+      {id:uid(), title:"完成 7 月成本分析报告", pri:"P0", due:oy, note:"财务对齐口径，周五经分会用", done:false},
+      {id:uid(), title:"复盘获客成本异常波动", pri:"P1", due:y, note:"上周 CAC 环比 +18%，定位渠道问题", done:false},
+      {id:uid(), title:"搭建留存分析看板", pri:"P2", due:sy, note:"次留/7留/30留分渠道", done:false},
+      {id:uid(), title:"核对毛利率指标口径", pri:"P1", due:ty, note:"与财务确认取数逻辑", done:false}
+    ]);
+    save(K.snippets, [
+      {id:uid(), name:"按天统计活跃用户(DAU)", type:"SQL", tag:"留存,取数", desc:"按日期聚合去重用户", code:"SELECT dt, COUNT(DISTINCT user_id) AS dau\nFROM dwd_user_active_log\nWHERE dt BETWEEN '2026-07-01' AND '2026-07-31'\nGROUP BY dt\nORDER BY dt;"},
+      {id:uid(), name:"pandas 分组聚合", type:"Python", tag:"清洗", desc:"按维度汇总指标", code:"import pandas as pd\ndf = pd.read_csv('cost.csv')\nres = df.groupby(['channel'])['cost'].agg(['sum','mean'])\nprint(res)"}
+    ]);
+    save(K.metrics, [
+      {id:uid(), name:"获客成本 CAC", unit:"元", owner:"成本组-张三", def:"获取一个付费用户的平均营销花费", cal:"总营销费用 / 新增付费用户数"},
+      {id:uid(), name:"毛利率", unit:"%", owner:"财务-李四", def:"毛利占营收比重", cal:"(营收 - 营业成本) / 营收 × 100%"}
+    ]);
+    save(K.notes, [
+      {id:uid(), name:"成本分析常用拆解维度", tag:"框架", body:"按 渠道 / 品类 / 时间段 三维拆解；\n先看总量趋势，再下钻找异常来源；\n对比口径必须固定，避免环比失真。"}
+    ]);
+    localStorage.setItem(SAMPLE_FLAG,"1");
+  }
+
+  // ---- render: today ----
+  function renderToday(){
+    var tasks = load(K.tasks, []);
+    var td = document.getElementById("tdList");
+    var t = todayStr();
+    var soon = addDays(t,2);
+    var items = tasks.filter(function(x){ return !x.done && x.due; })
+      .map(function(x){
+        var kind;
+        if(x.due < t) kind="over";
+        else if(x.due === t) kind="today";
+        else if(x.due <= soon) kind="soon";
+        else kind=null;
+        return {x:x, kind:kind};
+      }).filter(function(o){ return o.kind; })
+      .sort(function(a,b){ var rank={over:0,today:1,soon:2}; return rank[a.kind]-rank[b.kind]; });
+
+    if(!items.length){
+      td.innerHTML = '<div class="td-empty">暂时没有逾期或临近的任务，稳！</div>';
+    } else {
+      td.innerHTML = items.map(function(o){
+        var label = o.kind==="over"?"逾期":o.kind==="today"?"今天":"快到期";
+        return '<div class="td-item '+(o.kind==="over"?"over":"")+'">'
+          + '<span class="td-tag '+o.kind+'">'+label+'</span>'
+          + '<span class="td-title"><span class="pri">'+esc(o.x.pri)+'</span>'+esc(o.x.title)+'</span>'
+          + '<button class="iconbtn ok" data-act="doneT" data-id="'+o.x.id+'" title="标记完成">'
+          + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></button>'
+          + '</div>';
+      }).join("");
+    }
+    // ring: completion of items that are due today or overdue
+    var focus = tasks.filter(function(x){ return x.due && (x.due<=soon); });
+    var doneN = focus.filter(function(x){return x.done;}).length;
+    var totalN = focus.length || 1;
+    var pct = Math.round(doneN/totalN*100);
+    document.getElementById("ringFg").setAttribute("stroke-dasharray", pct+" "+(100-pct));
+    document.getElementById("ringTxt").textContent = pct+"%";
+
+    // nav badges
+    setBadge("navToday", items.length);
+    setBadge("navTasks", tasks.filter(function(x){return !x.done;}).length);
+  }
+  function setBadge(id,n){ var el=document.getElementById(id); if(!el)return; if(n>0){el.style.display="inline-flex"; el.textContent=n;} else {el.style.display="none";} }
+
+  // ---- render tasks ----
+  function renderTasks(){
+    var arr = load(K.tasks, []);
+    var box = document.getElementById("t_list");
+    if(!arr.length){ box.innerHTML='<div class="empty">还没有任务，上面的表单添加一条吧。</div>'; return; }
+    // sort: undone first, by due asc, P0 first
+    var rank={P0:0,P1:1,P2:2};
+    arr.sort(function(a,b){
+      if(a.done!==b.done) return a.done?1:-1;
+      if(a.due&&b.due) { if(a.due!==b.due) return a.due<b.due?-1:1; }
+      else if(a.due) return -1; else if(b.due) return 1;
+      return rank[a.pri]-rank[b.pri];
+    });
+    box.innerHTML = arr.map(function(x){
+      var pc = x.pri==="P0"?"red":x.pri==="P1"?"amber":"gray";
+      var over = (!x.done && x.due && x.due < todayStr());
+      return '<div class="item '+(x.done?"done":"")+'">'
+        + '<div class="main"><div class="t">'+esc(x.title)+'</div>'
+        + '<div class="meta"><span class="chip '+pc+'">'+esc(x.pri)+'</span>'
+        + (x.due?'<span class="chip '+(over?"red":"gray")+'">截止 '+esc(x.due)+(over?" · 逾期":"")+'</span>':'')
+        + '</div>'
+        + (x.note?'<div class="body">'+esc(x.note)+'</div>':'')
+        + '</div>'
+        + '<div class="acts row">'
+        + '<button class="iconbtn '+(x.done?"":"ok")+'" data-act="doneT" data-id="'+x.id+'" title="完成">'
+        + (x.done
+            ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 4v5h5"/></svg>'
+            : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>')
+        + '</button>'
+        + '<button class="iconbtn del" data-act="delT" data-id="'+x.id+'" title="删除">'
+        + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/></svg></button>'
+        + '</div></div>';
+    }).join("");
+  }
+
+  // ---- render snippets ----
+  function renderSnippets(){
+    var arr = load(K.snippets, []);
+    var box = document.getElementById("s_list");
+    if(!arr.length){ box.innerHTML='<div class="empty">还没有片段，把常用代码存进来。</div>'; return; }
+    box.innerHTML = arr.map(function(x){
+      return '<div class="item">'
+        + '<div class="main"><div class="t">'+esc(x.name)+'</div>'
+        + '<div class="meta"><span class="chip">'+esc(x.type)+'</span>'
+        + (x.tag?x.tag.split(/[,，]/).filter(Boolean).map(function(t){return '<span class="chip gray">'+esc(t.trim())+'</span>';}).join(""):'')
+        + '</div>'
+        + '<div class="body code">'+esc(x.code)+'</div>'
+        + (x.desc?'<div class="body" style="margin-top:8px;color:var(--muted)">'+esc(x.desc)+'</div>':'')
+        + '</div>'
+        + '<div class="acts row">'
+        + '<button class="iconbtn" data-act="copyS" data-id="'+x.id+'" title="复制代码">'
+        + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button>'
+        + '<button class="iconbtn del" data-act="delS" data-id="'+x.id+'" title="删除">'
+        + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/></svg></button>'
+        + '</div></div>';
+    }).join("");
+  }
+
+  // ---- render metrics ----
+  function renderMetrics(){
+    var arr = load(K.metrics, []);
+    var box = document.getElementById("m_list");
+    if(!arr.length){ box.innerHTML='<div class="empty">还没有指标，添加一条统一管理口径。</div>'; return; }
+    box.innerHTML = arr.map(function(x){
+      return '<div class="item">'
+        + '<div class="main"><div class="t">'+esc(x.name)+'</div>'
+        + '<div class="meta"><span class="chip">'+esc(x.unit||"—")+'</span>'
+        + (x.owner?'<span class="chip gray">'+esc(x.owner)+'</span>':'')+'</div>'
+        + '<div class="body"><b>定义：</b>'+esc(x.def||"—")+'</div>'
+        + '<div class="body" style="margin-top:6px"><b>口径：</b>'+esc(x.cal||"—")+'</div>'
+        + '</div>'
+        + '<div class="acts"><button class="iconbtn del" data-act="delM" data-id="'+x.id+'" title="删除">'
+        + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/></svg></button>'
+        + '</div></div>';
+    }).join("");
+  }
+
+  // ---- render notes ----
+  function renderNotes(){
+    var arr = load(K.notes, []);
+    var box = document.getElementById("n_list");
+    if(!arr.length){ box.innerHTML='<div class="empty">还没有笔记，沉淀第一条经验。</div>'; return; }
+    box.innerHTML = arr.map(function(x){
+      return '<div class="item">'
+        + '<div class="main"><div class="t">'+esc(x.title||x.name||"无标题")+'</div>'
+        + '<div class="meta">'+(x.tag?x.tag.split(/[,，]/).filter(Boolean).map(function(t){return '<span class="chip gray">'+esc(t.trim())+'</span>';}).join(""):'')+'</div>'
+        + '<div class="body">'+esc(x.body)+'</div>'
+        + '</div>'
+        + '<div class="acts"><button class="iconbtn del" data-act="delN" data-id="'+x.id+'" title="删除">'
+        + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/></svg></button>'
+        + '</div></div>';
+    }).join("");
+  }
+
+  function renderAll(){
+    renderToday(); renderTasks(); renderSnippets(); renderMetrics(); renderNotes();
+    var total = load(K.tasks,[]).length + load(K.snippets,[]).length + load(K.metrics,[]).length + load(K.notes,[]).length;
+    document.getElementById("tip30").style.display = total>=30 ? "flex":"none";
+  }
+
+  // ---- actions ----
+  function find(arr,id){ for(var i=0;i<arr.length;i++) if(arr[i].id===id) return i; return -1; }
+
+  document.addEventListener("click", function(e){
+    var btn = e.target.closest("[data-act]"); if(!btn) return;
+    var act = btn.getAttribute("data-act"), id = btn.getAttribute("data-id");
+
+    if(act==="doneT"){
+      var t = load(K.tasks,[]); var i=find(t,id); if(i<0)return;
+      t[i].done = !t[i].done; save(K.tasks,t); renderAll();
+    } else if(act==="delT"){
+      var t=load(K.tasks,[]); t.splice(find(t,id),1); save(K.tasks,t); renderAll();
+    } else if(act==="delS"){
+      var s=load(K.snippets,[]); s.splice(find(s,id),1); save(K.snippets,s); renderAll();
+    } else if(act==="delM"){
+      var m=load(K.metrics,[]); m.splice(find(m,id),1); save(K.metrics,m); renderAll();
+    } else if(act==="delN"){
+      var n=load(K.notes,[]); n.splice(find(n,id),1); save(K.notes,n); renderAll();
+    } else if(act==="copyS"){
+      var s=load(K.snippets,[]); var i=find(s,id); if(i<0)return;
+      var code=s[i].code||"";
+      copyText(code);
+    }
+  });
+
+  function copyText(txt){
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(function(){toast("代码已复制");}, function(){fallbackCopy(txt);});
+    } else { fallbackCopy(txt); }
+  }
+  function fallbackCopy(txt){
+    var ta=document.createElement("textarea"); ta.value=txt; ta.style.position="fixed"; ta.style.opacity="0";
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand("copy"); toast("代码已复制"); }catch(e){ toast("复制失败，请手动选择"); }
+    document.body.removeChild(ta);
+  }
+
+  // ---- add handlers ----
+  function bindAdd(btnId, build){
+    document.getElementById(btnId).addEventListener("click", function(){
+      var obj = build(); if(!obj) return;
+      // obj = {key, item, clears:[ids]}
+      var arr = load(obj.key, []); arr.push(obj.item); save(obj.key, arr);
+      (obj.clears||[]).forEach(function(cid){ var el=document.getElementById(cid); if(el) el.value=""; });
+      renderAll(); toast("已添加");
+    });
+  }
+
+  bindAdd("t_add", function(){
+    var title=document.getElementById("t_title").value.trim();
+    if(!title){ toast("请填写任务标题"); return null; }
+    return { key:K.tasks,
+      item:{id:uid(), title:title, pri:document.getElementById("t_pri").value,
+        due:document.getElementById("t_due").value, note:document.getElementById("t_note").value.trim(), done:false},
+      clears:["t_title","t_due","t_note"] };
+  });
+  bindAdd("s_add", function(){
+    var name=document.getElementById("s_name").value.trim();
+    var code=document.getElementById("s_code").value.trim();
+    if(!name){ toast("请填写片段名称"); return null; }
+    if(!code){ toast("请粘贴代码"); return null; }
+    return { key:K.snippets,
+      item:{id:uid(), name:name, type:document.getElementById("s_type").value,
+        tag:document.getElementById("s_tag").value.trim(), desc:document.getElementById("s_desc").value.trim(), code:code},
+      clears:["s_name","s_tag","s_code","s_desc"] };
+  });
+  bindAdd("m_add", function(){
+    var name=document.getElementById("m_name").value.trim();
+    if(!name){ toast("请填写指标名"); return null; }
+    return { key:K.metrics,
+      item:{id:uid(), name:name, unit:document.getElementById("m_unit").value.trim(),
+        owner:document.getElementById("m_owner").value.trim(), def:document.getElementById("m_def").value.trim(),
+        cal:document.getElementById("m_cal").value.trim()},
+      clears:["m_name","m_unit","m_owner","m_def","m_cal"] };
+  });
+  bindAdd("n_add", function(){
+    var title=document.getElementById("n_title").value.trim();
+    var body=document.getElementById("n_body").value.trim();
+    if(!title){ toast("请填写标题"); return null; }
+    if(!body){ toast("请填写内容"); return null; }
+    return { key:K.notes,
+      item:{id:uid(), title:title, tag:document.getElementById("n_tag").value.trim(), body:body},
+      clears:["n_title","n_tag","n_body"] };
+  });
+
+  // ---- export / import / clear ----
+  document.getElementById("btnExport").addEventListener("click", function(){
+    var data = { __type:"数据分析工作台", __v:1,
+      tasks:load(K.tasks,[]), snippets:load(K.snippets,[]), metrics:load(K.metrics,[]), notes:load(K.notes,[]) };
+    var blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
+    var a=document.createElement("a"); a.href=URL.createObjectURL(blob);
+    a.download="数据分析工作台-备份-"+todayStr()+".json"; a.click();
+    setTimeout(function(){URL.revokeObjectURL(a.href);}, 1000);
+    toast("已导出 JSON 备份");
+  });
+
+  document.getElementById("btnImport").addEventListener("click", function(){
+    document.getElementById("fileInput").click();
+  });
+  document.getElementById("fileInput").addEventListener("change", function(e){
+    var f=e.target.files[0]; if(!f) return;
+    var r=new FileReader();
+    r.onload=function(){
+      try{
+        var d=JSON.parse(r.result);
+        if(d.tasks) save(K.tasks,d.tasks);
+        if(d.snippets) save(K.snippets,d.snippets);
+        if(d.metrics) save(K.metrics,d.metrics);
+        if(d.notes) save(K.notes,d.notes);
+        renderAll(); toast("导入恢复成功");
+      }catch(err){ toast("文件格式错误，导入失败"); }
+    };
+    r.readAsText(f); e.target.value="";
+  });
+
+  document.getElementById("btnClear").addEventListener("click", function(){
+    if(!confirm("确定清空全部示例与数据吗？此操作不可恢复。\n建议先点「导出 JSON」备份。")) return;
+    [K.tasks,K.snippets,K.metrics,K.notes].forEach(function(k){ localStorage.removeItem(k); });
+    localStorage.removeItem(SAMPLE_FLAG);
+    renderAll(); toast("已清空，可重新添加");
+  });
+
+  // ---- nav scroll ----
+  function go(id){
+    var el=document.getElementById(id);
+    if(el) el.scrollIntoView({behavior:"smooth", block:"start"});
+  }
+  document.querySelectorAll("[data-go]").forEach(function(b){
+    b.addEventListener("click", function(){ go(b.getAttribute("data-go")); });
+  });
+  // active nav on scroll (sidebar + tab)
+  var secs=[["today","today"],["sec-tasks","sec-tasks"],["sec-snippets","sec-snippets"],["sec-metrics","sec-metrics"],["sec-notes","sec-notes"]];
+  window.addEventListener("scroll", function(){
+    var pos=window.scrollY+90, cur="today";
+    secs.forEach(function(s){ var el=document.getElementById(s[0]); if(el && el.offsetTop<=pos) cur=s[1]; });
+    document.querySelectorAll(".navbtn,.tab").forEach(function(b){
+      b.classList.toggle("active", b.getAttribute("data-go")===cur);
+    });
+  }, {passive:true});
+
+  // ---- collapsible sidebar (persisted) ----
+  var KEY_SIDE = PREFIX+"sidebar";
+  var sb = document.querySelector(".sidebar");
+  var btnCol = document.getElementById("btnCollapse");
+  function applySide(v){ if(v==="collapsed") sb.classList.add("collapsed"); else sb.classList.remove("collapsed"); }
+  applySide(localStorage.getItem(KEY_SIDE));
+  btnCol.addEventListener("click", function(){
+    var collapsed = sb.classList.toggle("collapsed");
+    try{ localStorage.setItem(KEY_SIDE, collapsed?"collapsed":"expanded"); }catch(e){}
+  });
+
+  // ---- init ----
+  seed();
+  renderAll();
+})();
+</script>
+</body>
+</html>

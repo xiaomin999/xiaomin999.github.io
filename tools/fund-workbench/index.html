@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>基金交易判断工作台</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+<style>
+  :root{
+    --bg:#f5f7fb; --panel:#ffffff; --ink:#1f2733; --sub:#66707d; --line:#e6eaf0;
+    --brand:#3b4cca; --brand2:#6c7cff;
+    --up:#e03131;   /* 涨 红 */
+    --down:#2f9e44; /* 跌 绿 */
+    --buy:#2f9e44; --dca:#1971c2; --hold:#f08c00; --watch:#868e96; --sell:#e03131;
+    --shadow:0 1px 3px rgba(20,30,60,.06),0 8px 24px rgba(20,30,60,.06);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    background:var(--bg);color:var(--ink);font-size:14px;-webkit-font-smoothing:antialiased}
+  .topbar{display:flex;align-items:center;gap:14px;padding:14px 22px;background:linear-gradient(90deg,#2b3578,#3b4cca);color:#fff}
+  .topbar h1{font-size:18px;margin:0;font-weight:700;letter-spacing:.5px}
+  .topbar .tag{font-size:12px;background:rgba(255,255,255,.16);padding:3px 10px;border-radius:20px}
+  .topbar .spacer{flex:1}
+  .topbar .date{font-size:12px;opacity:.85}
+  .banner{background:#fff7e6;border-bottom:1px solid #ffe1a8;color:#8a5a00;font-size:12.5px;padding:8px 22px;line-height:1.6}
+  .banner b{color:#b45309}
+  .layout{display:flex;min-height:calc(100vh - 112px)}
+  .side{width:188px;flex:0 0 188px;background:var(--panel);border-right:1px solid var(--line);padding:14px 10px}
+  .navbtn{display:flex;align-items:center;gap:10px;width:100%;border:0;background:transparent;color:var(--sub);
+    padding:11px 12px;border-radius:10px;cursor:pointer;font-size:13.5px;text-align:left;margin-bottom:4px;transition:.15s}
+  .navbtn:hover{background:#eef1fb;color:var(--ink)}
+  .navbtn.active{background:var(--brand);color:#fff;font-weight:600}
+  .navbtn .ic{font-size:16px;width:18px;text-align:center}
+  .main{flex:1;padding:18px 22px;overflow:auto}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:16px 18px;margin-bottom:16px}
+  .card h2{font-size:15px;margin:0 0 12px;display:flex;align-items:center;gap:8px}
+  .card h2 .dot{width:8px;height:8px;border-radius:50%;background:var(--brand)}
+  .grid{display:grid;gap:14px}
+  .g4{grid-template-columns:repeat(4,1fr)}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  @media(max-width:980px){.g4,.g3,.g2{grid-template-columns:1fr 1fr}}
+  @media(max-width:680px){.g4,.g3,.g2{grid-template-columns:1fr}}
+  .kpi{background:linear-gradient(180deg,#fbfcff,#f4f6ff);border:1px solid var(--line);border-radius:12px;padding:14px}
+  .kpi .lab{font-size:12px;color:var(--sub);margin-bottom:6px}
+  .kpi .val{font-size:24px;font-weight:700}
+  .kpi .sub{font-size:12px;color:var(--sub);margin-top:4px}
+  .pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11.5px;font-weight:600}
+  .p-buy{background:#e6f7ec;color:var(--buy)}
+  .p-dca{background:#e7f0fe;color:var(--dca)}
+  .p-hold{background:#fff2dc;color:var(--hold)}
+  .p-watch{background:#f0f2f5;color:var(--watch)}
+  .p-sell{background:#fde8e8;color:var(--sell)}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{padding:9px 10px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+  th{color:var(--sub);font-weight:600;font-size:12px;background:#fafbfe}
+  tbody tr:hover{background:#f7f9ff}
+  .up{color:var(--up);font-weight:600}
+  .down{color:var(--down);font-weight:600}
+  .muted{color:var(--sub)}
+  .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .field{display:flex;flex-direction:column;gap:5px;margin-bottom:4px}
+  .field label{font-size:12px;color:var(--sub)}
+  select,input{font-family:inherit;font-size:13px;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink)}
+  input[type=number]{width:130px}
+  .btn{background:var(--brand);color:#fff;border:0;border-radius:9px;padding:9px 16px;cursor:pointer;font-size:13px;font-weight:600}
+  .btn:hover{background:#2f3da8}
+  .grow{font-size:12px;line-height:1.7;color:var(--sub)}
+  .bar{height:8px;border-radius:6px;background:#eef1f6;overflow:hidden}
+  .bar > i{display:block;height:100%;border-radius:6px}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--sub);margin-top:8px}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .sw{width:10px;height:10px;border-radius:3px;display:inline-block}
+  .disc{font-size:11.5px;color:#9aa3ad;line-height:1.7;border-top:1px dashed var(--line);padding-top:12px;margin-top:6px}
+  .badge{font-size:11px;padding:1px 7px;border-radius:6px;background:#eef1f6;color:var(--sub);margin-left:6px}
+  .hero{background:linear-gradient(135deg,#2b3578,#4b5bd6);color:#fff;border-radius:14px;padding:18px 20px;margin-bottom:16px}
+  .hero .big{font-size:30px;font-weight:800}
+  .hero .lab{opacity:.85;font-size:13px}
+  .hero .row3{display:flex;gap:26px;margin-top:14px;flex-wrap:wrap}
+  .hero .row3 div span{display:block}
+  .hero .row3 .n{font-size:20px;font-weight:700}
+  .hero .row3 .c{font-size:12px;opacity:.8}
+  .sigline{display:flex;align-items:center;gap:10px;font-size:13px;margin:6px 0}
+  .meter{height:10px;flex:1;background:#eef1f6;border-radius:6px;overflow:hidden}
+  .meter>i{display:block;height:100%}
+  .note{font-size:12px;background:#f7f9ff;border:1px solid #e3e8fb;border-radius:9px;padding:10px 12px;color:#41506b;line-height:1.6}
+  .hidden{display:none}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+  .chip{padding:6px 12px;border-radius:20px;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:12.5px;color:var(--sub)}
+  .chip.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+  .src{font-size:11px;color:#9aa3ad;margin-top:6px}
+  .chat{display:flex;flex-direction:column;gap:10px;max-height:380px;overflow-y:auto;padding:12px;background:#f7f9ff;border:1px solid #e3e8fb;border-radius:12px;margin:6px 0 4px}
+  .msg{padding:10px 13px;border-radius:12px;font-size:13.5px;line-height:1.65;max-width:88%;white-space:pre-wrap;word-break:break-word}
+  .msg.user{align-self:flex-end;background:var(--brand);color:#fff;border-bottom-right-radius:3px}
+  .msg.bot{align-self:flex-start;background:#fff;border:1px solid var(--line);border-bottom-left-radius:3px}
+  .qchip{padding:6px 12px;border-radius:20px;border:1px dashed var(--brand);background:#fff;cursor:pointer;font-size:12.5px;color:var(--brand)}
+  .qchip:hover{background:#eef1ff}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <h1>基金交易判断工作台</h1>
+  <span class="tag">金融服务 · 场景 #28</span>
+  <span class="spacer"></span>
+  <span class="date" id="todayDate"></span>
+</div>
+<div class="banner">
+  <b>⚠️ 数据为示例（演示用，非真实行情）。</b>本工作台内置的基金净值、估值分位、恐贪指数等均为<b>虚构示例</b>，仅用于展示判断框架与交互逻辑。接入实时数据请配置数据源（天天基金 / 蛋卷基金 / 通达信 MCP 等公开接口），替换 <code>FUNDS</code> / <code>MARKET</code> 数据层即可。
+</div>
+
+<div class="layout">
+  <div class="side">
+    <button class="navbtn active" data-view="overview"><span class="ic">📊</span>概览仪表盘</button>
+    <button class="navbtn" data-view="screener"><span class="ic">🔎</span>基金筛选器</button>
+    <button class="navbtn" data-view="decision"><span class="ic">⚖️</span>买卖判断</button>
+    <button class="navbtn" data-view="dca"><span class="ic">📅</span>定投计算器</button>
+    <button class="navbtn" data-view="portfolio"><span class="ic">🧩</span>持仓诊断</button>
+    <button class="navbtn" data-view="tstrategy"><span class="ic">🔁</span>做T思路</button>
+    <button class="navbtn" data-view="advisor"><span class="ic">💬</span>AI 顾问</button>
+  </div>
+  <div class="main" id="main"></div>
+</div>
+
+<script>
+/* =================== 数据层（示例/可替换） =================== */
+/* 注意：以下均为虚构示例数据，仅供演示判断框架。
+   真实接入时，将 FUNDS 替换为实时接口返回的数组、MARKET 替换为实时市场温度即可。 */
+const MARKET = {
+  fearGreed: 38,        // 恐贪指数 0-100（越低越恐惧=机会）
+  fgLabel: "恐惧",
+  pePercentile: 31,     // 全市场 PE 历史分位 %
+  peLabel: "偏低",
+  bondYield: 1.95,      // 十年国债收益率 %
+  erp: "偏高",          // 股权风险溢价
+  breadth: 0.46         // 涨跌家数比（示例）
+};
+
+// 估值分位 valuationPct 仅对指数/宽基/QDII 类有意义；主动/债基可留 null
+const FUNDS = [
+  {code:"000961",name:"沪深300指数增强A",type:"指数",nav:2.184,ytd:0.061,oneY:0.084,threeY:0.121,maxDD:-0.182,sharpe:0.71,valuationPct:34,maTrend:"震荡偏多",sentiment:42,dcaRef:0.093,tradable:true,amplitude:1.2,liquidity:35,spread:2},
+  {code:"012708",name:"中证红利低波ETF联接A",type:"指数",nav:1.642,ytd:0.094,oneY:0.112,threeY:0.158,maxDD:-0.121,sharpe:0.88,valuationPct:22,maTrend:"多头",sentiment:38,dcaRef:0.107,tradable:true,amplitude:0.9,liquidity:8,spread:5},
+  {code:"007464",name:"创业板50ETF联接A",type:"指数",nav:1.205,ytd:-0.073,oneY:-0.061,threeY:-0.044,maxDD:-0.341,sharpe:0.18,valuationPct:18,maTrend:"震荡偏空",sentiment:30,dcaRef:0.126,tradable:true,amplitude:2.4,liquidity:22,spread:3},
+  {code:"270042",name:"纳斯达克100QDII_A",type:"QDII",nav:3.671,ytd:0.182,oneY:0.214,threeY:0.276,maxDD:-0.228,sharpe:0.92,valuationPct:71,maTrend:"多头",sentiment:62,dcaRef:0.061,tradable:true,amplitude:1.8,liquidity:18,spread:4},
+  {code:"015763",name:"同业存单AAA指数7天",type:"货基",nav:1.083,ytd:0.014,oneY:0.022,threeY:0.071,maxDD:-0.003,sharpe:9.9,valuationPct:null,maTrend:"多头",sentiment:50,dcaRef:0.018,tradable:false,amplitude:0,liquidity:0,spread:0},
+  {code:"003376",name:"中长债优选债券A",type:"债基",nav:1.412,ytd:0.038,oneY:0.052,threeY:0.142,maxDD:-0.041,sharpe:2.1,valuationPct:null,maTrend:"多头",sentiment:48,dcaRef:0.044,tradable:false,amplitude:0,liquidity:0,spread:0},
+  {code:"001550",name:"医药健康主题主动",type:"主动",nav:1.876,ytd:-0.041,oneY:-0.028,threeY:0.055,maxDD:-0.392,sharpe:0.31,valuationPct:null,maTrend:"震荡",sentiment:34,dcaRef:0.118,tradable:false,amplitude:0,liquidity:0,spread:0},
+  {code:"000083",name:"消费蓝筹主题主动",type:"主动",nav:2.933,ytd:0.022,oneY:0.017,threeY:0.098,maxDD:-0.268,sharpe:0.55,valuationPct:null,maTrend:"震荡偏多",sentiment:46,dcaRef:0.084,tradable:false,amplitude:0,liquidity:0,spread:0},
+  {code:"000216",name:"黄金ETF联接A",type:"商品",nav:2.456,ytd:0.163,oneY:0.241,threeY:0.312,maxDD:-0.131,sharpe:1.05,valuationPct:68,maTrend:"多头",sentiment:58,dcaRef:0.072,tradable:true,amplitude:1.5,liquidity:25,spread:2},
+  {code:"011608",name:"科创50ETF联接A",type:"指数",nav:0.968,ytd:-0.051,oneY:-0.033,threeY:-0.022,maxDD:-0.298,sharpe:0.24,valuationPct:27,maTrend:"震荡",sentiment:36,dcaRef:0.134,tradable:true,amplitude:2.6,liquidity:20,spread:3}
+];
+
+const TREND_MAP = {"多头":92,"震荡偏多":76,"震荡":55,"震荡偏空":34,"空头":14};
+const TYPE_COLOR = {"指数":"#3b4cca","主动":"#7048e8","债基":"#0ca678","QDII":"#e8590c","货基":"#868e96","商品":"#f59f00"};
+
+/* =================== 判断引擎 =================== */
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+
+function scoreFund(f){
+  // 1) 估值分位：越低越便宜→得分越高（债基/货基用中性 60）
+  const valScore = f.valuationPct==null ? 60 : (100 - f.valuationPct);
+  // 2) 趋势强度：均线多头/空头
+  const trendScore = TREND_MAP[f.maTrend] ?? 55;
+  // 3) 回撤控制：最大回撤越小越好
+  const ddScore = clamp(100 - Math.abs(f.maxDD)*1.6, 0, 100);
+  // 4) 定投性价比：估值低+已充分回调=高（用 dcaRef 反向映射）
+  const dcaScore = clamp(60 + (f.dcaRef - 0.08)*220, 0, 100);
+  // 5) 情绪背离：恐贪越低=越恐惧=潜在机会（反转视角）
+  const sentScore = clamp(100 - (f.sentiment-30)*1.6, 0, 100);
+  const total = Math.round(valScore*0.30 + trendScore*0.22 + ddScore*0.13 + dcaScore*0.17 + sentScore*0.18);
+  let signal, sigClass;
+  if(total>=72){signal="买入";sigClass="p-buy";}
+  else if(total>=60){signal="定投";sigClass="p-dca";}
+  else if(total>=48){signal="持有";sigClass="p-hold";}
+  else if(total>=38){signal="观望";sigClass="p-watch";}
+  else {signal="减仓";sigClass="p-sell";}
+  return {valScore:Math.round(valScore),trendScore,ddScore:Math.round(ddScore),dcaScore:Math.round(dcaScore),sentScore:Math.round(sentScore),total,signal,sigClass};
+}
+
+// 做T 适合度评分：仅场内可T品种参与；振幅(45%)+流动性(30%)+价差(25%)
+function scoreT(f){
+  if(!f.tradable) return {tradable:false};
+  const ampScore = clamp((f.amplitude-0.5)/2.5*100,0,100);     // 日均振幅 0.5%~3%
+  const liqScore = clamp(Math.log10(f.liquidity+1)/2*100,0,100); // 成交额(亿)
+  const spreadScore = clamp(100 - f.spread*8,0,100);           // 买卖价差 bps
+  const total = Math.round(ampScore*0.45 + liqScore*0.30 + spreadScore*0.25);
+  const level = total>=70?"高":total>=45?"中":"低";
+  return {tradable:true,ampScore:Math.round(ampScore),liqScore:Math.round(liqScore),spreadScore:Math.round(spreadScore),total,level};
+}
+
+// 生成示例分时序列（V 型：先低后高，演示做T机会），仅供演示
+function intradaySeries(f){
+  let seed=0; for(const ch of f.code) seed+=ch.charCodeAt(0);
+  let r=seed%9973; const rand=()=>{r=(r*9301+49297)%233280;return r/233280;};
+  const n=240; const base=f.nav;
+  const prices=[]; let p=base;
+  for(let i=0;i<n;i++){
+    const t=i/n;
+    // 形态：开盘小幅高开→10:30 探底→午后回升→尾盘接近开盘
+    const shape = 1 + 0.012*Math.sin(t*Math.PI*2) - 0.020*Math.exp(-Math.pow((t-0.22)/0.10,2)) + 0.018*Math.exp(-Math.pow((t-0.85)/0.12,2));
+    p = base*shape*(1+(rand()-0.5)*0.004);
+    prices.push(p);
+  }
+  // 分时均线（累计均值）
+  const avg=[]; let sum=0;
+  for(let i=0;i<n;i++){sum+=prices[i];avg.push(sum/(i+1));}
+  const support=Math.min.apply(null,prices)*1.001;
+  const resist=Math.max.apply(null,prices)*0.999;
+  const prevClose=base;
+  const xData=prices.map((_,i)=>{const m=9+Math.floor(i/60);const s=(i%60);return (m<10?"0":"")+m+":"+(s<10?"0":"")+s;});
+  return {prices,avg,support,resist,prevClose,xData};
+}
+
+function pct(v){return (v*100).toFixed(1)+"%";}
+function fmtNav(v){return v.toFixed(3);}
+function retClass(v){return v>=0?"up":"down";}
+function retStr(v){return (v>=0?"+":"")+(v*100).toFixed(1)+"%";}
+
+// 生成可复现的示例净值序列（用于走势图/定投，仅供演示）
+function seededSeries(f,months){
+  let seed = 0; for(const ch of f.code) seed += ch.charCodeAt(0);
+  let r = seed % 9973;
+  const rand = ()=>{ r = (r*9301+49297)%233280; return r/233280; };
+  const arr=[]; let nav=f.nav;
+  const drift = (f.threeY/3)/12; // 月漂移
+  arr.push({m:0,nav:nav});
+  for(let i=1;i<=months;i++){
+    const noise=(rand()-0.5)*0.06;
+    nav = nav*(1+drift+noise);
+    arr.push({m:i,nav:nav});
+  }
+  return arr;
+}
+
+/* =================== 视图渲染 =================== */
+const views = {
+  overview(){return overviewHTML();},
+  screener(){return screenerHTML();},
+  decision(){return decisionHTML();},
+  dca(){return dcaHTML();},
+  portfolio(){return portfolioHTML();},
+  tstrategy(){return tstrategyHTML();},
+  advisor(){return advisorHTML();}
+};
+
+function overviewHTML(){
+  const scored = FUNDS.map(f=>({f,s:scoreFund(f)}));
+  const buyCount = scored.filter(x=>x.s.signal==="买入").length;
+  const dcaCount = scored.filter(x=>x.s.signal==="定投").length;
+  const fg = MARKET.fearGreed;
+  const fgColor = fg<40?"var(--down)":fg<60?"var(--hold)":"var(--up)";
+  let rows = scored.sort((a,b)=>b.s.total-a.s.total).map(x=>`
+    <tr>
+      <td><b>${x.f.name}</b><div class="muted" style="font-size:11px">${x.f.code} · ${x.f.type}</div></td>
+      <td class="${retClass(x.f.ytd)}">${retStr(x.f.ytd)}</td>
+      <td class="${retClass(x.f.oneY)}">${retStr(x.f.oneY)}</td>
+      <td class="muted">${(x.f.maxDD*100).toFixed(1)}%</td>
+      <td>${x.f.valuationPct==null?"—":x.f.valuationPct+"%"}</td>
+      <td><span class="meter"><i style="width:${x.s.total}%;background:${sigColor(x.s.signal)}"></i></span><span style="margin-left:8px;font-size:12px">${x.s.total}</span></td>
+      <td><span class="pill ${x.s.sigClass}">${x.s.signal}</span></td>
+    </tr>`).join("");
+
+  let html = `
+  <div class="hero">
+    <div class="lab">市场温度（示例）</div>
+    <div class="big">恐贪指数 ${fg} · ${MARKET.fgLabel}</div>
+    <div class="row3">
+      <div><span class="n">${MARKET.pePercentile}%</span><span class="c">全市场PE分位 · ${MARKET.peLabel}</span></div>
+      <div><span class="n">${MARKET.bondYield}%</span><span class="c">十年国债收益率</span></div>
+      <div><span class="n">${MARKET.erp}</span><span class="c">股权风险溢价</span></div>
+      <div><span class="n">${buyCount} / ${dcaCount}</span><span class="c">买入 / 定投信号数</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span class="dot"></span>自选基金信号总览</h2>
+    <div class="note" style="margin-bottom:12px">综合评分 = 估值分位(30%) + 趋势强度(22%) + 回撤控制(13%) + 定投性价比(17%) + 情绪背离(18%)。恐贪低位、估值偏低时更利于左侧布局；趋势多头时右侧确认更稳。</div>
+    <div style="overflow-x:auto">
+    <table>
+      <thead><tr><th>基金</th><th>今年以来</th><th>近1年</th><th>最大回撤</th><th>估值分位</th><th>综合评分</th><th>信号</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    </div>
+    <div class="legend">
+      <span><i class="sw" style="background:#2f9e44"></i>买入</span>
+      <span><i class="sw" style="background:#1971c2"></i>定投</span>
+      <span><i class="sw" style="background:#f08c00"></i>持有</span>
+      <span><i class="sw" style="background:#868e96"></i>观望</span>
+      <span><i class="sw" style="background:#e03131"></i>减仓</span>
+    </div>
+    <div class="src">数据：示例数据（演示）· 时点：页面加载日</div>
+  </div>`;
+  return html;
+}
+
+function sigColor(sig){
+  return sig==="买入"?"#2f9e44":sig==="定投"?"#1971c2":sig==="持有"?"#f08c00":sig==="观望"?"#868e96":"#e03131";
+}
+
+/* =================== AI 智能搜索（本地语义解析，规则引擎） =================== */
+/* 解析自然语言查询为筛选条件；同时兼容精确名称/代码匹配。无需联网、无 API Key。 */
+function parseNL(q){
+  q=q.toLowerCase();
+  const crit=[];
+  let type=null,signal=null;
+  if(q.includes("指数")||q.includes("etf")) type="指数";
+  else if(q.includes("债")||q.includes("债券")) type="债基";
+  else if(q.includes("货基")||q.includes("货币")) type="货基";
+  else if(q.includes("黄金")||q.includes("商品")) type="商品";
+  else if(q.includes("qdii")||q.includes("纳指")||q.includes("纳斯达克")) type="QDII";
+  else if(q.includes("主动")) type="主动";
+  if(type) crit.push("类型="+type);
+  ["买入","定投","持有","观望","减仓"].forEach(s=>{ if(q.includes(s)) signal=s; });
+  if(signal) crit.push("信号="+signal);
+  if(/低估|便宜|低估值/.test(q)) crit.push("估值分位<40");
+  if(/高估|偏贵|贵/.test(q)) crit.push("估值分位>70");
+  if(/稳健|回撤小|波动小|低风险|安全/.test(q)) crit.push("最大回撤>-15%");
+  if(/夏普高|高夏普/.test(q)) crit.push("夏普>0.8");
+  if(/高收益|涨得好|表现好|赚钱|向上/.test(q)) crit.push("近1年>0");
+  if(/亏损|下跌|套牢|跌多|走弱/.test(q)) crit.push("近1年<0");
+  if(/做t|波动大|振幅大|日内|t\+0/.test(q)) crit.push("可场内做T");
+  return {q,type,signal,crit};
+}
+function rowMatch(f,p){
+  if(p.type && f.type!==p.type) return false;
+  if(p.signal){ const sc=scoreFund(f); if(sc.signal!==p.signal) return false; }
+  if(/低估|便宜|低估值/.test(p.q) && !(f.valuationPct!=null&&f.valuationPct<40)) return false;
+  if(/高估|偏贵|贵/.test(p.q) && !(f.valuationPct!=null&&f.valuationPct>70)) return false;
+  if(/稳健|回撤小|波动小|低风险|安全/.test(p.q) && !(f.maxDD>-0.15)) return false;
+  if(/夏普高|高夏普/.test(p.q) && !(f.sharpe>0.8)) return false;
+  if(/高收益|涨得好|表现好|赚钱|向上/.test(p.q) && !(f.oneY>0)) return false;
+  if(/亏损|下跌|套牢|跌多|走弱/.test(p.q) && !(f.oneY<0)) return false;
+  if(/做t|波动大|振幅大|日内|t\+0/.test(p.q) && !f.tradable) return false;
+  return true;
+}
+
+function screenerHTML(){
+  const types = ["全部","指数","主动","债基","QDII","货基","商品"];
+  const sigs = ["全部","买入","定投","持有","观望","减仓"];
+  let typeChips = types.map((t,i)=>`<span class="chip ${i===0?'on':''}" data-type="${t}">${t}</span>`).join("");
+  let sigChips = sigs.map((s,i)=>`<span class="chip ${i===0?'on':''}" data-sig="${s}">${s}</span>`).join("");
+  let rows = FUNDS.map(f=>{const s=scoreFund(f);return {f,s};}).map(x=>`
+    <tr data-type="${x.f.type}" data-sig="${x.s.signal}" data-code="${x.f.code}">
+      <td><b>${x.f.name}</b><div class="muted" style="font-size:11px">${x.f.code}</div></td>
+      <td><span class="pill" style="background:${TYPE_COLOR[x.f.type]}22;color:${TYPE_COLOR[x.f.type]}">${x.f.type}</span></td>
+      <td>${fmtNav(x.f.nav)}</td>
+      <td class="${retClass(x.f.ytd)}">${retStr(x.f.ytd)}</td>
+      <td class="${retClass(x.f.oneY)}">${retStr(x.f.oneY)}</td>
+      <td class="muted">${(x.f.maxDD*100).toFixed(1)}%</td>
+      <td>${x.f.sharpe.toFixed(2)}</td>
+      <td><span class="pill ${x.s.sigClass}">${x.s.signal}</span></td>
+      <td>${x.s.total}</td>
+    </tr>`).join("");
+
+  return `
+  <div class="card">
+    <h2><span class="dot"></span>基金筛选器</h2>
+    <div class="field"><label>🤖 AI 智能搜索（自然语言 / 名称 / 代码）</label><input type="text" id="scrSearch" placeholder="试试：低估值指数、适合做T、稳健高夏普、纳指买入、黄金" style="width:100%;max-width:420px"></div>
+    <div class="field"><label>按类型</label><div class="chips" id="typeChips">${typeChips}</div></div>
+    <div class="field"><label>按信号</label><div class="chips" id="sigChips">${sigChips}</div></div>
+    <div class="note" id="scrCount">说明：筛选条件为前端即时过滤，便于快速锁定"低估值 + 强信号"的候选标的。搜索框可与其他条件叠加。示例数据不含规模/费率等字段，真实接入时可在此扩展。</div>
+    <div style="overflow-x:auto;margin-top:12px">
+    <table id="scrTable">
+      <thead><tr><th>基金</th><th>类型</th><th>单位净值</th><th>今年以来</th><th>近1年</th><th>最大回撤</th><th>夏普</th><th>信号</th><th>评分</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    </div>
+    <div class="src">数据：示例数据（演示）</div>
+  </div>`;
+}
+
+function decisionHTML(){
+  const opts = FUNDS.map(f=>`<option value="${f.code}">${f.name}（${f.code}）</option>`).join("");
+  return `
+  <div class="card">
+    <h2><span class="dot"></span>买卖判断 · 多因子决策</h2>
+    <div class="row" style="margin-bottom:14px">
+      <div class="field"><label>选择基金</label><select id="decSelect">${opts}</select></div>
+    </div>
+    <div id="decBody"></div>
+    <div class="src">数据：示例数据（演示）· 决策逻辑基于 trade-plan 框架（交易位置/分仓/止损/失效条件）</div>
+  </div>`;
+}
+
+function renderDecision(code){
+  const f = FUNDS.find(x=>x.code===code);
+  const s = scoreFund(f);
+  const ser = seededSeries(f,48);
+  const navData = ser.map(p=>p.nav.toFixed(3));
+  const xData = ser.map(p=>"M"+(p.m));
+  const totalColor = sigColor(s.signal);
+
+  // 趋势位置判断
+  let position;
+  if(f.maTrend==="多头"&&f.valuationPct!=null&&f.valuationPct<40) position="趋势上行 + 估值偏低：右侧确认兼具性价比";
+  else if(f.maTrend==="多头") position="趋势多头但估值不低：顺势持有，避免追高";
+  else if(f.maTrend==="震荡偏空"||f.maTrend==="空头") position="趋势偏弱 + 估值偏低：左侧埋伏区，适合定投而非一把梭";
+  else position="震荡格局：等待方向选择，轻仓观察";
+
+  // 分仓建议
+  const plan = s.total>=72
+    ? ["试错仓 20%：首次回踩不破支撑","确认仓 +30%：放量突破前高","加仓仓 +30%：趋势延续","总仓可达 80%（需大盘配合）"]
+    : s.total>=60
+    ? ["底仓 30%：分批定投建仓","每下跌 5% 加 10%","目标定投周期 12-24 个月"]
+    : s.total>=48
+    ? ["持有现有仓位，不新增","设置回撤 -8% 预警"]
+    : ["仅观察，暂不加仓","若已持有，反弹至成本附近减仓"];
+
+  const stop = f.maxDD<-0.25 ? "技术止损：跌破近 20 日低点或回撤超 -12%" : "幅度止损：回撤超 -8% 减半";
+  const invalid = ["趋势反转（均线死叉确认）","估值快速拉升至高估区（分位>80%）","基本面/政策催化证伪","放量滞涨、资金大幅流出"];
+
+  const bars = [
+    ["估值分位",s.valScore],
+    ["趋势强度",s.trendScore],
+    ["回撤控制",s.ddScore],
+    ["定投性价比",s.dcaScore],
+    ["情绪背离",s.sentScore]
+  ].map(b=>`<div class="sigline"><span style="width:90px">${b[0]}</span><span class="meter"><i style="width:${b[1]}%;background:${totalColor}"></i></span><b style="width:34px;text-align:right">${b[1]}</b></div>`).join("");
+
+  const html = `
+  <div class="row" style="align-items:stretch;gap:16px;flex-wrap:wrap">
+    <div class="card" style="flex:1;min-width:280px;margin:0">
+      <h2><span class="dot"></span>综合评分</h2>
+      <div style="display:flex;align-items:center;gap:18px">
+        <div style="font-size:46px;font-weight:800;color:${totalColor}">${s.total}</div>
+        <div>
+          <span class="pill ${s.sigClass}" style="font-size:13px">${s.signal}信号</span>
+          <div class="muted" style="margin-top:8px;font-size:12px">${position}</div>
+        </div>
+      </div>
+      <div style="margin-top:14px">${bars}</div>
+    </div>
+    <div class="card" style="flex:2;min-width:340px;margin:0">
+      <h2><span class="dot"></span>净值走势（示例）</h2>
+      <div id="navChart" style="width:100%;height:300px"></div>
+    </div>
+  </div>
+
+  <div class="grid g3" style="margin-top:16px">
+    <div class="card" style="margin:0"><h2><span class="dot"></span>分仓路径</h2><div class="grow">${plan.map(p=>"• "+p).join("<br>")}</div></div>
+    <div class="card" style="margin:0"><h2><span class="dot"></span>止损规则</h2><div class="grow">${stop}<br><br><b>失效条件（触发器）：</b><br>${invalid.map(v=>"✕ "+v).join("<br>")}</div></div>
+    <div class="card" style="margin:0"><h2><span class="dot"></span>关键指标</h2>
+      <div class="grow">
+        单位净值：${fmtNav(f.nav)}<br>
+        今年以来：<span class="${retClass(f.ytd)}">${retStr(f.ytd)}</span><br>
+        近1年：<span class="${retClass(f.oneY)}">${retStr(f.oneY)}</span><br>
+        最大回撤：${(f.maxDD*100).toFixed(1)}%<br>
+        夏普比率：${f.sharpe.toFixed(2)}<br>
+        估值分位：${f.valuationPct==null?"不适用":f.valuationPct+"%"}<br>
+        均线状态：${f.maTrend}
+      </div>
+    </div>
+  </div>
+
+  <div class="note" style="margin-top:14px"><b>框架要点：</b>买入前先确认"交易位置 + 分仓路径 + 止损 + 失效条件"四件套；环境不支持（大盘弱势/板块退潮）时敢于降仓或放弃。定投优先用于"估值低但趋势未明"的品种，避免一次性押注。</div>`;
+
+  // 渲染图表
+  setTimeout(()=>{
+    const el = document.getElementById("navChart");
+    if(!el || typeof echarts==="undefined") return;
+    const chart = echarts.init(el);
+    chart.setOption({
+      tooltip:{trigger:"axis"},
+      grid:{left:48,right:16,top:20,bottom:30},
+      xAxis:{type:"category",data:xData,axisLabel:{interval:11}},
+      yAxis:{type:"value",scale:true},
+      series:[{type:"line",data:navData,smooth:true,showSymbol:false,
+        lineStyle:{color:totalColor,width:2},
+        areaStyle:{color:totalColor,opacity:0.08}}]
+    });
+  },30);
+  return html;
+}
+
+function dcaHTML(){
+  const opts = FUNDS.map(f=>`<option value="${f.code}">${f.name}（${f.code}）</option>`).join("");
+  const today = new Date();
+  const defStart = new Date(today.getFullYear()-2, today.getMonth(), 1);
+  const defStartStr = defStart.toISOString().slice(0,10);
+  return `
+  <div class="card">
+    <h2><span class="dot"></span>定投计算器（微笑曲线）</h2>
+    <div class="row">
+      <div class="field"><label>基金</label><select id="dcaFund">${opts}</select></div>
+      <div class="field"><label>每月定投金额(元)</label><input type="number" id="dcaAmt" value="1000" min="100" step="100"></div>
+      <div class="field"><label>起始日期</label><input type="date" id="dcaStart" value="${defStartStr}"></div>
+      <div class="field"><label>&nbsp;</label><button class="btn" id="dcaBtn">计算</button></div>
+    </div>
+    <div class="note" style="margin-top:6px">说明：按"每月月末以示例净值买入"模拟定投，演示微笑曲线效应——净值先跌后涨时，累计份额成本被摊低，回升后收益放大。示例数据，非真实回测。</div>
+    <div id="dcaResult" style="margin-top:14px"></div>
+    <div class="src">数据：示例数据（演示）</div>
+  </div>`;
+}
+
+function renderDca(){
+  const code = document.getElementById("dcaFund").value;
+  const amt = parseFloat(document.getElementById("dcaAmt").value)||1000;
+  const start = document.getElementById("dcaStart").value;
+  const f = FUNDS.find(x=>x.code===code);
+  const ser = seededSeries(f,48);
+  // 只取起始日期之后的月份序列（简化：用前 36 个月模拟）
+  const months = ser.slice(1,37);
+  let invested=0, units=0;
+  const points=[];
+  months.forEach((p,i)=>{
+    invested += amt;
+    units += amt/p.nav;
+    const value = units*p.nav;
+    points.push({i,nav:p.nav,inv:invested,val:value});
+  });
+  const last = points[points.length-1];
+  const value = last.val;
+  const profit = value - invested;
+  const ret = profit/invested;
+  // 年化（按 3 年）
+  const years = points.length/12;
+  const annual = Math.pow(1+ret, 1/years)-1;
+  const avgCost = invested/units;
+
+  // 图表：投入成本线 vs 市值线
+  const x = points.map(p=>"M"+p.i);
+  const invArr = points.map(p=>p.inv.toFixed(0));
+  const valArr = points.map(p=>p.val.toFixed(0));
+
+  const html = `
+  <div class="grid g4">
+    <div class="kpi"><div class="lab">累计投入</div><div class="val">¥${invested.toLocaleString()}</div></div>
+    <div class="kpi"><div class="lab">当前市值</div><div class="val">¥${value.toLocaleString()}</div></div>
+    <div class="kpi"><div class="lab">累计收益</div><div class="val ${profit>=0?'up':'down'}">${profit>=0?'+':''}¥${profit.toLocaleString()}</div><div class="sub ${profit>=0?'up':'down'}">${retStr(ret)}</div></div>
+    <div class="kpi"><div class="lab">年化收益</div><div class="val ${annual>=0?'up':'down'}">${retStr(annual)}</div><div class="sub muted">平均成本 ${avgCost.toFixed(3)}</div></div>
+  </div>
+  <div class="card" style="margin-top:14px"><h2><span class="dot"></span>定投累计成本 vs 市值</h2>
+    <div id="dcaChart" style="width:100%;height:320px"></div>
+  </div>
+  <div class="note">解读：净值先下行时坚持定投可积累廉价份额（份额成本 <b>${avgCost.toFixed(3)}</b>），待净值回升越过成本线即进入盈利区。定投的核心是用纪律对抗"追涨杀跌"。</div>`;
+
+  setTimeout(()=>{
+    const el=document.getElementById("dcaChart");
+    if(!el||typeof echarts==="undefined") return;
+    const chart=echarts.init(el);
+    chart.setOption({
+      tooltip:{trigger:"axis"},
+      legend:{data:["累计投入","当前市值"]},
+      grid:{left:56,right:16,top:36,bottom:30},
+      xAxis:{type:"category",data:x,axisLabel:{interval:5}},
+      yAxis:{type:"value",name:"元"},
+      series:[
+        {name:"累计投入",type:"line",data:invArr,step:"end",showSymbol:false,lineStyle:{color:"#868e96",type:"dashed"}},
+        {name:"当前市值",type:"line",data:valArr,smooth:true,showSymbol:false,lineStyle:{color:"#2f9e44",width:2},
+          areaStyle:{color:"#2f9e44",opacity:0.08}}
+      ]
+    });
+  },30);
+  return html;
+}
+
+function portfolioHTML(){
+  // 示例持仓（用户可替换为真实持仓）
+  const holdings = [
+    {code:"000961",name:"沪深300指数增强A",type:"指数",weight:0.22},
+    {code:"012708",name:"中证红利低波",type:"指数",weight:0.18},
+    {code:"003376",name:"中长债优选债券",type:"债基",weight:0.20},
+    {code:"015763",name:"同业存单AAA",type:"货基",weight:0.12},
+    {code:"270042",name:"纳斯达克100QDII",type:"QDII",weight:0.15},
+    {code:"000216",name:"黄金ETF联接",type:"商品",weight:0.08},
+    {code:"001550",name:"医药健康主题",type:"主动",weight:0.05}
+  ];
+  const totalW = holdings.reduce((a,b)=>a+b.weight,0);
+  // 类型分布
+  const byType={};
+  holdings.forEach(h=>{byType[h.type]=(byType[h.type]||0)+h.weight;});
+  const typeData = Object.keys(byType).map(k=>({name:k,value:+(byType[k]/totalW*100).toFixed(1)}));
+  // 评分
+  const scored = holdings.map(h=>{const f=FUNDS.find(x=>x.code===h.code);return {h,f,s:scoreFund(f)};});
+  // 集中度 HHI
+  const hhi = holdings.reduce((a,b)=>a+Math.pow(b.weight*100,2),0);
+  let layerRows = scored.map(x=>{
+    let layer = x.s.total>=60?"进攻核心仓": x.s.total>=48?"稳定器仓": x.s.total>=38?"观察仓":"问题仓/拖累项";
+    const lc = layer==="进攻核心仓"?"#2f9e44":layer==="稳定器仓"?"#1971c2":layer==="观察仓"?"#f08c00":"#e03131";
+    return `<tr><td><b>${x.h.name}</b></td><td>${(x.h.weight*100).toFixed(0)}%</td><td><span class="pill ${x.s.sigClass}">${x.s.signal}</span></td><td><span class="pill" style="background:${lc}1a;color:${lc}">${layer}</span></td></tr>`;
+  }).join("");
+
+  let typePieData = typeData.map(t=>`<span><i class="sw" style="background:${TYPE_COLOR[t.name]}"></i>${t.name} ${t.value}%</span>`).join("　");
+
+  const exposureNote = hhi>2000 ? "集中度偏高（HHI>"+Math.round(hhi)+"），前几大持仓权重过重，回撤风险集中。" : "持仓分散度尚可（HHI="+Math.round(hhi)+"）。";
+  const advice = [
+    "权益类（指数+主动+QDII）占比约 "+(byType["指数"]+byType["主动"]+byType["QDII"]).toFixed(0)+"%，剩余为债基/货基/商品做稳定器。",
+    "红利低波+中长债构成「压舱石」，权益端注意单一赛道（医药）暴露偏小、弹性有限。",
+    "调整优先级：先评估信号最弱的问题仓→再优化重复暴露→最后考虑加配低估值指数（如创业板/科创）。",
+    "总仓位：示例组合权益 6 成，属中性偏积极，需结合大盘温度（恐贪 "+MARKET.fearGreed+"）动态调节。"
+  ].join("<br>");
+
+  return `
+  <div class="card">
+    <h2><span class="dot"></span>持仓诊断（示例组合）</h2>
+    <div class="note" style="margin-bottom:12px">以下为内置示例持仓，仅用于演示组合体检框架（组合画像→风险暴露→持仓分层→调整优先级）。使用时将 <code>holdings</code> 替换为你的真实持仓即可。</div>
+    <div class="grid g2">
+      <div class="card" style="margin:0"><h2><span class="dot"></span>资产类型分布</h2><div id="pieChart" style="width:100%;height:280px"></div><div class="legend">${typePieData}</div></div>
+      <div class="card" style="margin:0"><h2><span class="dot"></span>组合画像</h2>
+        <div class="grow">
+          <div class="sigline"><span style="width:80px">持仓数量</span><b>${holdings.length} 只</b></div>
+          <div class="sigline"><span style="width:80px">集中度HHI</span><b>${Math.round(hhi)}</b></div>
+          <div class="sigline"><span style="width:80px">权益占比</span><b>${(byType["指数"]+byType["主动"]+byType["QDII"]).toFixed(0)}%</b></div>
+          <div class="sigline"><span style="width:80px">稳定器</span><b>${(byType["债基"]+byType["货基"]+byType["商品"]||0).toFixed(0)}%</b></div>
+          <div class="grow" style="margin-top:8px;color:#41506b">${exposureNote}</div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px"><h2><span class="dot"></span>持仓分层与信号</h2>
+      <div style="overflow-x:auto"><table>
+        <thead><tr><th>持仓</th><th>权重</th><th>基金信号</th><th>组合定位</th></tr></thead>
+        <tbody>${layerRows}</tbody>
+      </table></div>
+    </div>
+    <div class="card" style="margin-top:14px"><h2><span class="dot"></span>调整建议</h2><div class="grow">${advice}</div></div>
+    <div class="src">数据：示例数据（演示）· 框架：portfolio-checkup（组合视角）</div>
+  </div>`;
+}
+
+function tstrategyHTML(){
+  const offCount = FUNDS.filter(f=>!f.tradable).length;
+  let rows = FUNDS.map(f=>{
+    const t=scoreT(f);
+    if(!t.tradable) return `<tr><td><b>${f.name}</b><div class="muted" style="font-size:11px">${f.code}</div></td><td><span class="pill" style="background:#f0f2f5;color:#868e96">场外</span></td><td class="muted">—</td><td class="muted">—</td><td class="muted">—</td><td class="muted">不可做T</td></tr>`;
+    const lv = t.level==="高"?{c:"#2f9e44",bg:"#e6f7ec"}:t.level==="中"?{c:"#f08c00",bg:"#fff2dc"}:{c:"#868e96",bg:"#f0f2f5"};
+    return `<tr data-code="${f.code}"><td><b>${f.name}</b><div class="muted" style="font-size:11px">${f.code} · 场内</div></td><td><span class="meter"><i style="width:${t.total}%;background:${lv.c}"></i></span><span style="margin-left:8px;font-size:12px">${t.total}</span></td><td>${f.amplitude}%</td><td>${f.liquidity}亿</td><td>${f.spread}bps</td><td><span class="pill" style="background:${lv.bg};color:${lv.c}">${t.level}</span></td></tr>`;
+  }).join("");
+  const opts = FUNDS.filter(f=>f.tradable).map(f=>`<option value="${f.code}">${f.name}（${f.code}）</option>`).join("");
+
+  return `
+  <div class="card">
+    <h2><span class="dot"></span>做T 适用度总览</h2>
+    <div class="note" style="margin-bottom:12px"><b>做T（T+0）本质</b>：在已有底仓前提下，同一交易日买入并卖出同等数量，保持总持仓不变，赚取日内波动差价。仅<b>场内 ETF/LOF</b> 可操作（T+1 的场外基金无法当日回转）。评分 = 日均振幅(45%) + 流动性(30%) + 买卖价差(25%)。本页 ${offCount} 只场外基金不可做T。</div>
+    <div style="overflow-x:auto">
+    <table>
+      <thead><tr><th>基金</th><th>适合度评分</th><th>日均振幅</th><th>成交额</th><th>买卖价差</th><th>做T适合度</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    </div>
+    <div class="legend"><span><i class="sw" style="background:#2f9e44"></i>高（振幅大+流动性好）</span><span><i class="sw" style="background:#f08c00"></i>中</span><span><i class="sw" style="background:#868e96"></i>低</span></div>
+  </div>
+
+  <div class="card">
+    <h2><span class="dot"></span>做T 思路推演</h2>
+    <div class="row" style="margin-bottom:14px">
+      <div class="field"><label>选择场内基金</label><select id="tSelect">${opts}</select></div>
+    </div>
+    <div id="tBody"></div>
+    <div class="src">数据：示例数据（演示）· 分时线为示例形态，非真实行情</div>
+  </div>`;
+}
+
+function renderT(code){
+  const f = FUNDS.find(x=>x.code===code);
+  const d = intradaySeries(f);
+  const t = scoreT(f);
+  const lot = 10000;
+  const commission = Math.max(lot*0.0001,5)*2;
+  const breakPct = (commission/lot*100).toFixed(2);
+  const suggestPct = (breakPct*2.5).toFixed(2);
+  const lvColor = t.level==="高"?"#2f9e44":t.level==="中"?"#f08c00":"#868e96";
+
+  const html = `
+  <div class="row" style="align-items:stretch;gap:16px;flex-wrap:wrap">
+    <div class="card" style="flex:2;min-width:340px;margin:0">
+      <h2><span class="dot"></span>分时示意图（示例 V 型）</h2>
+      <div id="tChart" style="width:100%;height:320px"></div>
+      <div class="legend"><span><i class="sw" style="background:rgba(47,158,68,0.3)"></i>买区（探底）</span><span><i class="sw" style="background:rgba(224,49,49,0.28)"></i>卖区（冲高）</span><span><i class="sw" style="background:#f08c00"></i>分时均线</span><span><i class="sw" style="background:#868e96"></i>昨收</span></div>
+    </div>
+    <div class="card" style="flex:1;min-width:260px;margin:0">
+      <h2><span class="dot"></span>做T 适合度</h2>
+      <div style="font-size:40px;font-weight:800;color:${lvColor}">${t.level}</div>
+      <div class="muted" style="margin-bottom:8px">评分 ${t.total} · 日均振幅 ${f.amplitude}% · 成交额 ${f.liquidity}亿 · 价差 ${f.spread}bps</div>
+      <div class="sigline"><span style="width:70px">振幅</span><span class="meter"><i style="width:${t.ampScore}%;background:#3b4cca"></i></span><b style="width:30px;text-align:right">${t.ampScore}</b></div>
+      <div class="sigline"><span style="width:70px">流动性</span><span class="meter"><i style="width:${t.liqScore}%;background:#3b4cca"></i></span><b style="width:30px;text-align:right">${t.liqScore}</b></div>
+      <div class="sigline"><span style="width:70px">价差</span><span class="meter"><i style="width:${t.spreadScore}%;background:#3b4cca"></i></span><b style="width:30px;text-align:right">${t.spreadScore}</b></div>
+    </div>
+  </div>
+
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card" style="margin:0"><h2><span class="dot"></span>正向T（先买后卖）</h2>
+      <div class="grow">
+        <b>适用：</b>判断日内低点、账户有可用资金。<br>
+        <b>触发：</b>分时回踩支撑（绿线）且不破 + 缩量企稳。<br>
+        <b>动作：</b>买入 ≤1/3 可操作量 → 拉升至阻力/均线附近卖出同等数量。<br>
+        <b>纪律：</b>跌破支撑 -0.5% 立即回补，不做成加仓；单日 ≤2 笔。
+      </div>
+    </div>
+    <div class="card" style="margin:0"><h2><span class="dot"></span>反向T（先卖后买）</h2>
+      <div class="grow">
+        <b>适用：</b>判断日内高点、账户有底仓。<br>
+        <b>触发：</b>冲高至阻力（红线）+ 放量滞涨 / 顶背离。<br>
+        <b>动作：</b>卖出 ≤1/3 底仓 → 回落至均线/支撑买回同等数量。<br>
+        <b>纪律：</b>当日必须回补，避免变减仓；踏空不追，等下一日。
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:14px"><h2><span class="dot"></span>成本测算（示例）</h2>
+    <div class="grid g4">
+      <div class="kpi"><div class="lab">每手金额</div><div class="val">¥${lot.toLocaleString()}</div></div>
+      <div class="kpi"><div class="lab">双边佣金</div><div class="val">¥${commission.toFixed(0)}</div><div class="sub muted">万1·最低5元·ETF免印花税</div></div>
+      <div class="kpi"><div class="lab">覆盖佣金需价差</div><div class="val">${breakPct}%</div></div>
+      <div class="kpi"><div class="lab">建议最小价差</div><div class="val up">≥${suggestPct}%</div><div class="sub muted">含冲击/滑点缓冲</div></div>
+    </div>
+    <div class="note" style="margin-top:10px">解读：做T 单笔价差需先覆盖<b>双边佣金+冲击成本</b>才划算。低振幅/高佣金品种（如价差 &lt; ${suggestPct}%）频繁做T 反而被摩擦蚕食，建议只做高适合度（高/中）品种，且单日不超过 2 笔。</div>
+  </div>`;
+
+  setTimeout(()=>{
+    const el=document.getElementById("tChart");
+    if(!el||typeof echarts==="undefined") return;
+    const chart=echarts.init(el);
+    chart.setOption({
+      tooltip:{trigger:"axis"},
+      grid:{left:52,right:16,top:24,bottom:30},
+      xAxis:{type:"category",data:d.xData,axisLabel:{interval:39}},
+      yAxis:{type:"value",scale:true},
+      series:[
+        {name:"分时",type:"line",data:d.prices.map(v=>v.toFixed(4)),showSymbol:false,lineStyle:{color:"#3b4cca",width:1.5},
+          markLine:{silent:true,symbol:"none",data:[
+            {yAxis:+d.resist.toFixed(4),lineStyle:{color:"#e03131"},label:{formatter:"阻力",color:"#e03131"}},
+            {yAxis:+d.support.toFixed(4),lineStyle:{color:"#2f9e44"},label:{formatter:"支撑",color:"#2f9e44"}},
+            {yAxis:+d.prevClose.toFixed(4),lineStyle:{color:"#868e96",type:"dashed"},label:{formatter:"昨收",color:"#868e96"}}
+          ]},
+          markArea:{silent:true,data:[
+            [{yAxis:+d.support.toFixed(4),itemStyle:{color:"rgba(47,158,68,0.14)"}},{yAxis:+(d.support*1.012).toFixed(4)}],
+            [{yAxis:+(d.resist*0.988).toFixed(4),itemStyle:{color:"rgba(224,49,49,0.12)"}},{yAxis:+d.resist.toFixed(4)}]
+          ]}
+        },
+        {name:"分时均线",type:"line",data:d.avg.map(v=>v.toFixed(4)),showSymbol:false,lineStyle:{color:"#f08c00",width:1,type:"dashed"}}
+      ]
+    });
+  },30);
+  return html;
+}
+
+/* =================== AI 顾问（通义千问，前端 Key，OpenAI 兼容） =================== */
+function loadAdvisorCfg(){try{return JSON.parse(localStorage.getItem("wbAdvisorCfg")||"{}");}catch(e){return {};}}
+function buildAdvisorSystem(){
+  const lines=FUNDS.map(f=>{const s=scoreFund(f);return `- ${f.code} ${f.name}｜类型:${f.type}｜净值:${f.nav}｜今年以来:${(f.ytd*100).toFixed(1)}%｜近1年:${(f.oneY*100).toFixed(1)}%｜最大回撤:${(f.maxDD*100).toFixed(1)}%｜夏普:${f.sharpe}｜估值分位:${f.valuationPct==null?"无":f.valuationPct}｜趋势:${f.maTrend}｜信号:${s.signal}${f.tradable?"｜可做T":""}`;}).join("\n");
+  return `你是一个严谨的基金投资顾问（仅限演示框架，数据均为虚构示例）。以下是可供推荐的基金库：\n${lines}\n\n规则：\n1. 只能基于上述基金库推荐，不要编造库外基金。\n2. 结合用户需求（风险偏好、期限、目标）给出 1-3 只具体基金代码+名称，并说明依据（估值分位、回撤、夏普、信号、做T 等）。\n3. 主动提示风险与适配场景，不承诺收益。\n4. 简洁、有条理，用中文回答。`;
+}
+function advisorHTML(){
+  const cfg=loadAdvisorCfg();
+  const modelOpts=["qwen-plus","qwen-turbo","qwen-max","qwen-long"].map(m=>`<option ${m===(cfg.model||"qwen-plus")?"selected":""}>${m}</option>`).join("");
+  const sugs=["帮我选一只适合现在定投的低估值指数基金","波动大、适合做T的有哪些","稳健型、回撤小的买什么","对比沪深300和纳指现在哪个更值得配"];
+  return `
+  <div class="card">
+    <h2><span class="dot"></span>💬 AI 顾问 · 对话式选基</h2>
+    <div class="note">由<b>通义千问（阿里云）</b>驱动。API Key 仅存于本浏览器 <code>localStorage</code>，<b>不会写入源码或上传</b>。基于当前示例基金库回答，仅供框架演示，不构成投资建议。</div>
+    <div class="row" style="gap:12px;flex-wrap:wrap;align-items:flex-end;margin:10px 0">
+      <div class="field"><label>API Key（DashScope）</label><input type="password" id="advKey" placeholder="sk-..." value="${cfg.key||""}" style="width:260px"></div>
+      <div class="field"><label>模型</label><select id="advModel">${modelOpts}</select></div>
+      <div class="field"><label>Base URL（OpenAI 兼容）</label><input type="text" id="advBase" value="${cfg.base||"https://dashscope.aliyuncs.com/compatible-mode/v1"}" style="width:360px"></div>
+      <button class="btn" id="advSave">保存配置</button><span id="advSaveOk" class="muted"></span>
+    </div>
+    <div id="advChat" class="chat"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0">
+      ${sugs.map(s=>`<span class="qchip" data-q="${s}">${s}</span>`).join("")}
+    </div>
+    <div class="row" style="gap:10px;align-items:flex-end">
+      <div class="field" style="flex:1"><label>你的问题（大白话即可）</label><textarea id="advInput" rows="2" placeholder="例如：我风险偏好低，想买点能长期拿、回撤小的"></textarea></div>
+      <button class="btn" id="advSend">发送</button>
+    </div>
+    <div class="src">数据：示例基金库（演示）· 模型：通义千问 OpenAI 兼容接口 · Key 本地存储</div>
+  </div>`;
+}
+async function advisorSend(text){
+  const chat=document.getElementById("advChat");
+  text=(text||"").trim(); if(!text) return;
+  const cfg=loadAdvisorCfg();
+  const u=document.createElement("div"); u.className="msg user"; u.textContent=text; chat.appendChild(u);
+  const inp=document.getElementById("advInput"); if(inp) inp.value="";
+  if(!cfg.key){ const b=document.createElement("div"); b.className="msg bot"; b.textContent="⚠️ 请先在上方填写并保存通义千问 API Key（DashScope）。"; chat.appendChild(b); chat.scrollTop=chat.scrollHeight; return; }
+  const ph=document.createElement("div"); ph.className="msg bot"; ph.textContent="🤖 思考中…"; chat.appendChild(ph); chat.scrollTop=chat.scrollHeight;
+  try{
+    const sys=buildAdvisorSystem();
+    const resp=await fetch((cfg.base||"https://dashscope.aliyuncs.com/compatible-mode/v1").replace(/\/$/,"")+"/chat/completions",{
+      method:"POST",
+      headers:{"Content-Type":"application/json","Authorization":"Bearer "+cfg.key},
+      body:JSON.stringify({model:cfg.model||"qwen-plus",messages:[{role:"system",content:sys},{role:"user",content:text}],temperature:0.3,max_tokens:900})
+    });
+    if(!resp.ok){ const t=await resp.text(); ph.textContent="⚠️ 接口返回 "+resp.status+"："+t.slice(0,300); chat.scrollTop=chat.scrollHeight; return; }
+    const data=await resp.json();
+    const ans=(data.choices&&data.choices[0]&&data.choices[0].message&&data.choices[0].message.content)||"（空回复）";
+    ph.textContent=ans;
+  }catch(e){
+    ph.textContent="⚠️ 调用失败："+e.message+"。若为 CORS / 跨域错误，说明该接口不允许浏览器直连——需改用代理后端，或将 Base URL 指向一个带 CORS 转发的代理。";
+  }
+  chat.scrollTop=chat.scrollHeight;
+}
+function bindAdvisor(){
+  const save=document.getElementById("advSave");
+  save.addEventListener("click",()=>{
+    const c={key:document.getElementById("advKey").value.trim(),model:document.getElementById("advModel").value,base:document.getElementById("advBase").value.trim()};
+    localStorage.setItem("wbAdvisorCfg",JSON.stringify(c));
+    const ok=document.getElementById("advSaveOk"); ok.textContent="已保存 ✓"; setTimeout(()=>{ok.textContent="";},2200);
+  });
+  document.querySelectorAll("[data-q]").forEach(c=>c.addEventListener("click",()=>advisorSend(c.getAttribute("data-q"))));
+  document.getElementById("advSend").addEventListener("click",()=>advisorSend(document.getElementById("advInput").value));
+  const inp=document.getElementById("advInput");
+  inp.addEventListener("keydown",e=>{ if(e.key==="Enter"&&!e.shiftKey){ e.preventDefault(); advisorSend(inp.value);} });
+}
+
+/* =================== 事件绑定 =================== */
+function bindEvents(){
+  document.querySelectorAll(".navbtn").forEach(b=>{
+    b.addEventListener("click",()=>{
+      document.querySelectorAll(".navbtn").forEach(x=>x.classList.remove("active"));
+      b.classList.add("active");
+      const v=b.dataset.view;
+      document.getElementById("main").innerHTML = views[v]();
+      if(v==="decision"){const sel=document.getElementById("decSelect");sel.addEventListener("change",()=>document.getElementById("decBody").innerHTML=renderDecision(sel.value));document.getElementById("decBody").innerHTML=renderDecision(sel.value);}
+      if(v==="dca"){document.getElementById("dcaBtn").addEventListener("click",()=>document.getElementById("dcaResult").innerHTML=renderDca());document.getElementById("dcaResult").innerHTML=renderDca();}
+      if(v==="tstrategy"){const sel=document.getElementById("tSelect");sel.addEventListener("change",()=>document.getElementById("tBody").innerHTML=renderT(sel.value));document.getElementById("tBody").innerHTML=renderT(sel.value);}
+      if(v==="screener"){bindScreener();}
+      if(v==="advisor"){bindAdvisor();}
+    });
+  });
+}
+
+function bindScreener(){
+  const tc=document.getElementById("typeChips");
+  const sc=document.getElementById("sigChips");
+  const sb=document.getElementById("scrSearch");
+  const cnt=document.getElementById("scrCount");
+  function filter(){
+    const t=tc.querySelector(".on").dataset.type;
+    const s=sc.querySelector(".on").dataset.sig;
+    const raw=(sb.value||"").trim();
+    const q=raw.toLowerCase();
+    const p=parseNL(q);
+    const nlSpec=p.crit.length>0;
+    let n=0;
+    document.querySelectorAll("#scrTable tbody tr").forEach(tr=>{
+      const f=FUNDS.find(x=>x.code===tr.dataset.code);
+      const chipOk=(t==="全部"||tr.dataset.type===t)&&(s==="全部"||tr.dataset.sig===s);
+      const exact=(f.name+' '+f.code).toLowerCase().includes(q);
+      const nlOk=nlSpec?rowMatch(f,p):false;
+      const searchOk=(q==="")?true:(exact||nlOk);
+      const ok=chipOk&&searchOk;
+      tr.style.display=ok?"":"none";
+      if(ok)n++;
+    });
+    let head="";
+    if(q!==""){
+      if(nlSpec) head=`🤖 AI 解读：筛选条件 → ${p.crit.join("，")} · 命中 ${n} 只 · `;
+      else head=`🔍 精确匹配 “${raw}” · 命中 ${n} 只 · `;
+    }
+    cnt.innerHTML = head+`筛选条件为前端即时过滤，可与类型/信号叠加。示例数据不含规模/费率等字段，真实接入时可在此扩展。`;
+  }
+  tc.querySelectorAll(".chip").forEach(c=>c.addEventListener("click",()=>{tc.querySelectorAll(".chip").forEach(x=>x.classList.remove("on"));c.classList.add("on");filter();}));
+  sc.querySelectorAll(".chip").forEach(c=>c.addEventListener("click",()=>{sc.querySelectorAll(".chip").forEach(x=>x.classList.remove("on"));c.classList.add("on");filter();}));
+  sb.addEventListener("input",filter);
+}
+
+/* =================== 启动 =================== */
+document.getElementById("todayDate").textContent = "日期：" + new Date().toLocaleDateString("zh-CN");
+document.getElementById("main").innerHTML = views.overview();
+bindEvents();
+</script>
+
+<div class="disc" style="padding:14px 22px">
+  ⚠️ <b>免责声明</b>：本工作台为工具原型，内置基金净值、估值分位、恐贪指数等均为<b>虚构示例数据</b>，仅用于演示判断框架与交互逻辑，不构成任何投资建议、理财建议或交易邀约。市场有风险，投资需谨慎。任何投资决策应结合个人风险承受能力、资金状况和投资目标独立判断，必要时咨询持牌专业机构。过往业绩不预示未来收益。接入真实数据前，请勿依据本页任何数字做出交易决定。
+</div>
+</body>
+</html>

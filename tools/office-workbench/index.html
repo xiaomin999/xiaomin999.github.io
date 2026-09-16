@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>个人办公台</title>
+<style>
+  :root{
+    --primary:#0f766e;
+    --primary-light:#14b8a6;
+    --accent:#0891b2;
+    --bg:#ffffff;
+    --panel:#f8fafc;
+    --panel-2:#f1f5f9;
+    --border:#e5e7eb;
+    --text:#0f172a;
+    --muted:#64748b;
+    --danger:#dc2626;
+    --warn:#d97706;
+    --ok:#16a34a;
+    --hi:#dc2626;
+    --mid:#d97706;
+    --lo:#0891b2;
+    --radius:14px;
+    --shadow:0 1px 3px rgba(15,23,42,.06),0 1px 2px rgba(15,23,42,.04);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
+    color:var(--text);
+    background:var(--bg);
+    font-size:15px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  button{font-family:inherit;cursor:pointer;border:none;background:none}
+  input,select,textarea{font-family:inherit;font-size:16px;color:var(--text)}
+  a{color:var(--primary)}
+
+  /* ===== Top bar ===== */
+  .topbar{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:12px 20px;background:#fff;border-bottom:1px solid var(--border);
+    position:sticky;top:0;z-index:30;flex-wrap:wrap;
+  }
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px;color:var(--primary)}
+  .brand svg{width:26px;height:26px}
+  .actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .meta-count{font-size:13px;color:var(--muted);margin-right:4px;white-space:nowrap}
+  .btn{
+    display:inline-flex;align-items:center;gap:6px;
+    height:40px;padding:0 14px;border-radius:10px;font-size:14px;font-weight:600;
+    background:var(--panel-2);color:var(--text);border:1px solid var(--border);
+    transition:.15s;white-space:nowrap;
+  }
+  .btn svg{width:16px;height:16px}
+  .btn:hover{background:#e2e8f0}
+  .btn-primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+  .btn-primary:hover{background:#0d665f}
+  .btn-danger{background:#fff;color:var(--danger);border-color:#fecaca}
+  .btn-danger:hover{background:#fef2f2}
+  .btn-ghost{background:transparent;border-color:transparent;color:var(--muted)}
+  .btn-ghost:hover{background:var(--panel-2)}
+  .btn-sm{height:34px;padding:0 10px;font-size:13px;border-radius:8px}
+
+  /* ===== Banner (inline SVG, royalty-free, subtle) ===== */
+  .banner{height:84px;width:100%;display:block;background:linear-gradient(120deg,#0f766e,#0891b2)}
+
+  /* ===== Layout ===== */
+  .layout{display:flex;min-height:calc(100vh - 84px - 65px);align-items:stretch}
+  .sidebar{
+    width:210px;flex-shrink:0;background:#fff;border-right:1px solid var(--border);
+    padding:16px 12px;display:flex;flex-direction:column;gap:4px;position:sticky;top:65px;height:fit-content;
+  }
+  .nav-item{
+    display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:10px;
+    color:var(--muted);font-weight:600;font-size:14px;transition:.15s;text-align:left;width:100%;
+  }
+  .nav-item svg{width:18px;height:18px;flex-shrink:0}
+  .nav-item:hover{background:var(--panel-2);color:var(--text)}
+  .nav-item.active{background:var(--primary);color:#fff}
+  .nav-item .nav-badge{margin-left:auto;background:var(--danger);color:#fff;font-size:11px;font-weight:700;
+    min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 5px}
+  .nav-item.active .nav-badge{background:rgba(255,255,255,.25)}
+
+  .content{flex:1;padding:20px;max-width:1080px;width:100%}
+  @media(min-width:1200px){.content{margin:0 auto}}
+
+  /* ===== Today zone ===== */
+  .today-zone{
+    background:#fff;border:1px solid var(--border);border-left:4px solid var(--danger);
+    border-radius:var(--radius);padding:16px 18px;margin-bottom:22px;box-shadow:var(--shadow);
+  }
+  .today-zone h2{font-size:15px;display:flex;align-items:center;gap:8px;color:var(--text);margin-bottom:10px}
+  .today-zone h2 svg{width:18px;height:18px;color:var(--danger)}
+  .today-empty{color:var(--ok);display:flex;align-items:center;gap:8px;font-weight:600}
+  .today-empty svg{width:18px;height:18px}
+  .tz-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px dashed var(--border)}
+  .tz-item:first-of-type{border-top:none}
+  .tz-tag{font-size:11px;font-weight:700;color:#fff;background:var(--danger);padding:2px 7px;border-radius:6px;flex-shrink:0}
+  .tz-tag.proj{background:var(--warn)}
+  .tz-body{flex:1;min-width:0}
+  .tz-title{font-weight:600;color:var(--danger);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .tz-sub{font-size:12px;color:var(--muted)}
+  .tz-defer{color:var(--primary);font-weight:600;font-size:13px;flex-shrink:0}
+
+  /* ===== Views ===== */
+  .view{display:none;animation:fade .2s ease}
+  .view.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .view-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+  .view-head h1{font-size:20px;font-weight:700}
+  .view-head p{font-size:13px;color:var(--muted);margin-top:2px}
+  .card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+  .section-title{font-size:14px;font-weight:700;color:var(--muted);margin:20px 0 10px;display:flex;align-items:center;gap:8px}
+  .section-title .cnt{font-size:12px;background:var(--panel-2);color:var(--muted);padding:1px 8px;border-radius:8px;font-weight:600}
+
+  /* ===== Forms ===== */
+  .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;align-items:end}
+  .field{display:flex;flex-direction:column;gap:5px}
+  .field label{font-size:12px;font-weight:600;color:var(--muted)}
+  .field input,.field select,.field textarea{
+    border:1px solid var(--border);border-radius:10px;padding:10px 12px;background:#fff;width:100%;outline:none;transition:.15s;
+  }
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(15,118,110,.12)}
+  .field textarea{resize:vertical;min-height:64px}
+  .form-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+  .editing-hint{font-size:12px;color:var(--accent);font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+
+  /* ===== Todo items ===== */
+  .todo{display:flex;align-items:flex-start;gap:12px;padding:12px;border:1px solid var(--border);border-radius:12px;background:#fff;margin-bottom:10px;transition:.15s}
+  .todo:hover{border-color:#cbd5e1}
+  .todo.late{border-left:4px solid var(--danger);background:#fffafa}
+  .todo.done{opacity:.6}
+  .chk{width:22px;height:22px;border-radius:7px;border:2px solid var(--border);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;background:#fff;transition:.15s}
+  .chk svg{width:14px;height:14px;color:#fff;opacity:0}
+  .todo.done .chk{background:var(--ok);border-color:var(--ok)}
+  .todo.done .chk svg{opacity:1}
+  .todo-main{flex:1;min-width:0}
+  .todo-title{font-weight:600;word-break:break-word}
+  .todo.done .todo-title{text-decoration:line-through;color:var(--muted)}
+  .todo-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;align-items:center}
+  .pill{font-size:11px;font-weight:700;padding:2px 8px;border-radius:7px}
+  .pill.hi{background:#fee2e2;color:var(--hi)}
+  .pill.mid{background:#fef3c7;color:var(--mid)}
+  .pill.lo{background:#e0f2fe;color:var(--lo)}
+  .pill.date{background:var(--panel-2);color:var(--muted)}
+  .pill.proj{background:#ccfbf1;color:var(--primary)}
+  .pill.defer{background:#fef2f2;color:var(--danger);border:1px solid #fecaca}
+  .todo-actions{display:flex;gap:4px;flex-shrink:0;align-items:center}
+  .icon-btn{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:.15s}
+  .icon-btn svg{width:16px;height:16px}
+  .icon-btn:hover{background:var(--panel-2);color:var(--text)}
+  .icon-btn.del:hover{background:#fef2f2;color:var(--danger)}
+  .icon-btn.defer{color:var(--primary);font-weight:700;font-size:12px;width:auto;padding:0 8px}
+
+  .empty-state{text-align:center;color:var(--muted);padding:30px 10px;font-size:14px}
+
+  /* ===== Notes ===== */
+  .tag-filter{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+  .tag-chip{font-size:13px;padding:5px 12px;border-radius:20px;background:var(--panel-2);color:var(--muted);border:1px solid var(--border);font-weight:600}
+  .tag-chip.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+  .note{background:#fff;border:1px solid var(--border);border-radius:12px;padding:13px 15px;margin-bottom:10px}
+  .note-content{white-space:pre-wrap;word-break:break-word}
+  .note-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .note-tag{font-size:11px;font-weight:600;color:var(--accent);background:#ecfeff;padding:2px 8px;border-radius:6px}
+  .note-foot{display:flex;align-items:center;justify-content:space-between;margin-top:8px;font-size:12px;color:var(--muted)}
+
+  /* ===== Projects ===== */
+  .proj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+  .proj{background:#fff;border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:10px}
+  .proj.stuck{border-left:4px solid var(--warn)}
+  .proj-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+  .proj-name{font-size:16px;font-weight:700}
+  .proj-row{font-size:13px;color:var(--text)}
+  .proj-row .k{color:var(--muted);font-weight:600;margin-right:4px}
+  .proj-blocker{font-size:13px;background:#fffbeb;border:1px solid #fde68a;color:var(--warn);padding:8px 10px;border-radius:8px}
+  .proj-blocker b{color:var(--warn)}
+  .proj-prog{display:flex;align-items:center;gap:12px;margin-top:4px}
+  .ring{width:46px;height:46px;flex-shrink:0}
+  .ring-txt{font-size:11px;font-weight:700;fill:var(--primary)}
+  .prog-info{font-size:13px;color:var(--muted)}
+  .prog-info b{color:var(--text)}
+  .proj-todos{display:flex;flex-direction:column;gap:4px;margin-top:2px}
+  .proj-todo{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
+  .proj-todo .dot{width:7px;height:7px;border-radius:50%;background:var(--border);flex-shrink:0}
+  .proj-todo.done .dot{background:var(--ok)}
+  .proj-todo.done{color:var(--ok);text-decoration:line-through}
+  .proj-actions{display:flex;gap:6px;margin-top:4px}
+
+  /* ===== Review ===== */
+  .stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:20px}
+  .stat{background:#fff;border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:var(--shadow)}
+  .stat .n{font-size:28px;font-weight:800;color:var(--primary);line-height:1}
+  .stat .l{font-size:13px;color:var(--muted);margin-top:6px}
+  .chart-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+  .chart-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:var(--shadow)}
+  .chart-card h3{font-size:14px;margin-bottom:12px;color:var(--text)}
+  .chart{width:100%;height:auto;display:block}
+  .chart-val{font-size:11px;font-weight:700;fill:var(--text)}
+  .chart-cat{font-size:10px;fill:var(--muted)}
+  .donut-wrap{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .donut{width:150px;height:150px;flex-shrink:0}
+  .donut-num{font-size:22px;font-weight:800;fill:var(--text)}
+  .donut-cap{font-size:11px;fill:var(--muted)}
+  .legend{display:flex;flex-direction:column;gap:6px;font-size:13px}
+  .legend .li{display:flex;align-items:center;gap:8px}
+  .legend .sw{width:11px;height:11px;border-radius:3px;flex-shrink:0}
+  .blocker-list{display:flex;flex-direction:column;gap:8px}
+  .blocker-item{background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:10px 12px;font-size:13px}
+  .blocker-item b{color:var(--warn)}
+
+  /* ===== Reminder banner ===== */
+  .reminder{background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:12px 16px;margin-bottom:18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .reminder svg{width:20px;height:20px;color:var(--warn);flex-shrink:0}
+  .reminder .txt{flex:1;font-size:13px;color:#92400e;min-width:200px}
+  .reminder .txt b{color:var(--warn)}
+
+  /* ===== Bottom nav (mobile) ===== */
+  .bottomnav{display:none}
+
+  /* ===== Toast ===== */
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#0f172a;color:#fff;
+    padding:10px 18px;border-radius:10px;font-size:14px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:50}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* ===== Confirm modal (no native dialog) ===== */
+  .modal-mask{position:fixed;inset:0;background:rgba(15,23,42,.45);display:flex;align-items:center;justify-content:center;z-index:60;padding:20px}
+  .modal-mask[hidden]{display:none}
+  .modal{background:#fff;border-radius:16px;padding:22px;max-width:380px;width:100%;box-shadow:0 12px 44px rgba(0,0,0,.22);animation:fade .15s ease}
+  .modal-msg{font-size:15px;font-weight:600;line-height:1.55;margin-bottom:20px}
+  .modal-actions{display:flex;gap:10px;justify-content:flex-end}
+  .modal-actions .btn{height:44px;min-width:92px;justify-content:center}
+  @media(max-width:768px){
+    .modal-actions{flex-direction:column-reverse}
+    .modal-actions .btn{width:100%}
+  }
+
+  /* ===== Responsive ===== */
+  @media(max-width:768px){
+    .topbar{padding:10px 14px;gap:8px}
+    .brand{font-size:15px}
+    .btn{height:44px;padding:0 12px}
+    .btn span.txt{display:none}
+    .btn svg{width:18px;height:18px}
+    .meta-count{width:100%;order:3;margin:2px 0 0}
+    .banner{height:60px}
+    .layout{flex-direction:column;min-height:auto}
+    .sidebar{display:none}
+    .content{padding:14px 14px 90px}
+    .view-head h1{font-size:18px}
+    .bottomnav{
+      display:flex;position:fixed;bottom:0;left:0;right:0;z-index:40;
+      background:#fff;border-top:1px solid var(--border);
+      padding:6px 4px calc(6px + env(safe-area-inset-bottom));
+      box-shadow:0 -2px 10px rgba(15,23,42,.06);
+    }
+    .bottomnav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+      padding:6px 2px;border-radius:10px;color:var(--muted);font-size:11px;font-weight:600;position:relative;min-height:44px;justify-content:center}
+    .bottomnav button svg{width:20px;height:20px}
+    .bottomnav button.active{color:var(--primary);background:#f0fdfa}
+    .bottomnav .nav-badge{position:absolute;top:2px;right:50%;margin-right:-22px;background:var(--danger);color:#fff;
+      font-size:10px;font-weight:700;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 4px}
+    .form-grid{grid-template-columns:1fr}
+    .proj-grid{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 4v16"/><path d="M13 13l2 2 3-3" stroke="var(--primary-light)"/></svg>
+    个人办公台
+  </div>
+  <div class="actions">
+    <span class="meta-count" id="metaCount">数据 0 条</span>
+    <button class="btn btn-primary" onclick="exportData()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+      <span class="txt">导出备份</span>
+    </button>
+    <button class="btn" onclick="document.getElementById('importFile').click()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 8l5-5 5 5M12 3v12"/></svg>
+      <span class="txt">导入</span>
+    </button>
+    <button class="btn btn-danger" onclick="clearSamples()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
+      <span class="txt">清空示例</span>
+    </button>
+    <input type="file" id="importFile" accept="application/json,.json" hidden onchange="importData(event)">
+  </div>
+</header>
+
+<svg class="banner" viewBox="0 0 1200 84" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0f766e"/><stop offset="1" stop-color="#0891b2"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="84" fill="url(#bg)"/>
+  <g fill="none" stroke="#ffffff" stroke-opacity="0.12" stroke-width="1.5">
+    <circle cx="120" cy="42" r="46"/><circle cx="120" cy="42" r="30"/><circle cx="120" cy="42" r="14"/>
+    <circle cx="1080" cy="42" r="52"/><circle cx="1080" cy="42" r="34"/><circle cx="1080" cy="42" r="16"/>
+    <path d="M300 84 Q420 10 540 84"/><path d="M640 84 Q760 10 880 84"/>
+  </g>
+  <g fill="#ffffff" fill-opacity="0.10">
+    <rect x="420" y="30" width="10" height="10" rx="2"/><rect x="450" y="46" width="10" height="10" rx="2"/>
+    <rect x="700" y="24" width="10" height="10" rx="2"/><rect x="730" y="52" width="10" height="10" rx="2"/>
+    <rect x="980" y="40" width="8" height="8" rx="2"/>
+  </g>
+</svg>
+
+<div class="layout">
+  <aside class="sidebar">
+    <button class="nav-item" data-view="todos" onclick="go('todos')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      今日待办 <span class="nav-badge" id="navTodos">0</span>
+    </button>
+    <button class="nav-item" data-view="notes" onclick="go('notes')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+      灵感速记
+    </button>
+    <button class="nav-item" data-view="projects" onclick="go('projects')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-7l-2-2H5a2 2 0 0 0-2 2Z"/></svg>
+      项目跟进
+    </button>
+    <button class="nav-item" data-view="review" onclick="go('review')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg>
+      每周复盘
+    </button>
+  </aside>
+
+  <main class="content">
+    <div id="reminderSlot"></div>
+
+    <!-- 今天要处理 -->
+    <section class="today-zone" id="todayZone">
+      <h2>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg>
+        今天要处理
+      </h2>
+      <div id="todayBody"></div>
+    </section>
+
+    <!-- 今日待办 -->
+    <section class="view active" id="view-todos">
+      <div class="view-head">
+        <div><h1>今日待办</h1><p>填任务、选轻重缓急、设截止日期；过期标红可一键顺延，未来任务按日期分组。</p></div>
+      </div>
+      <div class="card">
+        <div id="todoFormHint"></div>
+        <div class="form-grid">
+          <div class="field" style="grid-column:1/-1">
+            <label>任务内容</label>
+            <input id="todoTitle" placeholder="例如：整理 Q3 季度汇报" maxlength="120">
+          </div>
+          <div class="field">
+            <label>轻重缓急</label>
+            <select id="todoPriority">
+              <option value="hi">高</option>
+              <option value="mid" selected>中</option>
+              <option value="lo">低</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>截止日期</label>
+            <input id="todoDeadline" type="date">
+          </div>
+          <div class="field">
+            <label>关联项目（可选）</label>
+            <select id="todoProject"><option value="">不关联</option></select>
+          </div>
+          <div class="field">
+            <label>&nbsp;</label>
+            <button class="btn btn-primary" style="height:44px" onclick="submitTodo()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+              <span id="todoSubmitTxt">添加任务</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div id="todoGroups"></div>
+    </section>
+
+    <!-- 灵感速记 -->
+    <section class="view" id="view-notes">
+      <div class="view-head">
+        <div><h1>灵感速记</h1><p>随手记想法，打标签、按标签筛选。</p></div>
+      </div>
+      <div class="card">
+        <div id="noteFormHint"></div>
+        <div class="field" style="margin-bottom:10px">
+          <label>想法内容</label>
+          <textarea id="noteContent" placeholder="此刻冒出来的点子、待琢磨的念头……"></textarea>
+        </div>
+        <div class="field">
+          <label>标签（逗号分隔，如：效率, AI）</label>
+          <input id="noteTags" placeholder="效率, AI">
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary" style="height:44px" onclick="submitNote()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+            <span id="noteSubmitTxt">保存速记</span>
+          </button>
+        </div>
+      </div>
+      <div class="tag-filter" id="tagFilter"></div>
+      <div id="noteList"></div>
+    </section>
+
+    <!-- 项目跟进 -->
+    <section class="view" id="view-projects">
+      <div class="view-head">
+        <div><h1>项目跟进</h1><p>记录进度、下一步与卡点；可关联待办，自动显示完成进度。</p></div>
+      </div>
+      <div class="card">
+        <div id="projFormHint"></div>
+        <div class="form-grid">
+          <div class="field" style="grid-column:1/-1">
+            <label>项目名称</label>
+            <input id="projName" placeholder="例如：官网改版" maxlength="60">
+          </div>
+          <div class="field">
+            <label>当前步骤</label>
+            <input id="projStep" placeholder="如：设计稿评审" maxlength="60">
+          </div>
+          <div class="field">
+            <label>下一步</label>
+            <input id="projNext" placeholder="如：开发首页" maxlength="60">
+          </div>
+          <div class="field" style="grid-column:1/-1">
+            <label>卡在哪儿（留空表示顺畅）</label>
+            <input id="projBlocker" placeholder="如：等待设计交付" maxlength="120">
+          </div>
+          <div class="field">
+            <label>&nbsp;</label>
+            <button class="btn btn-primary" style="height:44px" onclick="submitProject()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+              <span id="projSubmitTxt">添加项目</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="proj-grid" id="projGrid" style="margin-top:18px"></div>
+    </section>
+
+    <!-- 每周复盘 -->
+    <section class="view" id="view-review">
+      <div class="view-head">
+        <div><h1>每周复盘</h1><p id="reviewRange"></p></div>
+      </div>
+      <div class="stat-row" id="reviewStats"></div>
+      <div class="chart-grid">
+        <div class="chart-card">
+          <h3>本周完成 · 优先级分布</h3>
+          <div id="prioChart"></div>
+        </div>
+        <div class="chart-card">
+          <h3>精力去向 · 各项目完成量</h3>
+          <div class="donut-wrap" id="projChart"></div>
+        </div>
+      </div>
+      <div class="section-title" style="margin-top:22px">卡点汇总</div>
+      <div id="blockerSummary"></div>
+    </section>
+  </main>
+</div>
+
+<nav class="bottomnav" id="bottomnav">
+  <button data-view="todos" class="active" onclick="go('todos')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+    待办<span class="nav-badge" id="navTodosM">0</span>
+  </button>
+  <button data-view="notes" onclick="go('notes')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+    速记
+  </button>
+  <button data-view="projects" onclick="go('projects')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-7l-2-2H5a2 2 0 0 0-2 2Z"/></svg>
+    项目
+  </button>
+  <button data-view="review" onclick="go('review')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg>
+    复盘
+  </button>
+</nav>
+
+<div class="modal-mask" id="modalMask" hidden onclick="modalNo()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-msg" id="modalMsg"></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="modalNo()">取消</button>
+      <button class="btn btn-danger" id="modalYesBtn" onclick="modalYes()">确定</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============ 数据层 ============ */
+var state={todos:[],notes:[],projects:[]};
+var settings={sampleCleared:false,view:'todos',reminderDismissed:false};
+var editing={todo:null,note:null,project:null};
+var noteFilter='';
+
+function load(){
+  state.todos=JSON.parse(localStorage.getItem('wb_office_todos')||'[]');
+  state.notes=JSON.parse(localStorage.getItem('wb_office_notes')||'[]');
+  state.projects=JSON.parse(localStorage.getItem('wb_office_projects')||'[]');
+  settings=JSON.parse(localStorage.getItem('wb_office_settings')||'{}');
+  var fresh=!localStorage.getItem('wb_office_todos')&&!localStorage.getItem('wb_office_notes')&&!localStorage.getItem('wb_office_projects');
+  if(fresh&&!settings.sampleCleared) seed();
+}
+function save(){
+  localStorage.setItem('wb_office_todos',JSON.stringify(state.todos));
+  localStorage.setItem('wb_office_notes',JSON.stringify(state.notes));
+  localStorage.setItem('wb_office_projects',JSON.stringify(state.projects));
+  localStorage.setItem('wb_office_settings',JSON.stringify(settings));
+  toast('已自动保存');
+}
+function seed(){
+  var y=todayStr(),tm=addDays(y,1),t3=addDays(y,3);
+  state.projects=[
+    {id:uid(),name:'官网改版',step:'设计稿评审',next:'开发首页',blocker:'等待设计交付',createdAt:now()},
+    {id:uid(),name:'客户成功体系搭建',step:'调研竞品',next:'输出方案初稿',blocker:'',createdAt:now()}
+  ];
+  state.todos=[
+    {id:uid(),title:'整理 Q3 季度汇报',priority:'hi',deadline:addDays(y,-1),done:false,doneAt:'',projectId:'',deferCount:0,rolled:false,createdAt:now()},
+    {id:uid(),title:'回复重点客户邮件',priority:'mid',deadline:y,done:false,doneAt:'',projectId:'',deferCount:0,rolled:false,createdAt:now()},
+    {id:uid(),title:'审阅官网设计稿 v2',priority:'hi',deadline:y,done:false,doneAt:'',projectId:state.projects[0].id,deferCount:0,rolled:false,createdAt:now()},
+    {id:uid(),title:'预定下周团队午餐',priority:'lo',deadline:t3,done:false,doneAt:'',projectId:'',deferCount:0,rolled:false,createdAt:now()}
+  ];
+  state.notes=[
+    {id:uid(),content:'可以用 AI 先生成周报初稿，再人工润色，省一半时间。',tags:['效率','AI'],createdAt:now()},
+    {id:uid(),content:'周末想试试公司楼下新开的咖啡馆，顺便梳理下季度目标。',tags:['生活'],createdAt:now()}
+  ];
+  save();
+}
+
+/* ============ 工具 ============ */
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+function now(){return new Date().toISOString();}
+function todayStr(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function addDays(str,n){var d=new Date(str+'T00:00:00');d.setDate(d.getDate()+n);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function dateDiff(a,b){var da=new Date(a+'T00:00:00'),db=new Date(b+'T00:00:00');return Math.round((db-da)/86400000);}
+function fmtMD(str){var p=str.split('-');return (p[1]&&p[2])?(p[1]+'月'+p[2]+'日'):str;}
+function weekStart(){var d=new Date();var day=(d.getDay()+6)%7;d.setDate(d.getDate()-day);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function weekEnd(){var s=new Date(weekStart()+'T00:00:00');s.setDate(s.getDate()+6);return s.getFullYear()+'-'+String(s.getMonth()+1).padStart(2,'0')+'-'+String(s.getDate()).padStart(2,'0');}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]);});}
+function prioLabel(p){return p==='hi'?'高':p==='mid'?'中':'低';}
+function prioColor(p){return p==='hi'?'var(--hi)':p==='mid'?'var(--mid)':'var(--lo)';}
+function projName(id){var p=state.projects.find(function(x){return x.id===id;});return p?p.name:'';}
+
+/* ============ 顺延逻辑 ============ */
+function rollover(){
+  var t=todayStr(),changed=false;
+  state.todos.forEach(function(x){
+    if(!x.done&&x.deadline&&x.deadline<t){
+      var days=dateDiff(x.deadline,t);
+      x.deferCount=(x.deferCount||0)+days;
+      x.deadline=t;x.rolled=true;changed=true;
+    }
+  });
+  if(changed) save();
+}
+function isLate(t){return !t.done&&t.deadline&&t.deadline<=todayStr();}
+
+/* ============ 渲染主函数 ============ */
+function render(){
+  document.getElementById('metaCount').textContent='数据 '+total()+' 条';
+  renderReminder();
+  renderToday();
+  renderTodos();
+  renderNotes();
+  renderProjects();
+  renderReview();
+  updateNavBadges();
+}
+function total(){return state.todos.length+state.notes.length+state.projects.length;}
+
+function renderReminder(){
+  var slot=document.getElementById('reminderSlot');
+  if(total()>=20&&!settings.reminderDismissed){
+    slot.innerHTML='<div class="reminder">'+
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg>'+
+      '<div class="txt">数据已积累 <b>'+total()+' 条</b>，建议点右上角「导出备份」存一份，防止浏览器被清理后丢失。</div>'+
+      '<button class="btn btn-primary btn-sm" onclick="exportData()">立即导出</button>'+
+      '<button class="btn btn-sm" onclick="dismissReminder()">稍后</button>'+
+      '</div>';
+  } else slot.innerHTML='';
+}
+function dismissReminder(){settings.reminderDismissed=true;save();render();}
+
+function renderToday(){
+  var body=document.getElementById('todayBody');
+  var late=state.todos.filter(function(t){return isLate(t);});
+  var stuck=state.projects.filter(function(p){return p.blocker&&p.blocker.trim();});
+  if(!late.length&&!stuck.length){
+    body.innerHTML='<div class="today-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>今天没有紧急事项，保持节奏</div>';
+    return;
+  }
+  var h='';
+  late.forEach(function(t){
+    h+='<div class="tz-item"><span class="tz-tag">逾期</span><div class="tz-body"><div class="tz-title">'+esc(t.title)+'</div>'+
+       '<div class="tz-sub">优先级 '+prioLabel(t.priority)+(t.deferCount?(' · 已顺延 '+t.deferCount+' 次'):'')+(t.projectId?(' · '+esc(projName(t.projectId))):'')+'</div></div>'+
+       '<button class="tz-defer" onclick="deferTodo(\''+t.id+'\')">顺延到明天 →</button></div>';
+  });
+  stuck.forEach(function(p){
+    h+='<div class="tz-item"><span class="tz-tag proj">卡点</span><div class="tz-body"><div class="tz-title" style="color:var(--warn)">'+esc(p.name)+'</div>'+
+       '<div class="tz-sub">卡在：'+esc(p.blocker)+'</div></div>'+
+       '<button class="tz-defer" onclick="go(\'projects\')">查看 →</button></div>';
+  });
+  body.innerHTML=h;
+}
+
+/* ============ 待办 ============ */
+function renderTodos(){
+  // 项目下拉
+  var sel=document.getElementById('todoProject');
+  var cur=sel.value;
+  sel.innerHTML='<option value="">不关联</option>'+state.projects.map(function(p){return '<option value="'+p.id+'">'+esc(p.name)+'</option>';}).join('');
+  if(cur) sel.value=cur;
+
+  var order=['overdue','today','tomorrow','week','later','none','done'];
+  var labels={overdue:'已逾期',today:'今天',tomorrow:'明天',week:'本周内',later:'更晚',none:'无截止日期',done:'已完成'};
+  var groups={};
+  state.todos.forEach(function(t){var b=bucketOf(t);(groups[b]=groups[b]||[]).push(t);});
+  var h='';
+  order.forEach(function(b){
+    var arr=groups[b];if(!arr||!arr.length)return;
+    if(b==='done'){
+      h+='<div class="section-title">'+labels[b]+' <span class="cnt">'+arr.length+'</span></div>';
+      h+=arr.map(todoRow).join('');
+    } else {
+      h+='<div class="section-title">'+labels[b]+' <span class="cnt">'+arr.length+'</span></div>';
+      h+=arr.map(todoRow).join('');
+    }
+  });
+  if(!state.todos.length) h='<div class="empty-state">还没有任务，在上方添加第一条吧。</div>';
+  document.getElementById('todoGroups').innerHTML=h;
+}
+function bucketOf(t){
+  if(t.done)return 'done';
+  if(!t.deadline)return 'none';
+  var t0=todayStr();
+  if(t.deadline<t0)return 'overdue';
+  if(t.deadline===t0)return 'today';
+  if(t.deadline===addDays(t0,1))return 'tomorrow';
+  if(t.deadline<=weekEnd())return 'week';
+  return 'later';
+}
+function todoRow(t){
+  var cls='todo'+(isLate(t)?' late':'')+(t.done?' done':'');
+  var badges='<span class="pill '+t.priority+'">'+prioLabel(t.priority)+'</span>';
+  if(t.deadline) badges+='<span class="pill date">'+fmtMD(t.deadline)+(t.deadline<todayStr()?'（逾期）':'')+'</span>';
+  if(t.projectId) badges+='<span class="pill proj">'+esc(projName(t.projectId))+'</span>';
+  if(t.deferCount) badges+='<span class="pill defer">已顺延 '+t.deferCount+' 次</span>';
+  var actions='<button class="icon-btn" title="编辑" onclick="editTodo(\''+t.id+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>'+
+    '<button class="icon-btn del" title="删除" onclick="delTodo(\''+t.id+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button>';
+  if(isLate(t)&&!t.done) actions='<button class="icon-btn defer" title="顺延到明天" onclick="deferTodo(\''+t.id+'\')">顺延</button>'+actions;
+  return '<div class="'+cls+'"><div class="chk" onclick="toggleTodo(\''+t.id+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>'+
+    '<div class="todo-main"><div class="todo-title">'+esc(t.title)+'</div><div class="todo-meta">'+badges+'</div></div>'+
+    '<div class="todo-actions">'+actions+'</div></div>';
+}
+function submitTodo(){
+  var title=document.getElementById('todoTitle').value.trim();
+  if(!title){toast('请填写任务内容');return;}
+  var obj={id:uid(),title:title,priority:document.getElementById('todoPriority').value,
+    deadline:document.getElementById('todoDeadline').value,projectId:document.getElementById('todoProject').value,
+    done:false,doneAt:'',deferCount:0,rolled:false,createdAt:now()};
+  if(editing.todo){
+    var i=state.todos.findIndex(function(t){return t.id===editing.todo;});
+    if(i>=0){state.todos[i].title=obj.title;state.todos[i].priority=obj.priority;state.todos[i].deadline=obj.deadline;state.todos[i].projectId=obj.projectId;}
+    editing.todo=null;document.getElementById('todoSubmitTxt').textContent='添加任务';document.getElementById('todoFormHint').innerHTML='';
+  } else state.todos.unshift(obj);
+  document.getElementById('todoTitle').value='';document.getElementById('todoDeadline').value='';document.getElementById('todoProject').value='';
+  save();render();
+}
+function editTodo(id){
+  var t=state.todos.find(function(x){return x.id===id;});if(!t)return;
+  editing.todo=id;
+  document.getElementById('todoTitle').value=t.title;
+  document.getElementById('todoPriority').value=t.priority;
+  document.getElementById('todoDeadline').value=t.deadline||'';
+  document.getElementById('todoProject').value=t.projectId||'';
+  document.getElementById('todoSubmitTxt').textContent='保存修改';
+  document.getElementById('todoFormHint').innerHTML='<div class="editing-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>正在编辑任务，修改后点「保存修改」</div>';
+  go('todos');document.getElementById('todoTitle').focus();
+}
+function toggleTodo(id){var t=state.todos.find(function(x){return x.id===id;});if(!t)return;t.done=!t.done;t.doneAt=t.done?todayStr():'';save();render();}
+function deferTodo(id){var t=state.todos.find(function(x){return x.id===id;});if(!t)return;t.deadline=addDays(todayStr(),1);t.deferCount=(t.deferCount||0)+1;t.rolled=false;save();render();toast('已顺延到明天');}
+function delTodo(id){confirmModal('确定删除这条任务？',function(){state.todos=state.todos.filter(function(x){return x.id!==id;});save();render();});}
+
+/* ============ 灵感速记 ============ */
+function renderNotes(){
+  // 标签筛选
+  var allTags={};
+  state.notes.forEach(function(n){(n.tags||[]).forEach(function(t){allTags[t]=(allTags[t]||0)+1;});});
+  var tags=Object.keys(allTags);
+  var f=document.getElementById('tagFilter');
+  var chips='<button class="tag-chip'+(noteFilter===''?' active':'')+'" onclick="setFilter(\'\')">全部 ('+state.notes.length+')</button>';
+  chips+=tags.map(function(t){return '<button class="tag-chip'+(noteFilter===t?' active':'')+'" onclick="setFilter(\''+esc(t)+'\')">'+esc(t)+' ('+allTags[t]+')</button>';}).join('');
+  f.innerHTML=state.notes.length?chips:'';
+
+  var list=state.notes.filter(function(n){return !noteFilter||(n.tags||[]).indexOf(noteFilter)>=0;});
+  list.sort(function(a,b){return b.createdAt<a.createdAt?-1:1;});
+  var h='';
+  if(!list.length) h='<div class="empty-state">'+(state.notes.length?'没有匹配「'+esc(noteFilter)+'」的速记。':'还没有速记，记下第一个灵感吧。')+'</div>';
+  else h=list.map(function(n){
+    var tags=n.tags.map(function(t){return '<span class="note-tag">'+esc(t)+'</span>';}).join('');
+    return '<div class="note"><div class="note-content">'+esc(n.content)+'</div>'+
+      (tags?'<div class="note-tags">'+tags+'</div>':'')+
+      '<div class="note-foot"><span>'+fmtMD(n.createdAt.slice(0,10))+'</span>'+
+      '<span><button class="icon-btn" onclick="editNote(\''+n.id+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>'+
+      '<button class="icon-btn del" onclick="delNote(\''+n.id+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button></span></div></div>';
+  }).join('');
+  document.getElementById('noteList').innerHTML=h;
+}
+function setFilter(t){noteFilter=t;renderNotes();}
+function submitNote(){
+  var content=document.getElementById('noteContent').value.trim();
+  if(!content){toast('请填写内容');return;}
+  var tags=document.getElementById('noteTags').value.split(',').map(function(s){return s.trim();}).filter(function(s){return s;});
+  if(editing.note){
+    var i=state.notes.findIndex(function(x){return x.id===editing.note;});
+    if(i>=0){state.notes[i].content=content;state.notes[i].tags=tags;}
+    editing.note=null;document.getElementById('noteSubmitTxt').textContent='保存速记';document.getElementById('noteFormHint').innerHTML='';
+  } else state.notes.unshift({id:uid(),content:content,tags:tags,createdAt:now()});
+  document.getElementById('noteContent').value='';document.getElementById('noteTags').value='';
+  save();render();
+}
+function editNote(id){
+  var n=state.notes.find(function(x){return x.id===id;});if(!n)return;
+  editing.note=id;
+  document.getElementById('noteContent').value=n.content;
+  document.getElementById('noteTags').value=(n.tags||[]).join(', ');
+  document.getElementById('noteSubmitTxt').textContent='保存修改';
+  document.getElementById('noteFormHint').innerHTML='<div class="editing-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>正在编辑速记</div>';
+  go('notes');document.getElementById('noteContent').focus();
+}
+function delNote(id){confirmModal('确定删除这条速记？',function(){state.notes=state.notes.filter(function(x){return x.id!==id;});save();render();});}
+
+/* ============ 项目跟进 ============ */
+function renderProjects(){
+  var grid=document.getElementById('projGrid');
+  if(!state.projects.length){grid.innerHTML='<div class="empty-state" style="grid-column:1/-1">还没有项目，在上方添加第一个。</div>';return;}
+  grid.innerHTML=state.projects.map(function(p){
+    var linked=state.todos.filter(function(t){return t.projectId===p.id;});
+    var done=linked.filter(function(t){return t.done;}).length;
+    var total=linked.length;
+    var pct=total?Math.round(done/total*100):0;
+    var stuck=p.blocker&&p.blocker.trim();
+    var todosHtml=linked.length?linked.map(function(t){return '<div class="proj-todo'+(t.done?' done':'')+'"><span class="dot"></span>'+esc(t.title)+'</div>';}).join(''):'<div class="proj-todo">暂无关联待办</div>';
+    return '<div class="proj'+(stuck?' stuck':'')+'">'+
+      '<div class="proj-top"><div class="proj-name">'+esc(p.name)+'</div>'+
+      '<div class="proj-actions"><button class="icon-btn" onclick="editProject(\''+p.id+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>'+
+      '<button class="icon-btn del" onclick="delProject(\''+p.id+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button></div></div>'+
+      '<div class="proj-row"><span class="k">当前：</span>'+esc(p.step||'—')+'</div>'+
+      '<div class="proj-row"><span class="k">下一步：</span>'+esc(p.next||'—')+'</div>'+
+      (stuck?'<div class="proj-blocker"><b>卡点：</b>'+esc(p.blocker)+'</div>':'')+
+      '<div class="proj-prog">'+ringSVG(pct)+'<div class="prog-info"><b>'+done+'/'+total+'</b> 完成<br>进度 '+pct+'%</div></div>'+
+      '<div class="proj-todos">'+todosHtml+'</div>'+
+      '</div>';
+  }).join('');
+}
+function ringSVG(pct){
+  var r=18,c=2*Math.PI*r,off=c*(1-pct/100);
+  return '<svg class="ring" viewBox="0 0 44 44"><circle cx="22" cy="22" r="18" fill="none" stroke="#e5e7eb" stroke-width="5"/>'+
+    '<circle cx="22" cy="22" r="18" fill="none" stroke="var(--primary)" stroke-width="5" stroke-linecap="round" stroke-dasharray="'+c.toFixed(1)+'" stroke-dashoffset="'+off.toFixed(1)+'" transform="rotate(-90 22 22)"/><text x="22" y="26" text-anchor="middle" class="ring-txt">'+pct+'%</text></svg>';
+}
+function submitProject(){
+  var name=document.getElementById('projName').value.trim();
+  if(!name){toast('请填写项目名称');return;}
+  var obj={name:name,step:document.getElementById('projStep').value.trim(),next:document.getElementById('projNext').value.trim(),blocker:document.getElementById('projBlocker').value.trim()};
+  if(editing.project){
+    var i=state.projects.findIndex(function(x){return x.id===editing.project;});
+    if(i>=0){state.projects[i].name=obj.name;state.projects[i].step=obj.step;state.projects[i].next=obj.next;state.projects[i].blocker=obj.blocker;}
+    editing.project=null;document.getElementById('projSubmitTxt').textContent='添加项目';document.getElementById('projFormHint').innerHTML='';
+  } else state.projects.unshift({id:uid(),createdAt:now(),name:obj.name,step:obj.step,next:obj.next,blocker:obj.blocker});
+  document.getElementById('projName').value='';document.getElementById('projStep').value='';document.getElementById('projNext').value='';document.getElementById('projBlocker').value='';
+  save();render();
+}
+function editProject(id){
+  var p=state.projects.find(function(x){return x.id===id;});if(!p)return;
+  editing.project=id;
+  document.getElementById('projName').value=p.name;
+  document.getElementById('projStep').value=p.step||'';
+  document.getElementById('projNext').value=p.next||'';
+  document.getElementById('projBlocker').value=p.blocker||'';
+  document.getElementById('projSubmitTxt').textContent='保存修改';
+  document.getElementById('projFormHint').innerHTML='<div class="editing-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>正在编辑项目</div>';
+  go('projects');document.getElementById('projName').focus();
+}
+function delProject(id){
+  confirmModal('删除项目？关联的待办不会被删除，只是不再挂在项目下。',function(){
+    state.projects=state.projects.filter(function(x){return x.id!==id;});
+    state.todos.forEach(function(t){if(t.projectId===id)t.projectId='';});
+    save();render();
+  });
+}
+
+/* ============ 每周复盘 ============ */
+function renderReview(){
+  var ws=weekStart(),we=weekEnd();
+  document.getElementById('reviewRange').textContent='统计周期：'+fmtMD(ws)+' – '+fmtMD(we)+'（本周）';
+  var done=state.todos.filter(function(t){return t.done&&t.doneAt>=ws&&t.doneAt<=we;});
+  var inprog=state.todos.filter(function(t){return !t.done&&t.deadline&&t.deadline<=we;}).length;
+  var stuck=state.projects.filter(function(p){return p.blocker&&p.blocker.trim();}).length;
+  document.getElementById('reviewStats').innerHTML=
+    statCard(done.length,'本周完成')+statCard(inprog,'进行中')+statCard(stuck,'卡点项目');
+
+  // 优先级分布（SVG 柱状图）
+  var pr={hi:0,mid:0,lo:0};
+  done.forEach(function(t){pr[t.priority]=(pr[t.priority]||0)+1;});
+  document.getElementById('prioChart').innerHTML=svgBars([
+    {label:'高',value:pr.hi,color:'var(--hi)'},
+    {label:'中',value:pr.mid,color:'var(--mid)'},
+    {label:'低',value:pr.lo,color:'var(--lo)'}
+  ]);
+
+  // 精力去向（SVG 环形图）
+  var byProj={};
+  done.forEach(function(t){var k=t.projectId?projName(t.projectId):'未关联项目';byProj[k]=(byProj[k]||0)+1;});
+  var segs=Object.keys(byProj).map(function(k,i){return {label:k,value:byProj[k],color:projColorPalette(i)};});
+  var donut='';
+  if(!segs.length) donut='<div class="empty-state" style="padding:20px">本周还没有已完成记录</div>';
+  else{
+    var total=segs.reduce(function(s,x){return s+x.value;},0);
+    var r=54,c=2*Math.PI*r,cx=60,cy=60,off=0,parts='';
+    segs.forEach(function(s){var len=s.value/total*c;parts+='<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+s.color+'" stroke-width="16" stroke-dasharray="'+len.toFixed(2)+' '+(c-len).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'" transform="rotate(-90 '+cx+' '+cy+')"/>';off+=len;});
+    donut='<svg class="donut" viewBox="0 0 120 120">'+parts+'<text x="60" y="56" text-anchor="middle" class="donut-num">'+total+'</text><text x="60" y="74" text-anchor="middle" class="donut-cap">完成</text></svg>'+
+      '<div class="legend">'+segs.map(function(s){return '<div class="li"><span class="sw" style="background:'+s.color+'"></span>'+esc(s.label)+' · '+s.value+'</div>';}).join('')+'</div>';
+  }
+  document.getElementById('projChart').innerHTML=donut;
+
+  // 卡点汇总
+  var blockers=state.projects.filter(function(p){return p.blocker&&p.blocker.trim();});
+  document.getElementById('blockerSummary').innerHTML=blockers.length?
+    '<div class="blocker-list">'+blockers.map(function(p){return '<div class="blocker-item"><b>'+esc(p.name)+'</b>：'+esc(p.blocker)+'</div>';}).join('')+'</div>' :
+    '<div class="empty-state">本周没有卡点，进展顺利 🎉</div>'.replace('🎉','');
+}
+function statCard(n,l){return '<div class="stat"><div class="n">'+n+'</div><div class="l">'+l+'</div></div>';}
+function projColorPalette(i){var c=['#0f766e','#0891b2','#14b8a6','#0d9488','#0369a1','#5eead4','#22d3ee'];return c[i%c.length];}
+function svgBars(items){
+  var w=300,h=150,gap=24,n=items.length,bw=(w-gap*(n+1))/n,max=Math.max(1,Math.max.apply(null,items.map(function(i){return i.value;})));
+  var bars='';
+  items.forEach(function(it,i){var x=gap+i*(bw+gap),bh=Math.max(2,(it.value/max)*(h-34)),y=h-20-bh;
+    bars+='<rect x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+bh.toFixed(1)+'" rx="6" fill="'+it.color+'"/>'+
+      '<text x="'+(x+bw/2).toFixed(1)+'" y="'+(y-6).toFixed(1)+'" text-anchor="middle" class="chart-val">'+it.value+'</text>'+
+      '<text x="'+(x+bw/2).toFixed(1)+'" y="'+(h-4).toFixed(1)+'" text-anchor="middle" class="chart-cat">'+it.label+'</text>';});
+  return '<svg class="chart" viewBox="0 0 '+w+' '+h+'">'+bars+'</svg>';
+}
+
+/* ============ 导航 ============ */
+function go(view){
+  settings.view=view;localStorage.setItem('wb_office_settings',JSON.stringify(settings));
+  document.querySelectorAll('.view').forEach(function(v){v.classList.remove('active');});
+  document.getElementById('view-'+view).classList.add('active');
+  document.querySelectorAll('.sidebar .nav-item').forEach(function(b){b.classList.toggle('active',b.dataset.view===view);});
+  document.querySelectorAll('.bottomnav button').forEach(function(b){b.classList.toggle('active',b.dataset.view===view);});
+  if(view==='review') renderReview();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function updateNavBadges(){
+  var late=state.todos.filter(function(t){return isLate(t);}).length;
+  document.getElementById('navTodos').textContent=late;
+  document.getElementById('navTodos').style.display=late?'flex':'none';
+  document.getElementById('navTodosM').textContent=late;
+  document.getElementById('navTodosM').style.display=late?'flex':'none';
+}
+
+/* ============ 备份 ============ */
+function exportData(){
+  var data={app:'office-workbench',version:1,exportedAt:now(),todos:state.todos,notes:state.notes,projects:state.projects};
+  var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');a.href=url;a.download='办公台备份-'+todayStr()+'.json';a.click();
+  setTimeout(function(){URL.revokeObjectURL(url);},1000);
+  toast('已导出备份文件');
+}
+function importData(e){
+  var file=e.target.files[0];e.target.value='';if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(){
+    try{
+      var d=JSON.parse(reader.result);
+      confirmModal('导入将覆盖当前所有数据，确定继续？建议先导出一份当前备份。',function(){applyImport(d);});
+    }catch(err){toast('文件格式不正确，导入失败');}
+  };
+  reader.readAsText(file);
+}
+function applyImport(d){
+  state.todos=Array.isArray(d.todos)?d.todos:[];
+  state.notes=Array.isArray(d.notes)?d.notes:[];
+  state.projects=Array.isArray(d.projects)?d.projects:[];
+  settings.sampleCleared=true;
+  save();noteFilter='';editing={todo:null,note:null,project:null};
+  render();toast('导入成功，共 '+total()+' 条');
+}
+function clearSamples(){
+  confirmModal('确定清空所有示例数据？此操作不可恢复（如有真实数据也会一并清空，建议先导出备份）。',function(){
+    state.todos=[];state.notes=[];state.projects=[];
+    settings.sampleCleared=true;noteFilter='';editing={todo:null,note:null,project:null};
+    save();render();toast('已清空示例数据');
+  });
+}
+
+/* ============ Toast ============ */
+var toastTimer;
+function toast(msg){
+  var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastTimer);toastTimer=setTimeout(function(){t.classList.remove('show');},1600);
+}
+
+/* ============ 自定义确认弹窗（不依赖浏览器原生 confirm） ============ */
+var modalYesCb=null;
+function confirmModal(msg,onYes){
+  document.getElementById('modalMsg').textContent=msg;
+  document.getElementById('modalYesBtn').textContent='确定';
+  modalYesCb=onYes;
+  document.getElementById('modalMask').hidden=false;
+}
+function modalNo(){document.getElementById('modalMask').hidden=true;modalYesCb=null;}
+function modalYes(){var cb=modalYesCb;document.getElementById('modalMask').hidden=true;modalYesCb=null;if(cb)cb();}
+
+/* ============ 启动 ============ */
+load();
+rollover();
+render();
+go(settings.view||'todos');
+</script>
+</body>
+</html>

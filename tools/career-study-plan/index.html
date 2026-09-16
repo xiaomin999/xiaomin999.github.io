@@ -1,0 +1,2057 @@
+<!-- v20260818f-split - fix career isolation -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>小陈自用学习计划</title>
+<style>
+/* === 内联 style.css (v20260820e, setProperty+!important) === */
+
+  :root{
+    --bg:#eef1f7;
+    --panel:#ffffff;
+    --card:#ffffff;
+    --border:#e3e7f0;
+    --border2:#eef1f7;
+    --text:#1f2733;
+    --muted:#7a8194;
+    --brand:#2f6bff;
+    --brand2:#12b3a6;
+    --brand-hr:#e056a0;
+    --brand2-hr:#8b5cf6;
+    --brand-bom:#e67e22;
+    --brand2-bom:#d35400;
+    --brand-pm:#16a34a;
+    --brand2-pm:#0d9488;
+    --brand-sys:#8b5cf6;
+    --brand2-sys:#7c3aed;
+    --gold:#f5a623;
+    --silver:#9aa3bf;
+    --bronze:#d98b4a;
+    --green:#12b3a6;
+    --rose:#f43f5e;
+    --shadow:0 1px 3px rgba(24,39,75,.06),0 6px 20px rgba(24,39,75,.05);
+    --radius:16px;
+    --side-w:248px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg);color:var(--text);line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--brand);text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  /* ===== Sidebar ===== */
+  .sidebar{
+    position:fixed;top:0;left:0;width:var(--side-w);height:100vh;height:100dvh;
+    background:var(--panel);border-right:1px solid var(--border);
+    transform:translateX(0);transition:transform .3s ease;
+    display:flex;flex-direction:column;z-index:60;
+  }
+  .side-head{display:flex;align-items:center;gap:10px;padding:18px 16px 14px;border-bottom:1px solid var(--border2)}
+  .side-head .logo{font-size:24px}
+  .side-head h1{font-size:14.5px;font-weight:800;line-height:1.35;flex:1}
+  .side-collapse{
+    flex:0 0 auto;width:30px;height:30px;border:none;border-radius:8px;cursor:pointer;
+    background:var(--border2);color:var(--muted);font-size:16px;display:flex;align-items:center;justify-content:center;
+  }
+  .side-collapse:active{background:#e0e5f0}
+  .side-nav{flex:1;overflow-y:auto;padding:12px 10px}
+  .side-nav a{
+    display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;
+    color:var(--text);font-size:13.5px;font-weight:600;margin-bottom:3px;transition:.15s;
+  }
+  .side-nav a .ico{width:22px;text-align:center;flex:0 0 22px;font-size:15px}
+  .side-nav a:hover{background:var(--border2);text-decoration:none}
+  .side-nav a.active{background:linear-gradient(135deg,rgba(47,107,255,.12),rgba(18,179,166,.12));color:var(--brand)}
+  body.career-hr .side-nav a.active{background:linear-gradient(135deg,rgba(224,86,160,.12),rgba(139,92,246,.12));color:var(--brand-hr)}
+  body.career-bom .side-nav a.active{background:linear-gradient(135deg,rgba(230,126,34,.12),rgba(211,84,0,.12));color:var(--brand-bom)}
+  body.career-pm .side-nav a.active{background:linear-gradient(135deg,rgba(22,163,74,.12),rgba(13,148,136,.12));color:var(--brand-pm)}
+  .side-foot{padding:14px 16px;border-top:1px solid var(--border2)}
+  .side-foot .lbl{font-size:12px;color:var(--muted);margin-bottom:6px}
+  body.collapsed .sidebar{transform:translateX(-100%)}
+  .side-foot .lbl b{color:var(--brand2);font-size:13px}
+  body.career-hr .side-foot .lbl b{color:var(--brand-hr)}
+  body.career-bom .side-foot .lbl b{color:var(--brand-bom)}
+  body.career-pm .side-foot .lbl b{color:var(--brand-pm)}
+  .side-foot .track{height:7px;background:var(--border2);border-radius:99px;overflow:hidden}
+  .side-foot .fill{height:100%;width:0%;background:linear-gradient(90deg,var(--brand),var(--brand2));border-radius:99px;transition:width .4s ease}
+  body.career-hr .side-foot .fill{background:linear-gradient(90deg,var(--brand-hr),var(--brand2-hr))}
+  body.career-bom .side-foot .fill{background:linear-gradient(90deg,var(--brand-bom),var(--brand2-bom))}
+  body.career-pm .side-foot .fill{background:linear-gradient(90deg,var(--brand-pm),var(--brand2-pm))}
+
+  /* ===== Floating toggle (when collapsed) ===== */
+  .float-toggle{
+    position:fixed;top:14px;left:14px;z-index:300;display:none;
+    width:44px;height:44px;border-radius:12px;border:1px solid var(--border);
+    background:var(--panel);box-shadow:var(--shadow);cursor:pointer;font-size:20px;color:var(--text);
+    align-items:center;justify-content:center;touch-action:manipulation;user-select:none;-webkit-tap-highlight-color:transparent;
+  }
+  body.collapsed .float-toggle{display:flex}
+
+  .backdrop{display:none;position:fixed;inset:0;background:rgba(20,28,55,.45);z-index:50}
+
+  /* ===== Mobile / narrow screen (<820px): sidebar as overlay ===== */
+  @media(max-width:819px){
+    .sidebar{width:82%;max-width:300px;box-shadow:0 0 40px rgba(20,28,55,.25)}
+    body.collapsed .sidebar{transform:translateX(-100%)}
+    .main{margin-left:0 !important}
+    body:not(.collapsed) .backdrop{display:block}
+  }
+
+  /* ===== Main content area ===== */
+  .main{margin-left:var(--side-w);padding:20px 24px 60px;min-height:100vh;transition:margin-left .3s ease}
+  body.collapsed .main{margin-left:0}
+
+  /* ===== Career Tab Switcher ===== */
+  .career-switcher{
+    display:flex;gap:6px;margin-bottom:16px;background:var(--panel);padding:6px;border-radius:14px;
+    border:1px solid var(--border);box-shadow:var(--shadow);flex-wrap:wrap;
+  }
+  .career-tab{
+    padding:9px 18px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;
+    background:transparent;color:var(--muted);transition:.2s;border:none;white-space:nowrap;
+  }
+  .career-tab.active{background:var(--brand);color:#fff;box-shadow:0 4px 12px rgba(47,107,255,.3)}
+  .career-tab.hr-tab.active{background:var(--brand-hr);box-shadow:0 4px 12px rgba(224,86,160,.3)}
+  .career-tab.bom-tab.active{background:var(--brand-bom);box-shadow:0 4px 12px rgba(230,126,34,.3)}
+  .career-tab.pm-tab.active{background:var(--brand-pm);box-shadow:0 4px 12px rgba(22,163,74,.3)}
+  .career-tab.sys-tab.active{background:var(--brand-sys);box-shadow:0 4px 12px rgba(139,92,246,.3)}
+
+  /* ===== Top bar progress ===== */
+  .topbar{margin-bottom:16px}
+  .pg-row{display:flex;align-items:center;gap:12px;background:var(--panel);padding:12px 16px;border-radius:14px;border:1px solid var(--border);box-shadow:var(--shadow)}
+  .pg-row .ttl{font-size:14px;font-weight:800;flex:1}
+  .pg-num{font-size:12px;color:var(--muted);white-space:nowrap}
+  .pg-num b{color:var(--brand);font-size:16px;font-weight:800}
+  body.career-hr .pg-num b{color:var(--brand-hr)}
+  body.career-bom .pg-num b{color:var(--brand-bom)}
+  body.career-pm .pg-num b{color:var(--brand-pm)}
+  .pg-track{width:140px;height:8px;background:var(--border2);border-radius:99px;overflow:hidden}
+  .pg-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--brand),var(--brand2));border-radius:99px;transition:width .4s ease}
+  body.career-hr .pg-fill{background:linear-gradient(90deg,var(--brand-hr),var(--brand2-hr))}
+  body.career-bom .pg-fill{background:linear-gradient(90deg,var(--brand-bom),var(--brand2-bom))}
+  body.career-pm .pg-fill{background:linear-gradient(90deg,var(--brand-pm),var(--brand2-pm))}
+
+  /* ===== Hero ===== */
+  .hero{border-radius:18px;padding:28px 30px;margin-bottom:20px;
+    background:linear-gradient(135deg,#e8eeff,#dff0ea);position:relative;overflow:hidden;
+    border:1px solid var(--border);box-shadow:var(--shadow);}
+  .hero::after{content:'';position:absolute;right:-40px;top:-40px;width:200px;height:200px;border-radius:50%;
+    background:radial-gradient(circle,rgba(18,179,166,.2),transparent 70%)}
+  .hero .tag{display:inline-block;background:rgba(47,107,255,.1);border:1px solid rgba(47,107,255,.2);
+    padding:5px 12px;border-radius:99px;font-size:12px;font-weight:600;color:var(--brand);margin-bottom:10px}
+  .hero h2{font-size:22px;line-height:1.3;font-weight:800;margin-bottom:8px}
+  .hero p{font-size:13px;color:var(--muted);max-width:560px}
+  .hero .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .hero .chip{background:rgba(255,255,255,.7);border:1px solid var(--border);
+    padding:7px 12px;border-radius:10px;font-size:12px}
+  .hero .chip b{display:block;font-size:14px;margin-top:1px}
+  body.career-hr .hero{background:linear-gradient(135deg,#fdf0f7,#f5efff)}
+  body.career-hr .hero::after{background:radial-gradient(circle,rgba(224,86,160,.18),transparent 70%)}
+  body.career-hr .hero .tag{background:rgba(224,86,160,.12);color:var(--brand-hr);border-color:rgba(224,86,160,.25)}
+  body.career-bom .hero{background:linear-gradient(135deg,#fef5eb,#fff3e0)}
+  body.career-bom .hero::after{background:radial-gradient(circle,rgba(230,126,34,.18),transparent 70%)}
+  body.career-bom .hero .tag{background:rgba(230,126,34,.12);color:var(--brand-bom);border-color:rgba(230,126,34,.25)}
+  body.career-pm .hero{background:linear-gradient(135deg,#e9f9ef,#e6f7f4)}
+  body.career-pm .hero::after{background:radial-gradient(circle,rgba(22,163,74,.18),transparent 70%)}
+  body.career-pm .hero .tag{background:rgba(22,163,74,.12);color:var(--brand-pm);border-color:rgba(22,163,74,.25)}
+
+  /* ===== Sections ===== */
+  .sec{padding:18px 0}
+  .pm-sec{padding:18px 0}
+  .sys-sec{padding:18px 0}
+  .sec[hidden], .hr-sec[hidden], .bom-sec[hidden], .pm-sec[hidden], .sys-sec[hidden]{display:none}
+  .sec-head{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+  .sec-head .num{flex:0 0 auto;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;
+    background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;font-weight:800;font-size:17px;
+    box-shadow:0 6px 16px rgba(47,107,255,.25)}
+  body.career-hr .sec-head .num{background:linear-gradient(135deg,var(--brand-hr),var(--brand2-hr));box-shadow:0 6px 16px rgba(224,86,160,.25)}
+  body.career-bom .sec-head .num{background:linear-gradient(135deg,var(--brand-bom),var(--brand2-bom));box-shadow:0 6px 16px rgba(230,126,34,.25)}
+  body.career-pm .sec-head .num{background:linear-gradient(135deg,var(--brand-pm),var(--brand2-pm));box-shadow:0 6px 16px rgba(22,163,74,.25)}
+
+  /* ===== Career: 体系工程师 (sys) 紫色主题 ===== */
+  body.career-sys .side-nav a.active{background:linear-gradient(135deg,rgba(139,92,246,.12),rgba(124,58,237,.12));color:var(--brand-sys)}
+  body.career-sys .side-foot .lbl b{color:var(--brand-sys)}
+  body.career-sys .side-foot .fill{background:linear-gradient(90deg,var(--brand-sys),var(--brand2-sys))}
+  body.career-sys .pg-num b{color:var(--brand-sys)}
+  body.career-sys .pg-fill{background:linear-gradient(90deg,var(--brand-sys),var(--brand2-sys))}
+  body.career-sys .hero{background:linear-gradient(135deg,#f5f3ff,#ede9fe)}
+  body.career-sys .hero::after{background:radial-gradient(circle,rgba(139,92,246,.18),transparent 70%)}
+  body.career-sys .hero .tag{background:rgba(139,92,246,.12);color:var(--brand-sys);border-color:rgba(139,92,246,.25)}
+  body.career-sys .sec-head .num{background:linear-gradient(135deg,var(--brand-sys),var(--brand2-sys));box-shadow:0 6px 16px rgba(139,92,246,.25)}
+  .sec-head h3{font-size:17px;font-weight:800}
+
+  /* ===== Cards / Phase blocks ===== */
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;margin-bottom:14px;box-shadow:var(--shadow)}
+  .phase{border-left:4px solid var(--brand);padding-left:16px;margin-bottom:18px}
+  body.career-hr .phase{border-left-color:var(--brand-hr)}
+  body.career-bom .phase{border-left-color:var(--brand-bom)}
+  .phase-title{font-size:15px;font-weight:800;margin-bottom:8px}
+  .phase-week{font-size:12px;color:var(--brand2);font-weight:600;margin-bottom:10px}
+  body.career-hr .phase-week{color:var(--brand2-hr)}
+  body.career-bom .phase-week{color:var(--brand2-bom)}
+  .sub{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px}
+  .sub .dot{width:7px;height:7px;border-radius:50%;background:var(--brand);display:inline-block;flex:0 0 auto;margin-top:6px}
+  body.career-hr .sub .dot{background:var(--brand2-hr)}
+  body.career-bom .sub .dot{background:var(--brand2-bom)}
+  .sub-text{font-size:13.5px;line-height:1.65;display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+  .goal{border-left:3px solid var(--brand2);padding:10px 14px;margin-top:10px;border-radius:0 10px 10px 0;background:var(--bg);font-size:13px}
+  body.career-hr .goal{border-left-color:var(--brand2-hr)}
+  body.career-bom .goal{border-left-color:var(--brand2-bom)}
+
+  /* ===== Checkboxes ===== */
+  .check{display:flex;align-items:center;gap:10px;padding:8px 0;cursor:pointer;user-select:none;font-size:13.5px}
+  .check .box{width:22px;height:22px;border:2px solid var(--border);border-radius:7px;display:grid;place-items:center;flex:0 0 auto;transition:.15s}
+  .check.done .box{background:linear-gradient(135deg,var(--brand),var(--brand2));border-color:transparent}
+  body.career-hr .check.done .box{background:linear-gradient(135deg,var(--brand-hr),var(--brand2-hr))}
+  body.career-bom .check.done .box{background:linear-gradient(135deg,var(--brand-bom),var(--brand2-bom))}
+  .check.done .box::after{content:'✓';color:#fff;font-size:13px;font-weight:900}
+
+  /* ===== Schedule table ===== */
+  .sched{width:100%;border-collapse:collapse;font-size:13px}
+  .sched th{background:var(--bg);padding:10px 12px;text-align:left;font-weight:700;border-bottom:2px solid var(--border)}
+  .sched td{padding:9px 12px;border-bottom:1px solid var(--border2);vertical-align:top}
+  .sched .day{color:var(--brand);font-weight:700;white-space:nowrap}
+  body.career-hr .sched .day{color:var(--brand2-hr)}
+  body.career-bom .sched .day{color:var(--brand2-bom)}
+
+  /* ===== Priority ranking ===== */
+  .rank{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;margin-bottom:8px;
+    background:var(--panel);border:1px solid var(--border);transition:.15s}
+  .rank .rn{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-weight:900;font-size:14px;color:#fff;
+    flex:0 0 auto}
+  .rank.r1 .rn{background:linear-gradient(135deg,#f5a623,#e6a120)}
+  .rank.r2 .rn{background:linear-gradient(135deg,#9aa3bf,#8895b0)}
+  .rank.r3 .rn{background:linear-gradient(135deg,#d98b4a,#c97d3e)}
+  .rank.r4 .rn{background:linear-gradient(135deg,#a8b5bd,#95a3ad)}
+  .rank.r5 .rn{background:linear-gradient(135deg,#c4cdd4,#b3bec6)}
+  .rank .rl{font-size:13.5px;font-weight:700;flex:1}
+  .rank .rd{font-size:12px;color:var(--muted)}
+
+  /* ===== Resource links ===== */
+  .res-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border2)}
+  .res-item:last-child{border-bottom:none}
+  .res-cb{width:22px;height:22px;border:2px solid var(--border);border-radius:7px;display:grid;place-items:center;flex:0 0 auto;cursor:pointer;transition:.15s;font-size:12px}
+  .res-cb.on{background:linear-gradient(135deg,var(--brand),var(--brand2));border-color:transparent;color:#fff}
+  body.career-hr .res-cb.on{background:linear-gradient(135deg,var(--brand-hr),var(--brand2-hr))}
+  body.career-bom .res-cb.on{background:linear-gradient(135deg,var(--brand-bom),var(--brand2-bom))}
+  .res-info{flex:1;min-width:0}
+  .res-name{font-size:13.5px;font-weight:600;display:block}
+  .res-name a{word-break:break-all}
+  .res-desc{font-size:12px;color:var(--muted);margin-top:2px}
+  .rs-num{font-size:12px;font-weight:700;color:var(--brand);white-space:nowrap}
+  body.career-hr .rs-num{color:var(--brand-hr)}
+  body.career-bom .rs-num{color:var(--brand-bom)}
+  .rs-bar{width:80px;height:6px;background:var(--border2);border-radius:99px;overflow:hidden;margin-top:4px}
+  .rs-bar > i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--brand),var(--brand2));border-radius:99px;transition:width .3s}
+  body.career-hr .rs-bar > i{background:linear-gradient(90deg,var(--brand-hr),var(--brand2-hr))}
+  body.career-bom .rs-bar > i{background:linear-gradient(90deg,var(--brand-bom),var(--brand2-bom))}
+  /* 文字资料类型标签 */
+  .res-tag{display:inline-block;font-size:11px;font-weight:700;padding:1px 7px;border-radius:6px;margin-right:8px;flex:0 0 auto;background:rgba(47,107,255,.1);color:var(--brand);vertical-align:middle}
+  body.career-hr .res-tag{background:rgba(224,86,160,.1);color:var(--brand-hr)}
+  body.career-bom .res-tag{background:rgba(230,126,34,.1);color:var(--brand-bom)}
+  body.career-pm .res-tag{background:rgba(22,163,74,.1);color:var(--brand-pm)}
+  body.career-sys .res-tag{background:rgba(139,92,246,.1);color:var(--brand-sys)}
+
+  /* Episode stepper */
+  .res-step{display:inline-flex;align-items:center;gap:4px;margin-left:8px}
+  .st-btn{width:24px;height:24px;border:1px solid var(--border);border-radius:6px;background:var(--panel);cursor:pointer;font-size:14px;display:grid;place-items:center;color:var(--muted);transition:.15s}
+  .st-btn:active{background:var(--border2)}
+  .st-val{font-size:12px;font-weight:700;padding:0 4px}
+  .st-val b{color:var(--brand)}
+  body.career-hr .st-val b{color:var(--brand-hr)}
+  body.career-bom .st-val b{color:var(--brand-bom)}
+
+  /* Roadmap summary card */
+  .rs-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px}
+  .rs-stat{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center}
+  .rs-stat .sv{font-size:22px;font-weight:900}
+  .rs-stat .sv b{color:var(--brand)}
+  body.career-hr .rs-stat .sv b{color:var(--brand-hr)}
+  body.career-bom .rs-stat .sv b{color:var(--brand-bom)}
+  .rs-stat .sl{font-size:11.5px;color:var(--muted);margin-top:2px}
+  .rs-progress{margin:10px 0}
+  .rs-progress .bar{height:8px;background:var(--border2);border-radius:99px;overflow:hidden}
+  .rs-progress .bar > i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--brand),var(--brand2));border-radius:99px;transition:width .4s}
+  body.career-hr .rs-progress .bar > i{background:linear-gradient(90deg,var(--brand-hr),var(--brand2-hr))}
+  body.career-bom .rs-progress .bar > i{background:linear-gradient(90deg,var(--brand-bom),var(--brand2-bom))}
+  .mini-btn{padding:6px 12px;border:1px solid var(--border);border-radius:8px;background:var(--panel);cursor:pointer;font-size:12px;font-weight:600;color:var(--text);transition:.15s}
+  .mini-btn:hover{background:var(--border2)}
+  .btn-row{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+
+  /* Calendar */
+  .cal-wrap{margin-top:14px}
+  .cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+  .cal-month{font-size:14px;font-weight:800}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+  .cal-cell{height:40px;min-height:unset;border-radius:8px;display:grid;place-items:center;font-size:12px;font-weight:600;cursor:pointer;transition:.15s;border:1px solid transparent}
+  .cal-cell.today{border-color:var(--brand);box-shadow:0 0 0 1px var(--brand)}
+  body.career-hr .cal-cell.today{border-color:var(--brand-hr);box-shadow:0 0 0 1px var(--brand-hr)}
+  body.career-bom .cal-cell.today{border-color:var(--brand-bom);box-shadow:0 0 0 1px var(--brand-bom)}
+  .cd.lv1{background:rgba(47,107,255,.18);border-color:rgba(47,107,255,.3)}
+  .cd.lv2{background:rgba(47,107,255,.42);border-color:rgba(47,107,255,.55);color:#fff}
+  .cd.lv3{background:var(--brand);border-color:var(--brand2);color:#fff}
+  body.career-hr .cd.lv1{background:rgba(224,86,160,.18);border-color:rgba(224,86,160,.3)}
+  body.career-hr .cd.lv2{background:rgba(224,86,160,.42);border-color:rgba(224,86,160,.55);color:#fff}
+  body.career-hr .cd.lv3{background:var(--brand-hr);border-color:var(--brand2-hr);color:#fff}
+  body.career-bom .cd.lv1{background:rgba(230,126,34,.18);border-color:rgba(230,126,34,.3)}
+  body.career-bom .cd.lv2{background:rgba(230,126,34,.42);border-color:rgba(230,126,34,.55);color:#fff}
+  body.career-bom .cd.lv3{background:var(--brand-bom);border-color:var(--brand2-bom);color:#fff}
+  .cal-legend{display:flex;gap:12px;margin-top:8px;font-size:11.5px;color:var(--muted)}
+  .cal-legend .lg{width:14px;height:14px;border-radius:4px;display:inline-block}
+  .lg0{background:var(--panel);border:1px solid var(--border)}
+  .lg1{background:rgba(47,107,255,.18)}
+  body.career-hr .lg1{background:rgba(224,86,160,.18)}
+  body.career-bom .lg1{background:rgba(230,126,34,.18)}
+  .lg2{background:rgba(47,107,255,.42)}
+  body.career-hr .lg2{background:rgba(224,86,160,.42)}
+  body.career-bom .lg2{background:rgba(230,126,34,.42)}
+  .lg3{background:var(--brand)}
+  body.career-hr .lg3{background:var(--brand-hr)}
+  body.career-bom .lg3{background:var(--brand-bom)}
+  .cal-detail{margin-top:10px;font-size:12.5px;color:var(--muted);line-height:1.7;min-height:20px}
+  .rs-tip{margin-top:12px;font-size:11.5px;color:var(--muted);line-height:1.6;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:9px 11px}
+  /* 云端同步面板 */
+  .gist-panel{margin-top:10px;padding:11px 12px;border:1px dashed var(--border);border-radius:12px;background:var(--panel)}
+  .gist-panel label{display:block;font-size:11.5px;color:var(--muted);margin:8px 0 3px;font-weight:600}
+  .gist-panel label:first-child{margin-top:0}
+  .gist-input{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:9px;font-size:12.5px;background:#fff;color:var(--text);box-sizing:border-box}
+  .gist-panel .mini-btn{margin-top:10px}
+  .sync-status{margin-top:10px;font-size:12px;color:var(--muted);min-height:16px;line-height:1.5;word-break:break-all}
+  .sync-status.ok{color:var(--brand2);font-weight:600}
+  body.career-hr .sync-status.ok{color:var(--brand2-hr)}
+  body.career-bom .sync-status.ok{color:var(--brand2-bom)}
+  .sync-status.err{color:var(--rose);font-weight:600}
+  body.career-pm .phase{border-left-color:var(--brand-pm)}
+  body.career-pm .phase-week{color:var(--brand2-pm)}
+  body.career-pm .sub .dot{background:var(--brand2-pm)}
+  body.career-pm .goal{border-left-color:var(--brand2-pm)}
+  body.career-pm .check.done .box{background:linear-gradient(135deg,var(--brand-pm),var(--brand2-pm))}
+  body.career-pm .sched .day{color:var(--brand2-pm)}
+  body.career-pm .res-cb.on{background:linear-gradient(135deg,var(--brand-pm),var(--brand2-pm))}
+  body.career-pm .rs-num{color:var(--brand-pm)}
+  body.career-pm .rs-bar > i{background:linear-gradient(90deg,var(--brand-pm),var(--brand2-pm))}
+  body.career-pm .st-val b{color:var(--brand-pm)}
+  body.career-pm .rs-stat .sv b{color:var(--brand-pm)}
+  body.career-pm .rs-progress .bar > i{background:linear-gradient(90deg,var(--brand-pm),var(--brand2-pm))}
+  body.career-pm .cal-cell.today{border-color:var(--brand-pm);box-shadow:0 0 0 1px var(--brand-pm)}
+  body.career-pm .cd.lv1{background:rgba(22,163,74,.18);border-color:rgba(22,163,74,.3)}
+  body.career-pm .cd.lv2{background:rgba(22,163,74,.42);border-color:rgba(22,163,74,.55);color:#fff}
+  body.career-pm .cd.lv3{background:var(--brand-pm);border-color:var(--brand2-pm);color:#fff}
+  body.career-pm .lg1{background:rgba(22,163,74,.18)}
+  body.career-pm .lg2{background:rgba(22,163,74,.42)}
+  body.career-pm .lg3{background:var(--brand-pm)}
+  body.career-pm .sync-status.ok{color:var(--brand2-pm)}
+
+  /* Career containers */
+  .career-body{display:none}
+  .career-body.active{display:block}
+
+</style>>>>>
+</head>
+<body class="collapsed">
+
+<!-- JS 存活探测：JS 正常执行时会显示此标记；若始终隐藏 = JS 未运行 -->
+<span id="jsAlive" style="display:none;position:fixed;top:4px;right:4px;z-index:99999;background:#22c55e;color:#fff;font-size:11px;padding:2px 6px;border-radius:4px;font-family:monospace;pointer-events:none">✓ JS OK</span>
+
+<button class="float-toggle" id="floatToggle" aria-label="展开导航">☰</button>
+<div class="backdrop" id="backdrop"></div>
+
+<!-- ===== Sidebar ===== -->
+<aside class="sidebar" id="sidebar">
+  <div class="side-head">
+    <span class="logo">📊</span>
+    <h1 id="sideTitle">小陈自用<br>学习计划</h1>
+    <button class="side-collapse" id="sideCollapse" aria-label="折叠导航">«</button>
+  </div>
+  <nav class="side-nav" id="sideNav">
+    <a href="#s1"><span class="ico">🧩</span>能力拆解</a>
+    <a href="#s2"><span class="ico">🗺️</span>学习路线</a>
+    <a href="#s3"><span class="ico">📅</span>每日计划</a>
+    <a href="#s4"><span class="ico">✅</span>成果检验</a>
+    <a href="#s5"><span class="ico">🏆</span>优先级</a>
+    <a href="#s6"><span class="ico">🔗</span>资源速查</a>
+    <a href="#s7"><span class="ico">📚</span>文字资料</a>
+  </nav>
+  <div class="side-foot">
+    <div class="lbl">已完成 <b id="pgNumSide">0%</b></div>
+    <div class="track"><div class="fill" id="pgFillSide"></div></div>
+  </div>
+</aside>
+
+<!-- ===== Main ===== -->
+<div class="main">
+  <!-- Career Switcher -->
+  <div class="career-switcher">
+    <div class="career-tab active" data-career="cost" id="tabCost">
+      🏭 成本方向
+    </div>
+    <div class="career-tab hr-tab" data-career="hr" id="tabHR">
+      👥 HR数据专家
+    </div>
+    <div class="career-tab bom-tab" data-career="bom" id="tabBOM">
+      🔧 产品数据工程师(BOM)
+    </div>
+    <div class="career-tab pm-tab" data-career="pm" id="tabPM">
+      📋 制造业项目/PQE
+    </div>
+    <div class="career-tab sys-tab" data-career="sys" id="tabSys">
+      📑 体系工程师
+    </div>
+  </div>
+
+  <!-- ==================== CAREER 1: 成本方向 ==================== -->
+  <div class="career-body active" id="careerCost">
+  <div class="topbar">
+    <div class="pg-row">
+      <span class="ttl">📊 数据分析师·成本方向</span>
+      <span class="pg-num">完成 <b id="pgNum_cost">0%</b></span>
+      <div class="pg-track"><div class="pg-fill" id="pgFill_cost"></div></div>
+    </div>
+  </div>
+
+  <!-- S1 能力拆解 -->
+  <section class="sec" id="s1">
+    <header class="hero">
+      <span class="tag">🎯 制造业 · 成本方向</span>
+      <h2>数据分析师（成本方向）<br>岗位学习执行计划</h2>
+      <p>核心聚焦：SAP / Excel / Power BI 成本数据管理与差异分析。按阶段推进，步步为营。</p>
+      <div class="meta">
+        <span class="chip">⏱ 周期 3-6 月（全职）</span>
+        <span class="chip">📌 难度 中级 → 高级</span>
+        <span class="chip">🎓 前提：Excel 基础</span>
+      </div>
+    </header>
+    <div class="sec-head"><div class="num">1</div><h3>能力拆解表</h3></div>
+    <div class="card">
+      <table class="sched">
+        <thead><tr><th width="22%">能力维度</th><th>具体要求</th><th width="18%">优先级</th></tr></thead>
+        <tbody>
+          <tr><td class="day">SQL 查询</td><td>多表 JOIN、窗口函数、CTE，能独立从 ERP/数据仓库取数</td><td>⭐⭐⭐ 必须掌握</td></tr>
+          <tr><td class="day">Excel 高阶</td><td>数据透视表、Power Query、数组公式、条件格式看板</td><td>⭐⭐⭐ 必须掌握</td></tr>
+          <tr><td class="day">Power BI / Tableau</td><td>DAX 度量值、建模、交互式成本分析仪表盘</td><td>⭐⭐⭐ 必须掌握</td></tr>
+          <tr><td class="day">SAP 基础操作</td><td>CO 模块成本视图、标准成本/实际成本查询、事务码</td><td>⭐⭐ 熟练使用</td></tr>
+          <tr><td class="day">Python（加分）</td><td>Pandas 数据清洗、自动化报表、简单 ETL</td><td>⭐ 加分项</td></tr>
+          <tr><td class="day">成本核算方法</td><td>标准成本法、实际成本法、作业成本法理解与应用</td><td>⭐⭐⭐ 核心能力</td></tr>
+          <tr><td class="day">业务理解</td><td>BOM 结构、物料主数据、生产订单、在制品(WIP)流转</td><td>⭐⭐⭐ 关键差异化</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- S2 学习路线 -->
+  <section class="sec" id="s2">
+    <div class="sec-head"><div class="num">2</div><h3>分阶段学习路线图</h3></div>
+
+    <!-- Roadmap summary card -->
+    <div class="card" id="roadSummary_cost">
+      <div class="rs-summary">
+        <div class="rs-stat"><div class="sv"><b id="rsDone_cost">0</b></div><div class="sl">已完成课程</div></div>
+        <div class="rs-stat"><div class="sv"><b id="rsEp_cost">0</b></div><div class="sl">累计已学集数</div></div>
+        <div class="rs-stat"><div class="sv"><b id="rsDays_cost">0</b></div><div class="sl">累计学习天数</div></div>
+      </div>
+      <div class="rs-progress"><div class="bar"><i id="rsBar_cost"></i></div></div>
+      <div class="btn-row">
+        <button class="mini-btn road-reset" data-career="cost">↺ 重置路线图</button>
+        <button class="mini-btn road-export" data-career="cost">⬇ 导出进度</button>
+        <button class="mini-btn road-import" data-career="cost">⬆ 导入进度</button>
+        <input type="file" class="road-file" data-career="cost" accept="application/json" hidden>
+      </div>
+      <div class="btn-row">
+        <button class="mini-btn gist-toggle" data-career="cost">⚙ 云端设置</button>
+        <button class="mini-btn gist-upload" data-career="cost">☁ 上传云端</button>
+        <button class="mini-btn gist-download" data-career="cost">⬇ 下载云端</button>
+      </div>
+      <div class="gist-panel gist-panel-cost" style="display:none">
+        <label>GitHub 令牌（Personal Access Token，需 gist 权限）</label>
+        <input class="gist-input gist-token" data-career="cost" placeholder="ghp_xxxxxxxxxxxx" type="password">
+        <label>Gist ID（留空则首次自动创建）</label>
+        <input class="gist-input gist-id-input" data-career="cost" placeholder="自动获取或手动粘贴">
+        <button class="mini-btn gist-set" data-career="cost">保存设置</button>
+      </div>
+      <div class="sync-status sync-status-cost"></div>
+    </div>
+
+    <div class="cal-wrap">
+      <div class="cal-header">
+        <span class="cal-month" id="calMonth_cost"></span>
+        <div>
+          <button class="mini-btn cal-prev" data-career="cost">‹</button>
+          <button class="mini-btn cal-next" data-career="cost">›</button>
+        </div>
+      </div>
+      <div class="cal-grid" id="calGrid_cost"></div>
+      <div class="cal-legend"><span class="lg lg0"></span> 无记录 &nbsp; <span class="lg lg1"></span> 1 门 &nbsp; <span class="lg lg2"></span> 2-3 门 &nbsp; <span class="lg lg3"></span> 4+ 门</div>
+      <div class="cal-detail" id="calDetail_cost">点击有颜色的日期查看详情</div>
+    </div>
+
+    <div class="rs-tip">💡 勾选「✓」标记整门学完；点视频链接会自动记录「今天学过这门课」；带「N集」的课程可用 −/+ 记录学到第几集。所有数据存在本机浏览器。</div>
+
+    <div class="phase">
+      <div class="phase-title">🔷 第一阶段：基础夯实（第 1–4 周）</div>
+      <div class="phase-week">目标：Excel 高阶 + SQL 入门，能独立完成数据提取与清洗</div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>Excel 高阶实战</b> — 王佩丰《Excel 186集》<a href="https://www.bilibili.com/video/BV1bJLF6WEca" target="_blank">🔗 B站</a> <span class="rs-num">(186集)</span> <span class="res-step"><button class="st-btn st-minus">−</button><span class="st-val">第 <b>0</b> / 186 集</span><button class="st-btn st-plus">+</button></span></span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>VBA 自动化入门</b> — 《VBA 从入门到精通 200集》<a href="https://www.bilibili.com/video/BV1ax4y1V7qi" target="_blank">🔗 B站</a> <span class="rs-num">(200集)</span> <span class="res-step"><button class="st-btn st-minus">−</button><span class="st-val">第 <b>0</b> / 200 集</span><button class="st-btn st-plus">+</button></span></span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>SQL 基础到进阶</b> — 尚硅谷 MySQL / PostgreSQL <a href="https://www.bilibili.com/video/BV1iq4y1u7vj" target="_blank">🔗 B站</a> <span class="rs-num">(120集)</span> <span class="res-step"><button class="st-btn st-minus">−</button><span class="st-val">第 <b>0</b> / 120 集</span><button class="st-btn st-plus">+</button></span></span></div>
+      <div class="goal">📌 产出：完成 3 套练习题（透视表 ×1、SQL 多表查询 ×1、VBA 小工具 ×1）</div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-title">🔷 第二阶段：BI 可视化 + SAP 基础（第 5–8 周）</div>
+      <div class="phase-week">目标：能搭建成本分析仪表盘，理解 SAP CO 核心概念</div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>Power BI 实战</b> — 《Power BI 零基础 50集》<a href="https://www.bilibili.com/video/BV11ezsBCE58" target="_blank">🔗 B站</a> <span class="rs-num">(50集)</span> <span class="res-step"><button class="st-btn st-minus">−</button><span class="st-val">第 <b>0</b> / 50 集</span><button class="st-btn st-plus">+</button></span></span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>SAP FICO / CO 入门</b> — 《SAP CO 成本管理 51集》<a href="https://www.bilibili.com/video/BV1Jv4y1G7CD" target="_blank">🔗 B站</a> <span class="rs-num">(51集)</span> <span class="res-step"><button class="st-btn st-minus">−</button><span class="st-val">第 <b>0</b> / 51 集</span><button class="st-btn st-plus">+</button></span></span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>DAX 度量值深入</b> — Power BI DAX 进阶指南 <a href="https://docs.microsoft.com/zh-cn/dax/" target="_blank">🔗 微软官方文档</a></span></div>
+      <div class="goal">📌 产出：一份完整的「产品成本差异分析」Power BI 仪表盘（含钻取、筛选器）</div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-title">🔷 第三阶段：成本核算方法深化（第 9–12 周）</div>
+      <div class="phase-week">目标：掌握标准成本法 vs 实际成本法，能做差异分析报告</div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>成本会计实务</b> — 《成本会计学》配套视频 <a href="https://www.bilibili.com/video/BV1mB4y1Q7mx" target="_blank">🔗 B站</a> <span class="rs-num">(48集)</span> <span class="res-step"><button class="st-btn st-minus">−</button><span class="st-val">第 <b>0</b> / 48 集</span><button class="st-btn st-plus">+</button></span></span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>制造业成本分析案例</b> — CSDN / 知乎专栏文章合集 <a href="https://zhuanlan.zhihu.com/p/338497068" target="_blank">🔗 知乎</a></span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>BOM 成本滚算实操</b> — SAP BOM Cost Rollup 教程 <a href="https://www.bilibili.com/video/BV1JRSKBCEqD" target="_blank">🔗 B站</a> <span class="rs-num">(32集)</span> <span class="res-step"><button class="st-btn st-minus">−</button><span class="st-val">第 <b>0</b> / 32 集</span><button class="st-btn st-plus">+</button></span></span></div>
+      <div class="goal">📌 产出：一份「月度成本差异分析报告」（模拟数据，含价格/用量/效率差异分解）</div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-title">🔷 第四阶段：项目实战 + 面试准备（第 13–16 周）</div>
+      <div class="phase-week">目标：完成 1 个端到端项目，整理面试题库</div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>综合项目：制造企业成本数据分析平台</b>（自选数据源，用 Power BI + Excel 实现）</span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>面试高频题整理</b> — 成本分析师面试 30 问 <a href="https://www.zhihu.com/search?type=content&q=成本分析师面试题" target="_blank">🔗 知乎搜索</a></span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>简历优化</b> — 量化成果描述（如：搭建成本看板使差异分析效率提升 40%）</span></div>
+      <div class="goal">📌 产出：作品集（仪表盘截图 + 差异报告 PDF）+ 简历终稿</div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-title">🔷 第五阶段：持续提升（长期）</div>
+      <div class="phase-week">目标：保持学习节奏，关注行业动态</div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>Python Pandas 数据分析</b>（可选进阶）<a href="https://www.bilibili.com/video/BV1D9GLzyEL6" target="_blank">🔗 B站</a> <span class="rs-num">(80集)</span> <span class="res-step"><button class="st-btn st-minus">−</button><span class="st-val">第 <b>0</b> / 80 集</span><button class="st-btn st-plus">+</button></span></span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>行业研报阅读</b> — 制造业数字化转型 / 智能工厂成本管理趋势</span></div>
+      <div class="goal">📌 保持每周至少 1 次 BOM/成本相关技术文章阅读或视频学习</div>
+    </div>
+  </section>
+
+  <!-- S3 每日计划 -->
+  <section class="sec" id="s3">
+    <div class="sec-head"><div class="num">3</div><h3>每日学习计划</h3></div>
+    <div class="card">
+      <table class="sched">
+        <thead><tr><th width="14%">时间段</th><th>在职版（2–3h/天）</th><th>全职版（6–8h/天）</th></tr></thead>
+        <tbody>
+          <tr><td class="day">周一</td><td>SQL 练习 1h + Excel 透视表 1h</td><td>SQL 视频 3h + 习题 2h + 复盘 1h</td></tr>
+          <tr><td class="day">周二</td><td>Power BI 跟练 1.5h + 笔记 0.5h</td><td>Power BI 项目实战 5h + DAX 文档 2h</td></tr>
+          <tr><td class="day">周三</td><td>SAP CO 视频 1h + 操作练习 1h</td><td>SAP CO 系统 3h + 成本会计理论 3h</td></tr>
+          <tr><td class="day">周四</td><td>成本核算方法阅读 1h + 做笔记 1h</td><td>BOM 成本滚算 4h + 差异分析练习 3h</td></tr>
+          <tr><td class="day">周五</td><td>综合项目推进 1.5h + 复盘 0.5h</td><td>项目实战 5h + 面试题整理 2h</td></tr>
+          <tr><td class="day">周末</td><td>本周总结 + 下周规划（1h）</td><td>本周总结 + 作品集完善（3–4h）</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- S4 成果检验 -->
+  <section class="sec" id="s4">
+    <div class="sec-head"><div class="num">4</div><h3>成果检验清单</h3></div>
+    <div class="card">
+      <div class="check" data-key="c1"><div class="box"></div> 完成 Excel 186 集全部学习并输出 3 套练习</div>
+      <div class="check" data-key="c2"><div class="box"></div> 完成 SQL 120 集并独立写出 10 个以上复杂查询</div>
+      <div class="check" data-key="c3"><div class="box"></div> 用 Power BI 搭建出「产品成本差异分析」仪表盘</div>
+      <div class="check" data-key="c4"><div class="box"></div> 完成 SAP CO 51 集学习，能说出 5 个核心事务码用途</div>
+      <div class="check" data-key="c5"><div class="box"></div> 输出一份「月度成本差异分析报告」（模拟数据）</div>
+      <div class="check" data-key="c6"><div class="box"></div> 整理 30 道面试高频题并背诵核心答案</div>
+      <div class="check" data-key="c7"><div class="box"></div> 简历终稿量化成果 ≥ 3 条可测量的成就</div>
+      <div class="check" data-key="c8"><div class="box"></div>【加分】完成 Python Pandas 80 集</div>
+    </div>
+    <span class="reset" id="resetBtn_cost">↺ 清空我的进度</span>
+  </section>
+
+  <!-- S5 优先级 -->
+  <section class="sec" id="s5">
+    <div class="sec-head"><div class="num">5</div><h3>能力优先级排序</h3></div>
+    <div class="card">
+      <div class="rank r1"><div class="rn">1</div><div class="rl">Excel 高阶（透视表 / Power Query）</div><div class="rd">日常最高频使用</div></div>
+      <div class="rank r2"><div class="rn">2</div><div class="rl">SQL 多表查询与清洗</div><div class="rd">取数基本功</div></div>
+      <div class="rank r3"><div class="rn">3</div><div class="rl">Power BI / DAX 可视化</div><div class="rd">面试亮点技能</div></div>
+      <div class="rank r4"><div class="rn">4</div><div class="rl">SAP CO 成本模块操作</div><div class="rd">岗位核心差异化</div></div>
+      <div class="rank r5"><div class="rn">5</div><div class="rl">成本核算方法论</div><div class="rd">业务理解深度</div></div>
+    </div>
+  </section>
+
+  <!-- S6 资源速查 -->
+  <section class="sec" id="s6">
+    <div class="sec-head"><div class="num">6</div><h3>资源速查表</h3></div>
+    <div class="card" id="resList_cost">
+      <div class="res-item"><div class="res-cb">✓</div><div class="res-info"><span class="res-name"><a href="https://www.bilibili.com/video/BV1bJLF6WEca" target="_blank">王佩丰 Excel 186集</a></span><span class="res-desc">B站 · Excel 全栈实战</span><span class="rs-num">186集</span><div class="rs-bar"><i></i></div></div></div>
+      <div class="res-item"><div class="res-cb">✓</div><div class="res-info"><span class="res-name"><a href="https://www.bilibili.com/video/BV1ax4y1V7qi" target="_blank">VBA 从入门到精通 200集</a></span><span class="res-desc">B站 · VBA 自动化</span><span class="rs-num">200集</span><div class="rs-bar"><i></i></div></div></div>
+      <div class="res-item"><div class="res-cb">✓</div><div class="res-info"><span class="res-name"><a href="https://www.bilibili.com/video/BV1iq4y1u7vj" target="_blank">尚硅谷 SQL 120集</a></span><span class="res-desc">B站 · MySQL/PostgreSQL</span><span class="rs-num">120集</span><div class="rs-bar"><i></i></div></div></div>
+      <div class="res-item"><div class="res-cb">✓</div><div class="res-info"><span class="res-name"><a href="https://www.bilibili.com/video/BV11ezsBCE58" target="_blank">Power BI 零基础 50集</a></span><span class="res-desc">B站 · Power BI 实战</span><span class="rs-num">50集</span><div class="rs-bar"><i></i></div></div></div>
+      <div class="res-item"><div class="res-cb">✓</div><div class="res-info"><span class="res-name"><a href="https://www.bilibili.com/video/BV1Jv4y1G7CD" target="_blank">SAP CO 成本管理 51集</a></span><span class="res-desc">B站 · SAP FICO/CO</span><span class="rs-num">51集</span><div class="rs-bar"><i></i></div></div></div>
+      <div class="res-item"><div class="res-cb">✓</div><div class="res-info"><span class="res-name"><a href="https://www.bilibili.com/video/BV1mB4y1Q7mx" target="_blank">成本会计学 48集</a></span><span class="res-desc">B站 · 成本会计理论</span><span class="rs-num">48集</span><div class="rs-bar"><i></i></div></div></div>
+      <div class="res-item"><div class="res-cb">✓</div><div class="res-info"><span class="res-name"><a href="https://docs.microsoft.com/zh-cn/dax/" target="_blank">微软 DAX 官方文档</a></span><span class="res-desc">DAX 函数参考手册</span></div></div>
+      <div class="res-item"><div class="res-cb">✓</div><div class="res-info"><span class="res-name"><a href="https://zhuanlan.zhihu.com/p/338497068" target="_blank">知乎：制造业成本分析方法论</a></span><span class="res-desc">行业实践文章</span></div></div>
+    </div>
+    <p style="margin-top:14px">📊 数据分析师（成本方向）学习执行计划 · 基于个人学习路径整理</p>
+  </section>
+  <section class="sec" id="s7">
+    <div class="sec-head"><div class="num">7</div><h3>📚 文字学习资料（书籍 / 文档 / 文章）</h3></div>
+    <p style="margin:0 0 12px;color:var(--muted);font-size:13px">以下为纯文字资料，适合通勤、排队等碎片时间阅读，无需看视频即可打基础。</p>
+    <div class="card">
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📕 书籍</span><a href="https://search.jd.com/Search?keyword=%E6%88%90%E6%9C%AC%E4%BC%9A%E8%AE%A1+%E4%BA%8E%E5%AF%8C%E7%94%9F" target="_blank">《成本会计》· 于富生 等</a></span><span class="res-desc">成本归集、分配与核算方法，财务基础首选教材</span></div></div>
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📕 书籍</span><a href="https://search.jd.com/Search?keyword=%E7%AE%A1%E7%90%86%E4%BC%9A%E8%AE%A1+%E4%BD%99%E7%BB%AA%E7%BC%A8" target="_blank">《管理会计》· 余绪缨</a></span><span class="res-desc">本量利分析、预算编制与经营决策</span></div></div>
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📕 书籍</span><a href="https://search.jd.com/Search?keyword=%E7%94%A8%E6%95%B0%E6%8D%AE%E8%AE%B2%E6%95%85%E4%BA%8B" target="_blank">《用数据讲故事》· Cole Nussbaumer Knaflic</a></span><span class="res-desc">数据可视化与汇报表达，BI 看板必备思维</span></div></div>
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📕 书籍</span><a href="https://search.jd.com/Search?keyword=Excel+%E9%AB%98%E6%95%88%E5%8A%9E%E5%85%AC+%E8%B4%A2%E5%8A%A1%E6%95%B0%E6%8D%AE" target="_blank">《Excel 高效办公：财务数据管理》· Excel Home</a></span><span class="res-desc">函数、透视表、Power Query 实战</span></div></div>
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📄 文档</span><a href="https://learn.microsoft.com/zh-cn/power-bi/" target="_blank">Microsoft Learn · Power BI 文档</a></span><span class="res-desc">官方 DAX / 建模 / 可视化教程</span></div></div>
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📄 文档</span><a href="https://dax.guide/" target="_blank">DAX 指南（dax.guide）</a></span><span class="res-desc">DAX 函数速查与用法示例</span></div></div>
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📄 文档</span><a href="https://sqlzoo.net/" target="_blank">SQLZoo · 交互式 SQL 自学</a></span><span class="res-desc">边学边练的 SQL 练习题</span></div></div>
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📝 文章</span><a href="https://www.zhihu.com/search?type=content&q=成本会计实操" target="_blank">知乎：成本会计实操专栏</a></span><span class="res-desc">制造业成本核算案例汇总</span></div></div>
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📝 文章</span><a href="https://www.zhihu.com/search?type=content&q=数据分析方法论" target="_blank">知乎：数据分析方法论</a></span><span class="res-desc">业务视角的数据分析方法论</span></div></div>
+    </div>
+    <p style="margin-top:14px">📊 数据分析师（成本方向）学习执行计划 · 基于个人学习路径整理</p>
+  </section>
+  </div><!-- end careerCost -->
+
+  <!-- ==================== CAREER 2: HR数据专家 ==================== -->
+  <div class="career-body" id="careerHR">
+  <div class="topbar">
+    <div class="pg-row">
+      <span class="ttl">👥 HR数据专家</span>
+      <span class="pg-num">完成 <b id="pgNum_hr">0%</b></span>
+      <div class="pg-track"><div class="pg-fill" id="pgFill_hr"></div></div>
+    </div>
+  </div>
+
+  <section class="hr-sec" id="hr-s1">
+    <header class="hero">
+      <span class="tag">💼 HR · 数据驱动决策</span>
+      <h2>HR数据专家<br>岗位学习执行计划</h2>
+      <p>基于岗位 JD 拆解：SQL / Python / BI可视化 / HR业务理解 / ML预测模型，五阶段系统化路线。</p>
+      <div class="meta">
+        <span class="chip">⏱ 周期 4-6 月</span>
+        <span class="chip">📌 难度 中高级</span>
+        <span class="chip">🎓 前提：Excel 基础</span>
+      </div>
+    </header>
+    <div class="sec-head"><div class="num">1</div><h3>能力拆解表</h3></div>
+    <div class="card">
+      <table class="sched">
+        <thead><tr><th width="22%">能力维度</th><th>具体要求</th><th width="18%">优先级</th></tr></thead>
+        <tbody>
+          <tr><td class="day">SQL</td><td>多表JOIN、窗口函数、CTE，能从HRIS/ATS取数</td><td>⭐⭐⭐ 必须</td></tr>
+          <tr><td class="day">Python/Pandas</td><td>数据清洗、统计分析、自动化报表</td><td>⭐⭐⭐ 必须</td></tr>
+          <tr><td class="day">Excel高阶</td><td>透视表、Power Query、条件格式</td><td>⭐⭐⭐ 必须</td></tr>
+          <tr><td class="day">BI可视化</td><td>Power BI/Tableau搭建HR看板</td><td>⭐⭐ 核心</td></tr>
+          <tr><td class="day">HR业务理解</td><td>招聘漏斗、流失预警、薪酬结构、人效指标</td><td>⭐⭐⭐ 差异化</td></tr>
+          <tr><td class="day">ML预测</td><td>员工流失预测、招聘需求预测（scikit-learn）</td><td>⭐ 加分</td></tr>
+          <tr><td class="day">沟通呈现</td><td>向非技术管理层讲清数据洞察</td><td>⭐⭐ 关键软技能</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="hr-sec" id="hr-s2">
+    <div class="sec-head"><div class="num">2</div><h3>分阶段学习路线图</h3></div>
+    <div class="card" id="roadSummary_hr">
+      <div class="rs-summary">
+        <div class="rs-stat"><div class="sv"><b id="rsDone_hr">0</b></div><div class="sl">已完成课程</div></div>
+        <div class="rs-stat"><div class="sv"><b id="rsEp_hr">0</b></div><div class="sl">累计已学集数</div></div>
+        <div class="rs-stat"><div class="sv"><b id="rsDays_hr">0</b></div><div class="sl">累计学习天数</div></div>
+      </div>
+      <div class="rs-progress"><div class="bar"><i id="rsBar_hr"></i></div></div>
+      <div class="btn-row">
+        <button class="mini-btn road-reset" data-career="hr">↺ 重置路线图</button>
+        <button class="mini-btn road-export" data-career="hr">⬇ 导出进度</button>
+        <button class="mini-btn road-import" data-career="hr">⬆ 导入进度</button>
+        <input type="file" class="road-file" data-career="hr" accept="application/json" hidden>
+      </div>
+      <div class="btn-row">
+        <button class="mini-btn gist-toggle" data-career="hr">⚙ 云端设置</button>
+        <button class="mini-btn gist-upload" data-career="hr">☁ 上传云端</button>
+        <button class="mini-btn gist-download" data-career="hr">⬇ 下载云端</button>
+      </div>
+      <div class="gist-panel gist-panel-hr" style="display:none">
+        <label>GitHub 令牌（需 gist 权限）</label>
+        <input class="gist-input gist-token" data-career="hr" placeholder="ghp_xxxxxxxxxxxx" type="password">
+        <label>Gist ID（留空则首次创建）</label>
+        <input class="gist-input gist-id-input" data-career="hr" placeholder="自动获取或手动粘贴">
+        <button class="mini-btn gist-set" data-career="hr">保存设置</button>
+      </div>
+      <div class="sync-status sync-status-hr"></div>
+    </div>
+    <div class="cal-wrap">
+      <div class="cal-header">
+        <span class="cal-month" id="calMonth_hr"></span>
+        <div><button class="mini-btn cal-prev" data-career="hr">‹</button><button class="mini-btn cal-next" data-career="hr">›</button></div>
+      </div>
+      <div class="cal-grid" id="calGrid_hr"></div>
+      <div class="cal-legend"><span class="lg lg0"></span> 无记录 &nbsp; <span class="lg lg1"></span> 1 门 &nbsp; <span class="lg lg2"></span> 2-3 门 &nbsp; <span class="lg lg3"></span> 4+ 门</div>
+      <div class="cal-detail" id="calDetail_hr">点击有颜色的日期查看详情</div>
+    </div>
+    <div class="rs-tip">💡 勾选「✓」标记整门学完；点视频链接自动记录当天学过。带「N集」可用 −/+ 记录集数。云端同步与成本方向独立（使用不同 Gist ID）。</div>
+
+    <div class="phase">
+      <div class="phase-title">🔷 阶段一：SQL + Excel 基础（第 1–3 周）</div>
+      <div class="phase-week">目标：能独立从 HRIS 取数、用透视表做基础分析</div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>MySQL SQL 基础</b> — 尚硅谷 <a href="https://www.bilibili.com/video/BV1iq4y1u7vj" target="_blank">🔗 B站</a> <span class="rs-num">(120集)</span> <span class="res-step"><button class="st-btn st-minus">−</button><span class="st-val">第 <b>0</b> / 120 集</span><button class="st-btn st-plus">+</button></span></span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>Excel 数据分析</b> — 王佩丰 <a href="https://www.bilibili.com/video/BV1bJLF6WEca" target="_blank">🔗 B站</a> <span class="rs-num">(186集)</span> <span class="res-step"><button class="st-btn st-minus">−</button><span class="st-val">第 <b>0</b> / 186 集</span><button class="st-btn st-plus">+</button></span></span></div>
+      <div class="goal">📌 产出：用 SQL 从模拟 HR 库查出各部门人数分布；用透视表做薪资分布图</div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-title">🔷 阶段二：Python 数据分析 + ML 入门（第 4–7 周）</div>
+      <div class="phase-week">目标：能用 Pandas 清洗 HR 数据、跑简单统计模型</div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>Python 数据分析</b> — 数据森麟/黑马 <a href="https://www.bilibili.com/video/BV1D9GLzyEL6" target="_blank">🔗 B站</a> <span class="rs-num">(80集)</span> <span class="res-step"><button class="st-btn st-minus">−</button><span class="st-val">第 <b>0</b> / 80 集</span><button class="st-btn st-plus">+</button></span></span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>Pandas 实战</b> — HR 数据清洗案例 <a href="https://www.bilibili.com/video/BV1UJ411A7Fs" target="_blank">🔗 B站</a> <span class="rs-num">(45集)</span> <span class="res-step"><button class="st-btn st-minus">−</button><span class="st-val">第 <b>0</b> / 45 集</span><button class="st-btn st-plus">+</button></span></span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>机器学习入门（sklearn）</b> — 流失预测模型 <a href="https://www.bilibili.com/video/BV11reUzEEPH" target="_blank">🔗 B站</a> <span class="rs-num">(36集)</span> <span class="res-step"><button class="st-btn st-minus">−</button><span class="st-val">第 <b>0</b> / 36 集</span><button class="st-btn st-plus">+</button></span></span></div>
+      <div class="goal">📌 产出：用 Python 做一份员工流失风险评分 + 招聘漏斗转化率分析</div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-title">🔷 阶段三：BI 可视化 + HR 看板（第 8–11 周）</div>
+      <div class="phase-week">目标：搭建可交互的 HR 运营仪表盘</div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>Power BI 实战</b> — <a href="https://www.bilibili.com/video/BV11ezsBCE58" target="_blank">🔗 B站</a> <span class="rs-num">(50集)</span> <span class="res-step"><button class="st-btn st-minus">−</button><span class="st-val">第 <b>0</b> / 50 集</span><button class="st-btn st-plus">+</button></span></span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>HR 看板设计</b> — 招聘/离职/人效/薪酬四大主题</span></span></div>
+      <div class="goal">📌 产出：一套 HR 运营 Dashboard（含钻取、筛选器、KPI 卡片）</div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-title">🔷 阶段四：HR 业务深度 + 系统对接（第 12–15 周）</div>
+      <div class="phase-week">目标：理解 HR 业务流程，能对接 Workday/北森等系统</div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>HR 业务知识</b> — 招聘全流程 / 薪酬设计 / 绩效管理 / 劳动法规</span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>HRIS 系统对接</b> — API 取数、ETL 调度、数据治理</span></div>
+      <div class="goal">📌 产出：从模拟 HRIS 导数据 → 清洗 → 入仓 → 看板展示的完整链路</div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-title">🔷 阶段五：AI 应用 + 综合提升（第 16–20 周）</div>
+      <div class="phase-week">目标：探索 AI 在 HR 场景的应用，完善作品集</div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>AI + HR 案例</b> — 智能简历筛选 / 薪酬预测 / 组织网络分析</span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>作品集打磨</b> — 3–5 个可演示项目 + 技术博客</span></div>
+      <div class="goal">📌 产出：GitHub 作品集 + 技术博客 + 面试-ready 的项目故事</div>
+    </div>
+  </section>
+
+  <section class="hr-sec" id="hr-s3">
+    <div class="sec-head"><div class="num">3</div><h3>每日学习计划</h3></div>
+    <div class="card">
+      <table class="sched">
+        <thead><tr><th width="14%">时间</th><th>在职版（2-3h/天）</th><th>全职版（6-8h/天）</th></tr></thead>
+        <tbody>
+          <tr><td class="day">周一</td><td>SQL 练习 1h + Excel 1h</td><td>SQL 视频 3h + 练习 2h + 复盘 1h</td></tr>
+          <tr><td class="day">周二</td><td>Python Pandas 1.5h</td><td>Python 项目 4h + ML 理论 2h</td></tr>
+          <tr><td class="day">周三</td><td>Power BI 跟练 1.5h</td><td>BI 看板搭建 5h + DAX 2h</td></tr>
+          <tr><td class="day">周四</td><td>HR 业务阅读 1h + 笔记 1h</td><td>HR 业务 3h + 系统对接学习 3h</td></tr>
+          <tr><td class="day">周五</td><td>综合项目 1.5h</td><td>项目实战 5h + 面试准备 2h</td></tr>
+          <tr><td class="day">周末</td><td>本周复盘 + 下周规划（1h）</td><td>作品集完善 + 博客写作（4h）</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="hr-sec" id="hr-s4">
+    <div class="sec-head"><div class="num">4</div><h3>成果检验清单</h3></div>
+    <div class="card">
+      <div class="check" data-key="h1"><div class="box"></div> 完成 SQL 120 集 + 独立写出 10 个 HR 相关查询</div>
+      <div class="check" data-key="h2"><div class="box"></div> 完成 Python/Pandas 125 集 + 输出 1 份 HR 数据清洗脚本</div>
+      <div class="check" data-key="h3"><div class="box"></div> 搭建 HR 运营 Dashboard（Power BI 或 Tableau）</div>
+      <div class="check" data-key="h4"><div class="box"></div> 完成员工流失预测模型（sklearn，AUC > 0.75）</div>
+      <div class="check" data-key="h5"><div class="box"></div> 输出招聘漏斗分析报告（含转化率瓶颈定位）</div>
+      <div class="check" data-key="h6"><div class="box"></div> 整理 20 道 HR 数据分析师面试高频题</div>
+      <div class="check" data-key="h7"><div class="box"></div>【加分】对接真实 HRIS API 完成一次数据抽取</div>
+      <div class="check" data-key="h8"><div class="box"></div>【加分】写一篇 HR 数据分析技术博客（发布于知乎/CSDN）</div>
+    </div>
+    <span class="reset reset-hr" id="resetBtn_hr">↺ 清空我的进度</span>
+  </section>
+
+  <section class="hr-sec" id="hr-s5">
+    <div class="sec-head"><div class="num">5</div><h3>能力优先级排序</h3></div>
+    <div class="card">
+      <div class="rank r1"><div class="rn">1</div><div class="rl">SQL 取数能力</div><div class="rd">一切分析的根基</div></div>
+      <div class="rank r2"><div class="rn">2</div><div class="rl">Python / Pandas 数据处理</div><div class="rd">效率倍增器</div></div>
+      <div class="rank r3"><div class="rn">3</div><div class="rl">BI 可视化（Power BI）</div><div class="rd">向管理层展示价值</div></div>
+      <div class="rank r4"><div class="rn">4</div><div class="rl">HR 业务理解</div><div class="rd">提出正确的问题</div></div>
+      <div class="rank r5"><div class="rn">5</div><div class="rl">ML 预测模型</div><div class="rd">面试加分项</div></div>
+    </div>
+  </section>
+
+  <section class="hr-sec" id="hr-s6">
+    <div class="sec-head"><div class="num">6</div><h3>资源速查表</h3></div>
+    <div class="card" id="resList_hr">
+      <div class="res-item"><div class="res-cb">✓</div><div class="res-info"><span class="res-name"><a href="https://www.bilibili.com/video/BV1iq4y1u7vj" target="_blank">尚硅谷 MySQL 120集</a></span><span class="res-desc">B站 · SQL 基础到进阶</span><span class="rs-num">120集</span><div class="rs-bar"><i></i></div></div></div>
+      <div class="res-item"><div class="res-cb">✓</div><div class="res-info"><span class="res-name"><a href="https://www.bilibili.com/video/BV1D9GLzyEL6" target="_blank">Python 数据分析 80集</a></span><span class="res-desc">B站 · Pandas/NumPy/Matplotlib</span><span class="rs-num">80集</span><div class="rs-bar"><i></i></div></div></div>
+      <div class="res-item"><div class="res-cb">✓</div><div class="res-info"><span class="res-name"><a href="https://www.bilibili.com/video/BV11ezsBCE58" target="_blank">Power BI 零基础 50集</a></span><span class="res-desc">B站 · DAX/建模/可视化</span><span class="rs-num">50集</span><div class="rs-bar"><i></i></div></div></div>
+      <div class="res-item"><div class="res-cb">✓</div><div class="res-info"><span class="res-name"><a href="https://www.bilibili.com/video/BV1UJ411A7Fs" target="_blank">Pandas HR实战 45集</a></span><span class="res-desc">B站 · HR 数据清洗案例</span><span class="rs-num">45集</span><div class="rs-bar"><i></i></div></div></div>
+      <div class="res-item"><div class="res-cb">✓</div><div class="res-info"><span class="res-name"><a href="https://www.bilibili.com/video/BV11reUzEEPH" target="_blank">sklearn 流失预测 36集</a></span><span class="res-desc">B站 · ML 分类模型</span><span class="rs-num">36集</span><div class="rs-bar"><i></i></div></div></div>
+      <div class="res-item"><div class="res-cb">✓</div><div class="res-info"><span class="res-name"><a href="https://zhuanlan.zhihu.com/p/564877582" target="_blank">知乎：HR 数据分析入门指南</a></span><span class="res-desc">方法论 + 行业实践</span></div></div>
+      <div class="res-item"><div class="res-cb">✓</div><div class="res-info"><span class="res-name"><a href="https://www.zhihu.com/search?type=content&q=HR数据分析师面试" target="_blank">知乎搜索：HR数据分析师面试题</a></span><span class="res-desc">面试真题汇总</span></div></div>
+    </div>
+    <p style="margin-top:14px">👥 HR数据专家 · 岗位学习执行计划 · 基于岗位 JD 拆解</p>
+  </section>
+  <section class="hr-sec" id="hr-s7">
+    <div class="sec-head"><div class="num">7</div><h3>📚 文字学习资料（书籍 / 文档 / 文章）</h3></div>
+    <p style="margin:0 0 12px;color:var(--muted);font-size:13px">以下为纯文字资料，适合通勤、排队等碎片时间阅读，无需看视频即可打基础。</p>
+    <div class="card">
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📕 书籍</span><a href="https://search.jd.com/Search?keyword=HR%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90+%E6%95%B0%E6%8D%AE%E9%A9%B1%E5%8A%A8" target="_blank">《HR 数据分析：用数据驱动人力资源管理》· 陈豪</a></span><span class="res-desc">人力数据指标体系与分析方法</span></div></div>
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📕 书籍</span><a href="https://search.jd.com/Search?keyword=%E4%BA%BA%E5%8A%9B%E8%B5%84%E6%BA%90+analytics" target="_blank">《人力资源 analytics》· 牛思远 等</a></span><span class="res-desc">招聘漏斗、流失预警建模思路</span></div></div>
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📕 书籍</span><a href="https://search.jd.com/Search?keyword=Python+%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90%E5%9F%BA%E7%A1%80" target="_blank">《Python 数据分析基础》· Clinton Brownley</a></span><span class="res-desc">Pandas / 数据清洗入门</span></div></div>
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📕 书籍</span><a href="https://search.jd.com/Search?keyword=%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0+%E5%91%A8%E5%BF%97%E5%8D%8E" target="_blank">《机器学习》· 周志华（西瓜书）</a></span><span class="res-desc">分类/回归理论基础，看懂 sklearn 模型</span></div></div>
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📄 文档</span><a href="https://pandas.pydata.org/docs/" target="_blank">Pandas 官方文档</a></span><span class="res-desc">API 参考 + 入门教程</span></div></div>
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📄 文档</span><a href="https://scikit-learn.org/stable/documentation.html" target="_blank">scikit-learn 官方文档</a></span><span class="res-desc">分类模型与评估指标</span></div></div>
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📄 文档</span><a href="https://rework.withgoogle.com/" target="_blank">Google re:Work · 人才分析</a></span><span class="res-desc">谷歌公开的人才数据实践</span></div></div>
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📄 文档</span><a href="https://www.kaggle.com/search?q=HR+analytics" target="_blank">Kaggle · HR Analytics 数据集</a></span><span class="res-desc">员工流失等真实数据集练手</span></div></div>
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📝 文章</span><a href="https://www.zhihu.com/search?type=content&q=HR数据分析师面试" target="_blank">知乎：HR 数据分析师面试题</a></span><span class="res-desc">面试真题汇总</span></div></div>
+    </div>
+    <p style="margin-top:14px">👥 HR数据专家 · 岗位学习执行计划 · 基于岗位 JD 拆解</p>
+  </section>
+  </div><!-- end careerHR -->
+
+  <!-- ==================== CAREER 3: 产品数据工程师(BOM) ==================== -->
+  <div class="career-body" id="careerBOM">
+  <div class="topbar">
+    <div class="pg-row">
+      <span class="ttl">🔧 产品数据工程师(BOM)</span>
+      <span class="pg-num">完成 <b id="pgNum_bom">0%</b></span>
+      <div class="pg-track"><div class="pg-fill" id="pgFill_bom"></div></div>
+    </div>
+  </div>
+
+  <section class="bom-sec" id="bom-s1">
+    <header class="hero">
+      <span class="tag">🏭 制造业 · BOM / 成本方向</span>
+      <h2>产品数据工程师（BOM · 成本方向）<br>岗位学习执行计划</h2>
+      <p>聚焦 BOM 全生命周期管理 / ECR-ECN 变更流程 / PLM-ERP 工具链 / 物料替代与成本优化。五阶段系统化路线，20 周从入门到求职就绪。</p>
+      <div class="meta">
+        <span class="chip">⏱ 周期 20 周（约 5 个月）</span>
+        <span class="chip">📌 难度 中级 → 高级</span>
+        <span class="chip">🎓 学历：本科及以上（电子/微电子/机械/工业工程优先）</span>
+      </div>
+    </header>
+    <div class="sec-head"><div class="num">1</div><h3>能力拆解表（6 大核心模块）</h3></div>
+    <div class="card">
+      <table class="sched">
+        <thead><tr><th width="20%">模块</th><th>对应 JD 能力点</th><th width="18%">优先级</th></tr></thead>
+        <tbody>
+          <tr><td class="day">M1 电子硬件基础</td><td>元器件分类（电阻/电容/IC/连接器）、结构件材料（金属/塑料/PCB）、物料选型基础</td><td>⭐⭐⭐ 入门必备</td></tr>
+          <tr><td class="day">M2 BOM 结构与编码</td><td>BOM 层级、父子件关系、版本管理、唯一编码体系（分类码+流水码）</td><td>⭐⭐⭐ 核心能力</td></tr>
+          <tr><td class="day">M3 工程变更(ECR/ECN)</td><td>变更申请→评审→执行→归档全流程，5 个关键节点闭环追踪</td><td>⭐⭐⭐ JD 第 2 条职责</td></tr>
+          <tr><td class="day">M4 PLM / ERP 系统</td><td>SAP PP/MM / Windchill / Oracle Agile 任一平台实操（JD 明确要求）</td><td>⭐⭐⭐ JD 第 4、7 条要求</td></tr>
+          <tr><td class="day">M5 数据处理与分析</td><td>Excel 高阶、SQL、Power Query、数据透视表（Office + 数据分析双轨）</td><td>⭐⭐⭐ JD 第 5 条要求</td></tr>
+          <tr><td class="day">M6 成本分析与优化</td><td>物料替代评估、BOM 成本拆解、量产导入降本、议价支撑数据</td><td>⭐⭐⭐ 方向主线</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <div class="phase-title" style="font-size:14px">📋 岗位职责对照（来自 JD 截图）</div>
+      <div class="sub" style="margin-top:8px"><span class="dot"></span><span class="sub-text"><b>职责 1：</b>负责研发阶段产品 BOM（物料清单）的搭建、维护与版本管理，确保 BOM 数据的准确性、完整性及及时性</span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>职责 2：</b>参与工程变更（ECR/ECN）流程，负责 BOM 变更的审核、执行与跟踪，确保变更信息准确传递至采购、生产等相关部门</span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>职责 3：</b>配合硬件工程师进行物料选型与认证，参与新物料导入评审，维护物料编码与物料属性信息</span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>职责 4：</b>负责 PLM 系统中 BOM 数据的创建、维护与优化，推动 BOM 管理流程的标准化与效率提升</span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>职责 5：</b>协同采购、质量、生产等部门，解决 BOM 相关的物料替代、成本优化、量产导入等问题</span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>职责 6：</b>参与产品从研发到量产的 BOM 交接工作，保障量产阶段 BOM 的稳定运行</span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>职责 7：</b>跟踪行业 BOM 管理最佳实践，持续优化 BOM 管理规范与工具链</span></div>
+    </div>
+  </section>
+
+  <!-- S2 学习路线 -->
+  <section class="bom-sec" id="bom-s2">
+    <div class="sec-head"><div class="num">2</div><h3>分阶段学习路线图（5 阶段 × 20 周）</h3></div>
+
+    <!-- Roadmap summary card -->
+    <div class="card" id="roadSummary_bom">
+      <div class="rs-summary">
+        <div class="rs-stat"><div class="sv"><b id="rsDone_bom">0</b></div><div class="sl">已完成课程</div></div>
+        <div class="rs-stat"><div class="sv"><b id="rsEp_bom">0</b></div><div class="sl">累计已学集数</div></div>
+        <div class="rs-stat"><div class="sv"><b id="rsDays_bom">0</b></div><div class="sl">累计学习天数</div></div>
+      </div>
+      <div class="rs-progress"><div class="bar"><i id="rsBar_bom"></i></div></div>
+      <div class="btn-row">
+        <button class="mini-btn road-reset" data-career="bom">↺ 重置路线图</button>
+        <button class="mini-btn road-export" data-career="bom">⬇ 导出进度</button>
+        <button class="mini-btn road-import" data-career="bom">⬆ 导入进度</button>
+        <input type="file" class="road-file" data-career="bom" accept="application/json" hidden>
+      </div>
+      <div class="btn-row">
+        <button class="mini-btn gist-toggle" data-career="bom">⚙ 云端设置</button>
+        <button class="mini-btn gist-upload" data-career="bom">☁ 上传云端</button>
+        <button class="mini-btn gist-download" data-career="bom">⬇ 下载云端</button>
+      </div>
+      <div class="gist-panel gist-panel-bom" style="display:none">
+        <label>GitHub 令牌（Personal Access Token，需 gist 权限）</label>
+        <input class="gist-input gist-token" data-career="bom" placeholder="ghp_xxxxxxxxxxxx" type="password">
+        <label>Gist ID（留空则首次自动创建）</label>
+        <input class="gist-input gist-id-input" data-career="bom" placeholder="自动获取或手动粘贴">
+        <button class="mini-btn gist-set" data-career="bom">保存设置</button>
+      </div>
+      <div class="sync-status sync-status-bom"></div>
+    </div>
+
+    <div class="cal-wrap">
+      <div class="cal-header">
+        <span class="cal-month" id="calMonth_bom"></span>
+        <div>
+          <button class="mini-btn cal-prev" data-career="bom">‹</button>
+          <button class="mini-btn cal-next" data-career="bom">›</button>
+        </div>
+      </div>
+      <div class="cal-grid" id="calGrid_bom"></div>
+      <div class="cal-legend"><span class="lg lg0"></span> 无记录 &nbsp; <span class="lg lg1"></span> 1 门 &nbsp; <span class="lg lg2"></span> 2-3 门 &nbsp; <span class="lg lg3"></span> 4+ 门</div>
+      <div class="cal-detail" id="calDetail_bom">点击有颜色的日期查看详情</div>
+    </div>
+
+    <div class="rs-tip">💡 勾选「✓」标记整门学完；点视频链接会自动记录「今天学过这门课」；带「N集」的课程可用 −/+ 记录学到第几集。所有数据存在本机浏览器，三套职业进度完全独立。</div>
+
+    <!-- 阶段 1 -->
+    <div class="phase">
+      <div class="phase-title">🔹 阶段 1｜入门筑基（第 1–3 周）—— "看懂图纸、听懂术语"</div>
+      <div class="phase-week">M1 硬件基础 + M2 BOM 结构认知</div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>M1 电子元器件基础</b> — 常用元器件分类（电阻/电容/IC/连接器/二极管/三极管/MOSFET）、结构件材料（金属/塑料/PCB/陶瓷）<a href="https://www.bilibili.com/video/BV14dTczJE4X" target="_blank">🔗 B站：电子元器件识别与检测</a> <span class="rs-num">(38集)</span> <span class="res-step"><button class="st-btn st-minus">−</button><span class="st-val">第 <b>0</b> / 38 集</span><button class="st-btn st-plus">+</button></span></span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>M1 硬件基础知识补强</b> — PCB 设计基础 / SMT 工艺流程 / DFM 可制造性设计 <a href="https://www.bilibili.com/video/BV1gHSyY3E6q" target="_blank">🔗 B站：硬件工程师入门</a> <span class="rs-num">(65集)</span> <span class="res-step"><button class="st-btn st-minus">−</button><span class="st-val">第 <b>0</b> / 65 集</span><button class="st-btn st-plus">+</button></span></span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>M2 BOM 结构认知</b> — 单层 BOM vs 多层 BOM vs 模块化 BOM 的差异、父子件关系理解 <a href="https://zhuanlan.zhihu.com/p/360204184" target="_blank">🔗 知乎：BOM 结构详解</a></span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>M2 物料编码规则入门</b> — 编码体系分类（分类码 + 流水码 + 校验码）<a href="https://zhuanlan.zhihu.com/p/338946188" target="_blank">🔗 知乎：物料编码最佳实践</a></span></div>
+      <div class="goal">📌 每日产出：记 20 个元器件术语 + 画一张 "BOM 层级示意图"</div>
+    </div>
+
+    <!-- 阶段 2 -->
+    <div class="phase">
+      <div class="phase-title">🔹 阶段 2｜核心技能（第 4–7 周） —— "建得出 BOM、理得顺变更"</div>
+      <div class="phase-week">M2 编码规则 + M3 ECR/ECN 流程 + Excel 模拟实战</div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>M2 编制物料编码手册</b> — 设计一套小型编码方案（分类码 + 流水码），覆盖电子料/结构件/包材/辅料 <a href="https://www.bilibili.com/video/BV1bJLF6WEca" target="_blank">🔗 B站：Excel 高阶（用于编制模板）</a> <span class="rs-num">(186集，重点看前 40 集)</span> <span class="res-step"><button class="st-btn st-minus">−</button><span class="st-val">第 <b>0</b> / 186 集</span><button class="st-btn st-plus">+</button></span></span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>M3 ECR/ECN 变更流程全解析</b> — 画出端到端流程图（申请 → 评审 → 执行 → 归档），标注 5 个关键节点 <a href="https://zhuanlan.zhihu.com/p/37194857" target="_blank">🔗 知乎：ECR/ECN 流程详解</a></span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>M3 PLM 变更管理实践</b> — 企业PLM/ERP系统认知 <a href="https://www.bilibili.com/video/BV1EP4y1b78t" target="_blank">🔗 B站：ERP系统操作演示</a> <span class="rs-num">(1集)</span> <span class="res-step"><button class="st-btn st-minus">−</button><span class="st-val">第 <b>0</b> / 1 集</span><button class="st-btn st-plus">+</button></span></span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>实战作业</b>：用 Excel 模拟一套 50 个零件的 BOM 表，含版本号和成本字段</span></div>
+      <div class="goal">📌 产出：① 物料编码手册 v1.0 ② ECR/ECN 流程图（Visio/Draw.io）③ 50 零件 BOM Excel 模板</div>
+    </div>
+
+    <!-- 阶段 3 -->
+    <div class="phase">
+      <div class="phase-title">🔹 阶段 3｜工具实战（第 8–11 周） —— "用熟一套 PLM/ERP"</div>
+      <div class="phase-week">M4 系统深度上手 + M5 数据技能</div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>M4 路线 A：企业PLM/ERP系统实操</b>（制造企业主流，JD 多次提及）— BOM 创建/修订/版本控制/基线管理 <a href="https://www.bilibili.com/video/BV1EP4y1b78t" target="_blank">🔗 B站：ERP系统实操演示</a> <span class="rs-num">(1集)</span> <span class="res-step"><button class="st-btn st-minus">−</button><span class="st-val">第 <b>0</b> / 1 集</span><button class="st-btn st-plus">+</button></span></span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>M4 路线 B：SAP PP/MM 模块</b>（侧重物料主数据与 BOM 视图）— CS03/BOM 创建、MM01/物料主数据、MD04/库存查看 <a href="https://www.bilibili.com/video/BV1Jv4y1G7CD" target="_blank">🔗 B站：SAP PP/MM 入门</a> <span class="rs-num">(51集)</span> <span class="res-step"><button class="st-btn st-minus">−</button><span class="st-val">第 <b>0</b> / 51 集</span><button class="st-btn st-plus">+</button></span></span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>M5 SQL 基础查询</b> — 用于从 ERP/数据库提取 BOM 相关数据 <a href="https://www.bilibili.com/video/BV1iq4y1u7vj" target="_blank">🔗 B站：MySQL SQL</a> <span class="rs-num">(120集，重点看前 60 集)</span> <span class="res-step"><button class="st-btn st-minus">−</button><span class="st-val">第 <b>0</b> / 120 集</span><button class="st-btn st-plus">+</button></span></span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>M5 Excel 数据透视 + Power Query</b> — BOM 数据自动清洗与多维分析 <a href="https://www.bilibili.com/video/BV1bJLF6WEca" target="_blank">🔗 B站：Excel 高阶</a> <span class="rs-num">(186集，重点看 41-100 集)</span> <span class="res-step"><button class="st-btn st-minus">−</button><span class="st-val">第 <b>0</b> / 186 集</span><button class="st-btn st-plus">+</button></span></span></div>
+      <div class="goal">📌 考核节点：能在演示环境中独立创建物料、创建 BOM、发起一次 ECN</div>
+    </div>
+
+    <!-- 阶段 4 -->
+    <div class="phase">
+      <div class="phase-title">🔹 阶段 4｜成本主线深化（第 12–16 周） —— "看得见降本空间"</div>
+      <div class="phase-week">M6 成本拆解 + 物料替代 + 量产导入 + 数据可视化</div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>M6 BOM 成本法对比</b> — 标准成本法 vs 实际成本法 vs 作业成本法，何时用哪种 <a href="https://www.bilibili.com/video/BV1mB4y1Q7mx" target="_blank">🔗 B站：成本会计学</a> <span class="rs-num">(48集)</span> <span class="res-step"><button class="st-btn st-minus">−</button><span class="st-val">第 <b>0</b> / 48 集</span><button class="st-btn st-plus">+</button></span></span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>M6 物料替代评估框架</b> — 建立替换评估表（性能 / 交期 / 价格 / 风险 4 维度打分）<a href="https://zhuanlan.zhihu.com/p/439378981" target="_blank">🔗 知乎：物料替代评估方法论</a></span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>M6 量产导入降本跟踪</b> — 跟踪一次从研发 BOM → 量产 BOM 的成本收敛过程，目标降本 5–10%</span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>M6 数据可视化</b> — 用 Power BI 或透视表出一份 "BOM 成本 Top10 物料分析看板" <a href="https://www.bilibili.com/video/BV11ezsBCE58" target="_blank">🔗 B站：Power BI 实战</a> <span class="rs-num">(50集)</span> <span class="res-step"><button class="st-btn st-minus">−</button><span class="st-val">第 <b>0</b> / 50 集</span><button class="st-btn st-plus">+</button></span></span></div>
+      <div class="goal">📌 产出：① 物料替代评估表模板 ② 量产降本跟踪表 ③ BOM 成本 Top10 分析看板</div>
+    </div>
+
+    <!-- 阶段 5 -->
+    <div class="phase">
+      <div class="phase-title">🔹 阶段 5｜求职冲刺（第 17–20 周） —— "对得上 JD、打得过面试"</div>
+      <div class="phase-week">简历重构 + 面试题库 + JD 匹配度自检</div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>简历重构</b>：把以上产出量化写进简历<br>例：「搭建 50+ 物料编码体系，将物料检索效率提升 40%」「主导 3 次 ECR/ECN 变更闭环，变更及时率 100%」</span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>面试高频 15 题</b>：<br>1. BOM 多层级展开时如何避免循环引用？<br>2. ECR 和 ECN 的区别？<br>3. 量产导入阶段 BOM 失控的常见原因？<br>4. 物料替代的评审维度？<br>5. PLM 与 ERP 在 BOM 管理上的边界？<br>6. 如何保证 BOM 数据准确性？<br>7. 版本管理的最佳实践？<br>8. 一次典型 ECR/ECN 流程怎么走？<br>9. 物料编码的设计原则？<br>10. 量产 BOM 和研发 BOM 有什么区别？<br>11. 如何处理 BOM 中的替代料？<br>12. 成本滚算(Cost Roll-up)的逻辑？<br>13. 你用什么指标衡量 BOM 管理的质量？<br>14. 协同采购/质量时遇到过什么难题？<br>15. 对行业 BOM 管理趋势的看法？</span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>JD 匹配度自检表</b>：逐条勾对 7 条岗位职责 + 5 条任职要求，≥ 70% 进入下一阶段</span></div>
+      <div class="goal">📌 产出：① 量化简历终稿 ② 面试自检表（打分）③ 模拟面试录音/录像</div>
+    </div>
+  </section>
+
+  <!-- S3 每日计划 -->
+  <section class="bom-sec" id="bom-s3">
+    <div class="sec-head"><div class="num">3</div><h3>每日学习计划</h3></div>
+    <div class="card">
+      <table class="sched">
+        <thead><tr><th width="14%">时间</th><th>在职版（2-3h/天）</th><th>全职版（6-8h/天）</th></tr></thead>
+        <tbody>
+          <tr><td class="day">周一</td><td>元器件术语 30min + BOM 结构学习 1h + Excel 练习 30min</td><td>元器件视频 2h + BOM 理论 2h + Excel 实操 2h</td></tr>
+          <tr><td class="day">周二</td><td>编码规则学习 1h + 编码手册编写 1h</td><td>编码方案设计 3h + Excel 模板制作 3h</td></tr>
+          <tr><td class="day">周三</td><td>ECR/ECN 流程学习 1h + 画流程图 1h</td><td>PLM/Windchill 视频 3h + 系统实操 3h</td></tr>
+          <tr><td class="day">周四</td><td>SAP/PLM 系统学习 1h + SQL 练习 1h</td><td>SAP PP/MM 3h + SQL 查询练习 3h</td></tr>
+          <tr><td class="day">周五</td><td>成本分析方法 1h + 替代评估表设计 1h</td><td>成本分析 3h + Power BI 看板搭建 3h</td></tr>
+          <tr><td class="day">周六</td><td>综合项目推进 2h</td><td>项目实战 4h + 面试题整理 2h</td></tr>
+          <tr><td class="day">周日</td><td>本周复盘 + 产出物整理（1h）</td><td>周复盘 + 简历更新 + 自检表打分（3h）</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <div class="phase-title" style="font-size:14px">📅 学习节奏建议</div>
+      <div class="sub" style="margin-top:8px"><span class="dot"></span><span class="sub-text"><b>每日</b>：60 分钟模块学习 + 30 分钟实操</span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>每周</b>：周日复盘 + 输出 1 个可展示的产出物</span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>每阶段末</b>：自测一次（参考 JD 任职要求逐条打分，≥ 70% 进入下一阶段）</span></div>
+    </div>
+  </section>
+
+  <!-- S4 成果检验 -->
+  <section class="bom-sec" id="bom-s4">
+    <div class="sec-head"><div class="num">4</div><h3>成果检验清单（阶段产出物）</h3></div>
+    <div class="card">
+      <div class="check" data-key="b1"><div class="box"></div> <b>阶段 1</b> 元器件术语表（200+ 条）+ 硬件分类脑图</div>
+      <div class="check" data-key="b2"><div class="box"></div> <b>阶段 2</b> 物料编码手册 v1.0 + BOM Excel 模板（50 零件）+ ECR/ECN 流程图</div>
+      <div class="check" data-key="b3"><div class="box"></div> <b>阶段 3</b> PLM/ERP 操作录屏 ×3（创建物料/创建 BOM/发起 ECN）+ SQL 题库 50 道</div>
+      <div class="check" data-key="b4"><div class="box"></div> <b>阶段 4</b> 物料替代评估表 + BOM 成本 Top10 看板 + 量产降本案例分析报告</div>
+      <div class="check" data-key="b5"><div class="box"></div> <b>阶段 5</b> 量化简历（含 3+ 条可测量成果）+ 面试自检表（JD 12 条逐条打分）+ 模拟面试录音</div>
+      <div class="check" data-key="b6"><div class="box"></div> 【加分】完成 Windchill 或 SAP 官方认证课程</div>
+      <div class="check" data-key="b7"><div class="box"></div> 【加分】用 Power BI 做一份完整的 "BOM 全生命周期管理" 仪表盘</div>
+      <div class="check" data-key="b8"><div class="box"></div> 【加分】找到 1 个真实的 BOM 管理实习/项目机会并参与</div>
+    </div>
+    <span class="reset reset-bom" id="resetBtn_bom">↺ 清空我的进度</span>
+  </section>
+
+  <!-- S5 优先级 -->
+  <section class="bom-sec" id="bom-s5">
+    <div class="sec-head"><div class="num">5</div><h3>能力优先级排序</h3></div>
+    <div class="card">
+      <div class="rank r1"><div class="rn">1</div><div class="rl">BOM 结构与编码规则（M2）</div><div class="rd">岗位最核心硬技能</div></div>
+      <div class="rank r2"><div class="rn">2</div><div class="rl">ECR/ECN 变更管理（M3）</div><div class="rd">JD 第 2 条职责，高频考察</div></div>
+      <div class="rank r3"><div class="rn">3</div><div class="rl">PLM / ERP 系统操作（M4）</div><div class="rd">JD 第 4、7 条明确要求</div></div>
+      <div class="rank r4"><div class="rn">4</div><div class="rl">数据处理与分析（M5）</div><div class="rd">JD 第 5 条要求，效率放大器</div></div>
+      <div class="rank r5"><div class="rn">5</div><div class="rl">成本分析与优化（M6）</div><div class="rd">方向主线，差异化竞争力</div></div>
+      <div class="rank r5"><div class="rn">6</div><div class="rl">电子硬件基础（M1）</div><div class="rd">入门门槛，持续积累即可</div></div>
+    </div>
+  </section>
+
+  <!-- S6 资源速查 -->
+  <section class="bom-sec" id="bom-s6">
+    <div class="sec-head"><div class="num">6</div><h3>资源速查表</h3></div>
+    <div class="card" id="resList_bom">
+      <div class="res-item"><div class="res-cb">✓</div><div class="res-info"><span class="res-name"><a href="https://www.bilibili.com/video/BV14dTczJE4X" target="_blank">电子元器件识别与检测 38集</a></span><span class="res-desc">B站 · M1 硬件基础入门</span><span class="rs-num">38集</span><div class="rs-bar"><i></i></div></div></div>
+      <div class="res-item"><div class="res-cb">✓</div><div class="res-info"><span class="res-name"><a href="https://www.bilibili.com/video/BV1gHSyY3E6q" target="_blank">硬件工程师入门 65集</a></span><span class="res-desc">B站 · PCB/SMT/DFM 基础</span><span class="rs-num">65集</span><div class="rs-bar"><i></i></div></div></div>
+      <div class="res-item"><div class="res-cb">✓</div><div class="res-info"><span class="res-name"><a href="https://www.bilibili.com/video/BV1bJLF6WEca" target="_blank">王佩丰 Excel 186集</a></span><span class="res-desc">B站 · M2/M5 编码手册 & 数据处理</span><span class="rs-num">186集</span><div class="rs-bar"><i></i></div></div></div>
+      <div class="res-item"><div class="res-cb">✓</div><div class="res-info"><span class="res-name"><a href="https://www.bilibili.com/video/BV1EP4y1b78t" target="_blank">ERP系统操作演示</a></span><span class="res-desc">B站 · 企业管理系统实操</span><span class="rs-num">1集</span><div class="rs-bar"><i></i></div></div></div>
+      <div class="res-item"><div class="res-cb">✓</div><div class="res-info"><span class="res-name"><a href="https://www.bilibili.com/video/BV1Jv4y1G7CD" target="_blank">SAP PP/MM 模块 51集</a></span><span class="res-desc">B站 · M4 ERP 系统实操</span><span class="rs-num">51集</span><div class="rs-bar"><i></i></div></div></div>
+      <div class="res-item"><div class="res-cb">✓</div><div class="res-info"><span class="res-name"><a href="https://www.bilibili.com/video/BV1iq4y1u7vj" target="_blank">尚硅谷 MySQL SQL 120集</a></span><span class="res-desc">B站 · M5 数据取数</span><span class="rs-num">120集</span><div class="rs-bar"><i></i></div></div></div>
+      <div class="res-item"><div class="res-cb">✓</div><div class="res-info"><span class="res-name"><a href="https://www.bilibili.com/video/BV11ezsBCE58" target="_blank">Power BI 零基础 50集</a></span><span class="res-desc">B站 · M6 成本看板可视化</span><span class="rs-num">50集</span><div class="rs-bar"><i></i></div></div></div>
+      <div class="res-item"><div class="res-cb">✓</div><div class="res-info"><span class="res-name"><a href="https://www.bilibili.com/video/BV1mB4y1Q7mx" target="_blank">成本会计学 48集</a></span><span class="res-desc">B站 · M6 成本核算方法论</span><span class="rs-num">48集</span><div class="rs-bar"><i></i></div></div></div>
+      <div class="res-item"><div class="res-cb">✓</div><div class="res-info"><span class="res-name"><a href="https://zhuanlan.zhihu.com/p/360204184" target="_blank">知乎：BOM 结构详解</a></span><span class="res-desc">M2 BOM 层级理论</span></div></div>
+      <div class="res-item"><div class="res-cb">✓</div><div class="res-info"><span class="res-name"><a href="https://zhuanlan.zhihu.com/p/37194857" target="_blank">知乎：ECR/ECN 流程详解</a></span><span class="res-desc">M3 变更管理方法论</span></div></div>
+      <div class="res-item"><div class="res-cb">✓</div><div class="res-info"><span class="res-name"><a href="https://zhuanlan.zhihu.com/p/439378981" target="_blank">知乎：物料替代评估方法论</a></span><span class="res-desc">M6 成本优化框架</span></div></div>
+    </div>
+    <p style="margin-top:14px">🔧 产品数据工程师（BOM · 成本方向）· 岗位学习执行计划 · 基于 JD 7 条职责 + 5 条任职要求拆解</p>
+  </section>
+  <section class="bom-sec" id="bom-s7">
+    <div class="sec-head"><div class="num">7</div><h3>📚 文字学习资料（书籍 / 文档 / 文章）</h3></div>
+    <p style="margin:0 0 12px;color:var(--muted);font-size:13px">以下为纯文字资料，适合通勤、排队等碎片时间阅读，无需看视频即可打基础。</p>
+    <div class="card">
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📕 书籍</span><a href="https://search.jd.com/Search?keyword=%E7%89%A9%E6%96%99%E7%AE%A1%E7%90%86%E5%85%A5%E9%97%A8" target="_blank">《物料管理入门》· [德] 希尔德布兰特</a></span><span class="res-desc">物料计划、库存与采购基础</span></div></div>
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📕 书籍</span><a href="https://search.jd.com/Search?keyword=BOM+%E5%88%B6%E9%80%A0%E4%B8%9A%E4%BF%A1%E6%81%AF%E5%8C%96" target="_blank">《BOM——制造业信息化基石》</a></span><span class="res-desc">BOM 结构与全生命周期管理</span></div></div>
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📕 书籍</span><a href="https://search.jd.com/Search?keyword=%E4%BA%A7%E5%93%81%E6%95%B0%E6%8D%AE%E7%AE%A1%E7%90%86+PDM" target="_blank">《产品数据管理 PDM》· 童秉枢</a></span><span class="res-desc">PLM/PDM 系统与设计数据管理</span></div></div>
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📕 书籍</span><a href="https://search.jd.com/Search?keyword=SAP+MM+%E6%A8%A1%E5%9D%97+%E5%9F%B9%E8%AE%AD%E6%95%99%E6%9D%90" target="_blank">《SAP MM 模块培训教材》</a></span><span class="res-desc">物料主数据、采购与库存实操</span></div></div>
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📕 书籍</span><a href="https://search.jd.com/Search?keyword=%E7%B2%BE%E7%9B%94%E7%94%9F%E4%BA%A7+%E5%A4%A7%E9%87%8E%E8%80%90%E4%B8%80" target="_blank">《精益生产》· [日] 大野耐一</a></span><span class="res-desc">消除浪费、持续改善理念</span></div></div>
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📄 文档</span><a href="https://help.sap.com/docs/" target="_blank">SAP Help Portal · MM/PP 模块</a></span><span class="res-desc">官方系统操作文档</span></div></div>
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📄 文档</span><a href="https://en.wikipedia.org/wiki/Bill_of_materials" target="_blank">维基百科 · Bill of Materials</a></span><span class="res-desc">BOM 概念与行业定义</span></div></div>
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📄 文档</span><a href="https://www.ipc.org/" target="_blank">IPC 标准官网</a></span><span class="res-desc">电子组装与物料行业标准</span></div></div>
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📝 文章</span><a href="https://www.zhihu.com/search?type=content&q=BOM结构详解" target="_blank">知乎：BOM 结构详解</a></span><span class="res-desc">层级与母子件关系案例</span></div></div>
+    </div>
+    <p style="margin-top:14px">🔧 产品数据工程师（BOM · 成本方向）· 岗位学习执行计划</p>
+  </section>
+  </div><!-- end careerBOM -->
+
+  <!-- ==================== CAREER 4: 制造业项目 / PQE ==================== -->
+  <div class="career-body" id="careerPM">
+  <div class="topbar">
+    <div class="pg-row">
+      <span class="ttl">📋 制造业项目 / PQE</span>
+      <span class="pg-num">完成 <b id="pgNum_pm">0%</b></span>
+      <div class="pg-track"><div class="pg-fill" id="pgFill_pm"></div></div>
+    </div>
+  </div>
+
+  <!-- S1 能力拆解 -->
+  <section class="pm-sec" id="pm-s1">
+    <header class="hero">
+      <span class="tag">🏭 制造业 · 项目/PQE 方向</span>
+      <h2>制造业项目 / PQE 岗位<br>自学完整汇总包</h2>
+      <p>定位：转行零基础，面向东莞制造业项目工程师、PQE；目标看懂新品全流程、面试能答出专业术语。优先学流程概念，手册不用逐字啃。</p>
+      <div class="meta">
+        <span class="chip">⏱ 周期 4 周（约 1 个月）</span>
+        <span class="chip">📌 难度 入门 → 进阶</span>
+        <span class="chip">🎓 前提：统计学/质量管理基础</span>
+      </div>
+    </header>
+    <div class="sec-head"><div class="num">1</div><h3>必学知识清单（分优先级）</h3></div>
+    <div class="card">
+      <table class="sched">
+        <thead><tr><th width="16%">梯队</th><th width="26%">能力维度</th><th>具体要求</th><th width="14%">优先级</th></tr></thead>
+        <tbody>
+          <tr><td class="day" rowspan="5">第一梯队<br>（面试必考）</td><td class="day">APQP 先期策划</td><td>五大阶段各自输入输出文档、参与部门、关键评审闸门</td><td>⭐⭐⭐ 必须</td></tr>
+          <tr><td class="day">NPI 新产品导入</td><td>EVT 工程样机 / DVT 设计定型 / PVT 量产试产 三阶段区别与放行条件</td><td>⭐⭐⭐ 必须</td></tr>
+          <tr><td class="day">ECR / ECN 变更管理</td><td>变更申请 vs 变更通知；图纸-BOM-实物三者版本一致性管控</td><td>⭐⭐⭐ 必须</td></tr>
+          <tr><td class="day">8D 问题解决</td><td>D1~D8 八步骤；围堵、根因、永久纠正、预防再发</td><td>⭐⭐⭐ 必须</td></tr>
+          <tr><td class="day">BOM / DFM</td><td>BOM 版本管理；面向制造的设计评审目的与时机</td><td>⭐⭐⭐ 必须</td></tr>
+          <tr><td class="day" rowspan="3">第二梯队<br>（理解即可）</td><td class="day">PPAP 文件包</td><td>18 项文件，供应商/新产品量产提交客户用</td><td>⭐⭐ 理解</td></tr>
+          <tr><td class="day">FMEA</td><td>DFMEA / PFMEA 风险分析，看懂用途不要求独立编写</td><td>⭐⭐ 理解</td></tr>
+          <tr><td class="day">基础概念</td><td>控制计划 CP、试产总结、问题跟踪台账、风险登记册</td><td>⭐⭐ 理解</td></tr>
+          <tr><td class="day">第三梯队<br>（加分）</td><td class="day">SPC / MSA</td><td>统计过程控制、测量系统分析，统计学背景理解概念即可</td><td>⭐ 加分</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- S2 学习路线 -->
+  <section class="pm-sec" id="pm-s2">
+    <div class="sec-head"><div class="num">2</div><h3>分阶段学习路线图（4 周自学节奏）</h3></div>
+
+    <div class="card" id="roadSummary_pm">
+      <div class="rs-summary">
+        <div class="rs-stat"><div class="sv"><b id="rsDone_pm">0</b></div><div class="sl">已完成课程</div></div>
+        <div class="rs-stat"><div class="sv"><b id="rsEp_pm">0</b></div><div class="sl">累计已学集数</div></div>
+        <div class="rs-stat"><div class="sv"><b id="rsDays_pm">0</b></div><div class="sl">累计学习天数</div></div>
+      </div>
+      <div class="rs-progress"><div class="bar"><i id="rsBar_pm"></i></div></div>
+      <div class="btn-row">
+        <button class="mini-btn road-reset" data-career="pm">↺ 重置路线图</button>
+        <button class="mini-btn road-export" data-career="pm">⬇ 导出进度</button>
+        <button class="mini-btn road-import" data-career="pm">⬆ 导入进度</button>
+        <input type="file" class="road-file" data-career="pm" accept="application/json" hidden>
+      </div>
+      <div class="btn-row">
+        <button class="mini-btn gist-toggle" data-career="pm">⚙ 云端设置</button>
+        <button class="mini-btn gist-upload" data-career="pm">☁ 上传云端</button>
+        <button class="mini-btn gist-download" data-career="pm">⬇ 下载云端</button>
+      </div>
+      <div class="gist-panel gist-panel-pm" style="display:none">
+        <label>GitHub 令牌（Personal Access Token，需 gist 权限）</label>
+        <input class="gist-input gist-token" data-career="pm" placeholder="ghp_xxxxxxxxxxxx" type="password">
+        <label>Gist ID（留空则首次自动创建）</label>
+        <input class="gist-input gist-id-input" data-career="pm" placeholder="自动获取或手动粘贴">
+        <button class="mini-btn gist-set" data-career="pm">保存设置</button>
+      </div>
+      <div class="sync-status sync-status-pm"></div>
+    </div>
+
+    <div class="cal-wrap">
+      <div class="cal-header">
+        <span class="cal-month" id="calMonth_pm"></span>
+        <div>
+          <button class="mini-btn cal-prev" data-career="pm">‹</button>
+          <button class="mini-btn cal-next" data-career="pm">›</button>
+        </div>
+      </div>
+      <div class="cal-grid" id="calGrid_pm"></div>
+      <div class="cal-legend"><span class="lg lg0"></span> 无记录 &nbsp; <span class="lg lg1"></span> 1 门 &nbsp; <span class="lg lg2"></span> 2-3 门 &nbsp; <span class="lg lg3"></span> 4+ 门</div>
+      <div class="cal-detail" id="calDetail_pm">点击有颜色的日期查看详情</div>
+    </div>
+
+    <div class="rs-tip">💡 勾选「✓」标记整门学完；点视频链接自动记录「今天学过」；数据存本机浏览器，四套职业进度完全独立。</div>
+
+    <!-- 第1周 -->
+    <div class="phase">
+      <div class="phase-title">🔹 第 1 周｜总览产品开发完整链路</div>
+      <div class="phase-week">看懂「立项 → 量产」全流程，建立 APQP 框架</div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>新产品从立项到量产全过程</b> — 建立全流程心智图 <a href="https://search.bilibili.com/all?keyword=制造业新产品开发从立项到量产全过程" target="_blank">🔗 B站搜索</a></span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>APQP 五大阶段通俗易懂讲解</b> — 面试高频，记住每阶段输出物 <a href="https://search.bilibili.com/all?keyword=APQP五大阶段通俗易懂讲解" target="_blank">🔗 B站搜索</a></span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>产出</b>：手写一遍 立项→方案→设计冻结→EVT→DVT→模具工装→PVT→SOP 量产，画简易思维导图</span></div>
+      <div class="goal">📌 本周目标：能口述产品开发完整链路，说清 APQP 五个阶段各自主要工作</div>
+    </div>
+
+    <!-- 第2周 -->
+    <div class="phase">
+      <div class="phase-title">🔹 第 2 周｜吃透 NPI + 三大核心流程</div>
+      <div class="phase-week">变更管理、8D、DFM 三大工具</div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>NPI 新产品导入完整流程</b> — 消费电子工厂实战，EVT-DVT-PVT <a href="https://search.bilibili.com/all?keyword=NPI新产品导入完整流程" target="_blank">🔗 B站搜索</a></span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>ECR / ECN 工程变更管理</b> — 理解为什么不能口头改图纸 <a href="https://search.bilibili.com/all?keyword=ECR ECN工程变更管理 制造业实战" target="_blank">🔗 B站搜索</a></span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>8D 报告完整讲解 + 案例</b> — 重点看 8 个步骤与适用场景 <a href="https://search.bilibili.com/all?keyword=8D报告完整讲解+案例" target="_blank">🔗 B站搜索</a></span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>DFM 面向制造设计评审</b> — 为什么设计完一定要工艺评审 <a href="https://search.bilibili.com/all?keyword=DFM面向制造设计评审讲解" target="_blank">🔗 B站搜索</a></span></div>
+      <div class="goal">📌 本周目标：看懂一份真实 8D 案例报告；理解变更管控逻辑；说清 DFM 不做的风险</div>
+    </div>
+
+    <!-- 第3周 -->
+    <div class="phase">
+      <div class="phase-title">🔹 第 3 周｜PQE 与制造业项目 PM 真实场景</div>
+      <div class="phase-week">岗位真实工作 + PPAP/FMEA 概念</div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>PQE 项目质量工程师日常工作</b> — 了解 PQE 真实工作内容 <a href="https://search.bilibili.com/all?keyword=PQE项目质量工程师日常工作讲解" target="_blank">🔗 B站搜索</a></span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>PPAP / FMEA 概念</b> — 知道用途即可：PPAP 何时提交、DFMEA/PFMEA 风险分析干什么用</span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>风险识别</b>：样机≠量产；模具延期、物料长交期、反复设计变更是主要风险点</span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>问题台账</b>：问题描述 / 等级 / 责任人 / 关闭状态，制造业项目最常用工具</span></div>
+      <div class="goal">📌 本周目标：能区分 PQE（新品项目质量）与产线 IPQC/IQC 现场巡检</div>
+    </div>
+
+    <!-- 第4周 -->
+    <div class="phase">
+      <div class="phase-title">🔹 第 4 周｜面试输出整理（知识转话术）</div>
+      <div class="phase-week">把流程知识转化为可背诵的面试话术</div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>面试问答整理</b>：APQP 各阶段干什么 / EVT·DVT·PVT 区别 / ECR 与 ECN 区别 / 8D 步骤 / 试产不通过不能转量产的情形</span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>简历关键词</b>：APQP、NPI 新产品导入、ECR/ECN 变更、8D 闭环、问题台账、DFM 评审</span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>统计学优势结合</b>：问题台账不良统计分析、试产数据统计，面试主动提</span></div>
+      <div class="goal">📌 本周目标：独立完成 6 道高频自测题的口述作答，简历关键词巩固</span></div>
+    </div>
+  </section>
+
+  <!-- S3 每周安排 -->
+  <section class="pm-sec" id="pm-s3">
+    <div class="sec-head"><div class="num">3</div><h3>每周学习安排（每日 1–1.5h）</h3></div>
+    <div class="card">
+      <table class="sched">
+        <thead><tr><th width="14%">周次</th><th>每日重点（1–1.5h）</th><th>周末产出</th></tr></thead>
+        <tbody>
+          <tr><td class="day">第 1 周</td><td>看新品全流程视频；搞懂 APQP 五阶段，画思维导图；记住每阶段输出物</td><td>手写产品开发链路图 + APQP 五阶段脑图</td></tr>
+          <tr><td class="day">第 2 周</td><td>学 ECR/ECN 逻辑；8D 八步骤 + 真实案例；DFM 评审目的；下载模板浏览字段</td><td>8D 案例批注 + 变更管控要点笔记</td></tr>
+          <tr><td class="day">第 3 周</td><td>看 PQE/项目工程师工作讲解；了解问题台账、风险识别、阶段闸门评审；PPAP/FMEA 概念</td><td>PQE 工作理解笔记 + 风险清单</td></tr>
+          <tr><td class="day">第 4 周</td><td>整理面试问答 6 题；巩固简历关键词；结合统计学优势准备话术</td><td>面试自测录音 + 关键词简历版</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <div class="phase-title" style="font-size:14px">📅 学习节奏建议</div>
+      <div class="sub" style="margin-top:8px"><span class="dot"></span><span class="sub-text"><b>每日</b>：45 分钟视频/阅读 + 30 分钟做笔记或画流程</span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>每周</b>：周末半天整理产出物，能讲给别人听 = 真懂</span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>避坑</b>：不啃几百页原版 AIAG 手册，优先 PPT 培训版、思维导图、表单模板</span></div>
+    </div>
+  </section>
+
+  <!-- S4 成果检验 -->
+  <section class="pm-sec" id="pm-s4">
+    <div class="sec-head"><div class="num">4</div><h3>成果检验清单（面试高频自测）</h3></div>
+    <div class="card">
+      <div class="check" data-key="p1"><div class="box"></div> 我能流利说出 APQP 五大阶段，以及每个阶段的主要输出</div>
+      <div class="check" data-key="p2"><div class="box"></div> 我能说清 EVT / DVT / PVT 三者的区别与放行条件</div>
+      <div class="check" data-key="p3"><div class="box"></div> 我能讲清 ECR 和 ECN 的区别，以及制造业为何严格管控工程变更</div>
+      <div class="check" data-key="p4"><div class="box"></div> 我能背出 8D 报告八个步骤，并说明适用场景</div>
+      <div class="check" data-key="p5"><div class="box"></div> 我知道 DFM 评审在哪个阶段做、不做会带来什么后果</div>
+      <div class="check" data-key="p6"><div class="box"></div> 我能答出：试产出现大量不良时，项目工程师/PQE 要做哪些动作</div>
+      <div class="check" data-key="p7"><div class="box"></div> 【加分】我能结合统计学背景，讲问题台账不良统计与试产数据分析</div>
+    </div>
+    <span class="reset reset-pm" id="resetBtn_pm">↺ 清空我的进度</span>
+  </section>
+
+  <!-- S5 优先级 -->
+  <section class="pm-sec" id="pm-s5">
+    <div class="sec-head"><div class="num">5</div><h3>能力优先级排序（三梯队）</h3></div>
+    <div class="card">
+      <div class="rank r1"><div class="rn">1</div><div class="rl">第一梯队：APQP / NPI / ECR-ECN / 8D / BOM·DFM</div><div class="rd">面试必考，优先学，要能口述</div></div>
+      <div class="rank r2"><div class="rn">2</div><div class="rl">第二梯队：PPAP / FMEA / 控制计划 / 问题台账</div><div class="rd">理解概念即可，不要求精通</div></div>
+      <div class="rank r3"><div class="rn">3</div><div class="rl">第三梯队：SPC / MSA（统计过程与测量系统）</div><div class="rd">统计学背景加分，提一句即可</div></div>
+    </div>
+  </section>
+
+  <!-- S6 资源速查 -->
+  <section class="pm-sec" id="pm-s6">
+    <div class="sec-head"><div class="num">6</div><h3>资源速查表</h3></div>
+    <div class="card" id="resList_pm">
+      <div class="res-item"><div class="res-cb">✓</div><div class="res-info"><span class="res-name"><a href="https://search.bilibili.com/all?keyword=APQP五大阶段通俗易懂讲解" target="_blank">APQP 五大阶段讲解</a></span><span class="res-desc">B站搜索 · 面试高频</span></div></div>
+      <div class="res-item"><div class="res-cb">✓</div><div class="res-info"><span class="res-name"><a href="https://search.bilibili.com/all?keyword=NPI新产品导入完整流程" target="_blank">NPI 新产品导入流程</a></span><span class="res-desc">B站搜索 · EVT-DVT-PVT</span></div></div>
+      <div class="res-item"><div class="res-cb">✓</div><div class="res-info"><span class="res-name"><a href="https://search.bilibili.com/all?keyword=8D报告完整讲解+案例" target="_blank">8D 报告讲解+案例</a></span><span class="res-desc">B站搜索 · 问题解决</span></div></div>
+      <div class="res-item"><div class="res-cb">✓</div><div class="res-info"><span class="res-name"><a href="https://search.bilibili.com/all?keyword=ECR ECN工程变更管理 制造业实战" target="_blank">ECR/ECN 变更管理</a></span><span class="res-desc">B站搜索 · 变更管控</span></div></div>
+      <div class="res-item"><div class="res-cb">✓</div><div class="res-info"><span class="res-name"><a href="https://search.bilibili.com/all?keyword=DFM面向制造设计评审讲解" target="_blank">DFM 设计评审讲解</a></span><span class="res-desc">B站搜索 · 工艺评审</span></div></div>
+      <div class="res-item"><div class="res-cb">✓</div><div class="res-info"><span class="res-name"><a href="https://search.bilibili.com/all?keyword=PQE项目质量工程师日常工作讲解" target="_blank">PQE 日常工作讲解</a></span><span class="res-desc">B站搜索 · 岗位认知</span></div></div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <div class="phase-title" style="font-size:14px">📄 文档模板搜索关键词（免费下载）</div>
+      <div class="sub" style="margin-top:8px"><span class="dot"></span><span class="sub-text">APQP 全套表单模板 excel、8D 报告模板 word/excel 带案例、ECR ECN 工程变更单模板、NPI 试产报告模板、项目问题跟踪台账模板 excel、PPAP 文件包清单</span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text">优质渠道：品质协会论坛（APQP/NPI/PQE 表单）、CSDN 搜「APQP 培训 PPT」「NPI 新产品导入 PPT」找精简课件</span></div>
+    </div>
+    <p style="margin-top:14px">📋 制造业项目 / PQE 岗位 · 自学完整汇总包 · 转行零基础优先学流程概念</p>
+  </section>
+  <section class="pm-sec" id="pm-s7">
+    <div class="sec-head"><div class="num">7</div><h3>📚 文字学习资料（书籍 / 文档 / 文章）</h3></div>
+    <p style="margin:0 0 12px;color:var(--muted);font-size:13px">以下为纯文字资料，适合通勤、排队等碎片时间阅读，无需看视频即可打基础。</p>
+    <div class="card">
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📕 书籍</span><a href="https://search.jd.com/Search?keyword=PMBOK+%E6%8C%87%E5%8D%97" target="_blank">《PMBOK 指南》· PMI</a></span><span class="res-desc">项目管理五大过程组与十大领域</span></div></div>
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📕 书籍</span><a href="https://search.jd.com/Search?keyword=APQP+%E4%BA%A7%E5%93%81%E8%B4%A8%E9%87%8F%E5%85%88%E6%9C%9F%E7%AD%96%E5%88%92" target="_blank">《产品质量先期策划 APQP》· AIAG</a></span><span class="res-desc">新产品开发阶段Gate与输出物</span></div></div>
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📕 书籍</span><a href="https://search.jd.com/Search?keyword=8D+%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3%E6%B3%95" target="_blank">《8D 问题解决法实战》</a></span><span class="res-desc">团队导向的问题解决步骤</span></div></div>
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📕 书籍</span><a href="https://search.jd.com/Search?keyword=FMEA+%E5%A4%B1%E6%95%88%E6%A8%A1%E5%BC%8F" target="_blank">《失效模式与影响分析 FMEA》</a>· AIAG/VDA</span><span class="res-desc">风险预防与严重度/频度/探测度</span></div></div>
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📕 书籍</span><a href="https://search.jd.com/Search?keyword=%E7%B2%BE%E7%9B%94%E5%85%AD%E8%A5%BF%E6%A0%BC%E7%8E%9B" target="_blank">《精益六西格玛》</a>· [美] 乔治</span><span class="res-desc">DMAIC 与浪费消除</span></div></div>
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📄 文档</span><a href="https://www.aiag.org/" target="_blank">AIAG 官网 · 五大工具手册</a></span><span class="res-desc">APQP/PPAP/FMEA/MSA/SPC 资料</span></div></div>
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📄 文档</span><a href="https://asq.org/" target="_blank">ASQ 美国质量协会</a></span><span class="res-desc">质量工具与认证资源</span></div></div>
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📝 文章</span><a href="https://www.zhihu.com/search?type=content&q=NPI新产品导入流程" target="_blank">知乎：NPI 新产品导入流程</a></span><span class="res-desc">EVT/DVT/PVT 阶段解读</span></div></div>
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📝 文章</span><a href="https://www.zhihu.com/search?type=content&q=8D报告案例" target="_blank">知乎：8D 报告案例</a></span><span class="res-desc">真实问题闭环写法</span></div></div>
+    </div>
+    <p style="margin-top:14px">📋 制造业项目 / PQE · 岗位学习执行计划</p>
+  </section>
+  </div><!-- end careerPM -->
+
+  <!-- ==================== CAREER 5: 体系工程师 ==================== -->
+  <div class="career-body" id="careerSys">
+  <div class="topbar">
+    <div class="pg-row">
+      <span class="ttl">📑 体系工程师</span>
+      <span class="pg-num">完成 <b id="pgNum_sys">0%</b></span>
+      <div class="pg-track"><div class="pg-fill" id="pgFill_sys"></div></div>
+    </div>
+  </div>
+
+  <!-- S1 能力拆解 -->
+  <section class="sys-sec" id="sys-s1">
+    <header class="hero">
+      <span class="tag">📑 质量 · 体系工程师方向</span>
+      <h2>体系工程师岗位<br>自学完整汇总包</h2>
+      <p>定位：转行零基础，面向半导体/制造业体系工程师；目标精通 ISO9001 / IATF16949 体系、内外审流程、客户审核应对。优先学框架与实操，标准条文不用逐字背。</p>
+      <div class="meta">
+        <span class="chip">⏱ 周期 4 周（约 1 个月）</span>
+        <span class="chip">📌 难度 入门 → 进阶</span>
+        <span class="chip">🎓 前提：本科即可，专业不限</span>
+      </div>
+    </header>
+    <div class="sec-head"><div class="num">1</div><h3>必学知识清单（JD 拆解）</h3></div>
+    <div class="card">
+      <table class="sched">
+        <thead><tr><th width="16%">梯队</th><th width="26%">能力维度</th><th>具体要求（对应 JD 条款）</th><th width="14%">优先级</th></tr></thead>
+        <tbody>
+          <tr><td class="day" rowspan="5">第一梯队<br>（JD 第5条·精通）</td><td class="day">ISO9001 质量管理体系</td><td>七大原则、PDCA 循环、条款结构、文件层级（质量手册/程序文件/作业指导书/记录）</td><td>⭐⭐⭐ 必须</td></tr>
+          <tr><td class="day">IATF16949 汽车质量体系</td><td>在 ISO9001 基础上的汽车行业特殊要求；与 ISO9001 的差异点</td><td>⭐⭐⭐ 必须</td></tr>
+          <tr><td class="day">五大工具（Core Tools）</td><td>APQP / PPAP / FMEA / MSA / SPC 各自用途与关联关系</td><td>⭐⭐⭐ 必须</td></tr>
+          <tr><td class="day">内审（Internal Audit）</td><td>内审策划→实施→报告→跟踪闭环；检查表编写；不符合项判定</td><td>⭐⭐⭐ 必须</td></tr>
+          <tr><td class="day">外审 &amp; 管理评审</td><td>第三方认证审核流程；管理评审输入输出；审核应对技巧</td><td>⭐⭐⭐ 必须</td></tr>
+          <tr><td class="day" rowspan="3">第二梯队<br>（JD 第3条·核心职责）</td><td class="day">客户审核陪审</td><td>审前调查表填写；现场陪审话术；不符合项整改（8D/CAPA）；审核报告回复</td><td>⭐⭐ 核心</td></tr>
+          <tr><td class="day">体系认证全流程</td><td>选择认证机构→文件准备→初审→不符合项整改→发证→年度监督审核→再认证</td><td>⭐⭐ 核心</td></tr>
+          <tr><td class="day">CAPA 纠正预防措施</td><td>根本原因分析（5Why/鱼骨图）；纠正 vs 预防；关闭验证</td><td>⭐⭐ 核心</td></tr>
+          <tr><td class="day" rowspan="2">第三梯队<br>（加分项）</td><td class="day">内审员资格证</td><td>CQA / 内审员证书获取路径；考试内容与备考策略</td><td>⭐ 加分</td></tr>
+          <tr><td class="day">VDA / ISO14001 / ISO45001</td><td>VDA6.3 过程审核基础；环境/安全体系了解即可</td><td>⭐ 加分</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- S2 学习路线 -->
+  <section class="sys-sec" id="sys-s2">
+    <div class="sec-head"><div class="num">2</div><h3>分阶段学习路线图（4 周自学节奏）</h3></div>
+
+    <div class="card" id="roadSummary_sys">
+      <div class="rs-summary">
+        <div class="rs-stat"><div class="sv"><b id="rsDone_sys">0</b></div><div class="sl">已完成课程</div></div>
+        <div class="rs-stat"><div class="sv"><b id="rsEp_sys">0</b></div><div class="sl">累计已学集数</div></div>
+        <div class="rs-stat"><div class="sv"><b id="rsDays_sys">0</b></div><div class="sl">累计学习天数</div></div>
+      </div>
+      <div class="rs-progress"><div class="bar"><i id="rsBar_sys"></i></div></div>
+      <div class="btn-row">
+        <button class="mini-btn road-reset" data-career="sys">↺ 重置路线图</button>
+        <button class="mini-btn road-export" data-career="sys">⬇ 导出进度</button>
+        <button class="mini-btn road-import" data-career="sys">⬆ 导入进度</button>
+        <input type="file" class="road-file" data-career="sys" accept="application/json" hidden>
+      </div>
+      <div class="btn-row">
+        <button class="mini-btn gist-toggle" data-career="sys">⚙ 云端设置</button>
+        <button class="mini-btn gist-upload" data-career="sys">☁ 上传云端</button>
+        <button class="mini-btn gist-download" data-career="sys">⬇ 下载云端</button>
+      </div>
+      <div class="gist-panel gist-panel-sys" style="display:none">
+        <label>GitHub 令牌（Personal Access Token，需 gist 权限）</label>
+        <input class="gist-input gist-token" data-career="sys" placeholder="ghp_xxxxxxxxxxxx" type="password">
+        <label>Gist ID（留空则首次自动创建）</label>
+        <input class="gist-input gist-id-input" data-career="sys" placeholder="自动获取或手动粘贴">
+        <button class="mini-btn gist-set" data-career="sys">保存设置</button>
+      </div>
+      <div class="sync-status sync-status-sys"></div>
+    </div>
+
+    <div class="cal-wrap">
+      <div class="cal-header">
+        <span class="cal-month" id="calMonth_sys"></span>
+        <div>
+          <button class="mini-btn cal-prev" data-career="sys">‹</button>
+          <button class="mini-btn cal-next" data-career="sys">›</button>
+        </div>
+      </div>
+      <div class="cal-grid" id="calGrid_sys"></div>
+      <div class="cal-legend"><span class="lg lg0"></span> 无记录 &nbsp; <span class="lg lg1"></span> 1 门 &nbsp; <span class="lg lg2"></span> 2-3 门 &nbsp; <span class="lg lg3"></span> 4+ 门</div>
+      <div class="cal-detail" id="calDetail_sys">点击有颜色的日期查看详情</div>
+    </div>
+
+    <div class="rs-tip">💡 勾选「✓」标记整门学完；点视频链接自动记录「今天学过」；数据存本机浏览器，五套职业进度完全独立。</div>
+
+    <!-- 第1周 -->
+    <div class="phase">
+      <div class="phase-title">🔹 第 1 周｜建立 ISO9001 / IATF16949 体系框架认知</div>
+      <div class="phase-week">搞懂两大体系的标准结构与核心思想</div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>ISO9001 质量管理体系通俗讲解</b> — 七大原则 + PDCA + 条款框架 <a href="https://search.bilibili.com/all?keyword=ISO9001质量管理体系通俗易懂讲解" target="_blank">🔗 B站搜索</a></span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>IATF16949 与 ISO9001 的区别</b> — 汽车行业特殊要求有哪些 <a href="https://search.bilibili.com/all?keyword=IATF16949和ISO9001区别讲解" target="_blank">🔗 B站搜索</a></span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>五大工具全景图</b> — APQP·PPAP·FMEA·MSA·SPC 各干什么、怎么串联 <a href="https://search.bilibili.com/all?keyword=IATF16949五大工具讲解" target="_blank">🔗 B站搜索</a></span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>产出</b>：画一张「ISO9001 → IATF16949 → 五大工具」关系思维导图</span></div>
+      <div class="goal">📌 本周目标：能口述 ISO9001 七大原则和 IATF16949 五大工具各自用途</div>
+    </div>
+
+    <!-- 第2周 -->
+    <div class="phase">
+      <div class="phase-title">🔹 第 2 周｜掌握内外审与管理评审实操</div>
+      <div class="phase-week">内审策划→实施→报告；外审应对；管理评审</div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>质量内审完整流程讲解</b> — 从策划到跟踪闭环 <a href="https://search.bilibili.com/all?keyword=质量内审完整流程讲解" target="_blank">🔗 B站搜索</a></span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>内审检查表怎么写</b> — 实战案例：按条款逐项设计问题 <a href="https://search.bilibili.com/all?keyword=内审检查表编写教程" target="_blank">🔗 B站搜索</a></span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>外审迎审技巧 &amp; 不符合项应对</b> — 第三方审核员关注什么、如何回答 <a href="https://search.bilibili.com/all?keyword=外审迎审技巧不符合项应对" target="_blank">🔗 B站搜索</a></span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>管理评审怎么做</b> — 输入输出资料准备、评审会议组织</span></div>
+      <div class="goal">📌 本周目标：能独立编写一份简单内审检查表；知道外审时如何配合应对</div>
+    </div>
+
+    <!-- 第3周 -->
+    <div class="phase">
+      <div class="phase-title">🔹 第 3 周｜客户审核陪审 &amp; CAPA 整改实战</div>
+      <div class="phase-week">JD 核心职责：客户审核全流程 + 不符合项整改闭环</div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>客户审核陪审全流程</b> — 审前调查表→现场陪审→不符合项收集→整改→报告回复 <a href="https://search.bilibili.com/all?keyword=客户审核陪审流程体系工程师" target="_blank">🔗 B站搜索</a></span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>CAPA 纠正预防措施实战</b> — 5Why 根因分析、鱼骨图、纠正预防区别 <a href="https://search.bilibili.com/all?keyword=CAPA纠正预防措施实战案例" target="_blank">🔗 B站搜索</a></span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>体系认证全流程</b> — 选机构→文件准备→初审→整改→发证→监督审核→再认证</span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>审核报告回复模板</b>：问题描述→原因分析→短期对策→长期预防→证据附件</span></div>
+      <div class="goal">📌 本周目标：能独立完成一份客户审核不符合项的整改报告（CAPA 8D 格式）</div>
+    </div>
+
+    <!-- 第4周 -->
+    <div class="phase">
+      <div class="phase-title">🔹 第 4 周｜面试输出整理 + 内审员考证准备</div>
+      <div class="phase-week">把体系知识转化为面试话术；了解考证路径</div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>面试高频问答整理</b>：ISO9001 七大原则 / IATF16949 与 ISO9001 区别 / 五大工具各解决什么问题 / 内审流程 / CAPA 怎么做 / 客户审核如何应对</span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>简历关键词</b>：ISO9001、IATF16949、五大工具、内审员、CAPA、客户审核、体系认证、管理评审</span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>内审员资格证路径</b>：CCAA / 各省质协培训 → 考试内容 → 备考重点</span></div>
+      <div class="goal">📌 本周目标：独立完成面试自测题口述；明确考证计划和时间线</div>
+    </div>
+  </section>
+
+  <!-- S3 每周安排 -->
+  <section class="sys-sec" id="sys-s3">
+    <div class="sec-head"><div class="num">3</div><h3>每周学习安排（每日 1–1.5h）</h3></div>
+    <div class="card">
+      <table class="sched">
+        <thead><tr><th width="14%">周次</th><th>每日重点（1–1.5h）</th><th>周末产出</th></tr></thead>
+        <tbody>
+          <tr><td class="day">第 1 周</td><td>看 ISO9001 体系框架视频；理解七大原则和 PDCA；学 IATF16949 差异点和五大工具全景</td><td>体系框架思维导图 + 五大工具关系图</td></tr>
+          <tr><td class="day">第 2 周</td><td>学内审完整流程（策划→实施→报告）；练习写检查表；了解外审应对和管理评审</td><td>一份模拟内审检查表 + 外审应对笔记</td></tr>
+          <tr><td class="day">第 3 周</td><td>学客户审核陪审流程；CAPA 整改实战（5Why+鱼骨图）；看体系认证全流程视频</td><td>一份 CAPA 整改报告（模拟案例）</td></tr>
+          <tr><td class="day">第 4 周</td><td>整理面试高频问答；巩固简历关键词；了解内审员考证路径和考试内容</td><td>面试自测录音 + 考证计划时间表</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <div class="phase-title" style="font-size:14px">📅 学习节奏建议</div>
+      <div class="sub" style="margin-top:8px"><span class="dot"></span><span class="sub-text"><b>每日</b>：40 分钟视频学习 + 30 分钟整理笔记/画流程图 + 20 分钟记忆关键词</span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>每周</b>：周末用思维导图复盘本周学的框架，能讲给别人听 = 真懂</span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text"><b>避坑</b>：不用背 ISO9001 全部条款原文，重点理解框架逻辑和审核员关注点</span></div>
+    </div>
+  </section>
+
+  <!-- S4 成果检验 -->
+  <section class="sys-sec" id="sys-s4">
+    <div class="sec-head"><div class="num">4</div><h3>成果检验清单（面试高频自测）</h3></div>
+    <div class="card">
+      <div class="check" data-key="s1"><div class="box"></div> 我能说出 ISO9001 七大质量管理原则并举例说明</div>
+      <div class="check" data-key="s2"><div class="box"></div> 我能讲清 IATF16949 和 ISO9001 的主要区别（至少 3 点）</div>
+      <div class="check" data-key="s3"><div class="box"></div> 我能说明 APQP / PPAP / FMEA / MSA / SPC 五大工具各自的用途</div>
+      <div class="check" data-key="s4"><div class="box"></div> 我能描述一次完整的内审流程（从策划到跟踪验证）</div>
+      <div class="check" data-key="s5"><div class="box"></div> 我知道客户审核时如何填写审前调查表、如何应对现场提问</div>
+      <div class="check" data-key="s6"><div class="box"></div> 我能用 5Why 或鱼骨图完成一个不符合项的根因分析和 CAPA 报告</div>
+      <div class="check" data-key="s7"><div class="box"></div> 【加分】我了解内审员资格证的报考条件和考试内容</div>
+    </div>
+    <span class="reset reset-sys" id="resetBtn_sys">↺ 清空我的进度</span>
+  </section>
+
+  <!-- S5 优先级 -->
+  <section class="sys-sec" id="sys-s5">
+    <div class="sec-head"><div class="num">5</div><h3>能力优先级排序（JD 对应）</h3></div>
+    <div class="card">
+      <div class="rank r1"><div class="rn">1</div><div class="rl">ISO9001 / IATF16949 体系框架 + 五大工具</div><div class="rd">JD 第 5 条「精通」，面试必考</div></div>
+      <div class="rank r2"><div class="rn">2</div><div class="rl">内审 / 外审 / 管理评审实操</div><div class="rd">JD 第 1、2 条核心职责</div></div>
+      <div class="rank r3"><div class="rn">3</div><div class="rl">客户审核陪审 + CAPA 整改</div><div class="rd">JD 第 3 条最长职责描述，工作重心</div></div>
+      <div class="rank r4"><div class="rn">4</div><div class="rl">体系认证全流程</div><div class="rd">JD 第 1 条，理解认证生命周期</div></div>
+      <div class="rank r5"><div class="rn">5</div><div class="rl">内审员资格证 / VDA6.3</div><div class="rd">加分项，入职后可考</div></div>
+    </div>
+  </section>
+
+  <!-- S6 资源速查 -->
+  <section class="sys-sec" id="sys-s6">
+    <div class="sec-head"><div class="num">6</div><h3>资源速查表</h3></div>
+    <div class="card" id="resList_sys">
+      <div class="res-item"><div class="res-cb">✓</div><div class="res-info"><span class="res-name"><a href="https://search.bilibili.com/all?keyword=ISO9001质量管理体系通俗易懂讲解" target="_blank">ISO9001 体系通俗讲解</a></span><span class="res-desc">B站搜索 · 七大原则 + PDCA</span></div></div>
+      <div class="res-item"><div class="res-cb">✓</div><div class="res-info"><span class="res-name"><a href="https://search.bilibili.com/all?keyword=IATF16949五大工具讲解" target="_blank">IATF16949 五大工具</a></span><span class="res-desc">B站搜索 · APQP/PPAP/FMEA/MSA/SPC</span></div></div>
+      <div class="res-item"><div class="res-cb">✓</div><div class="res-info"><span class="res-name"><a href="https://search.bilibili.com/all?keyword=质量内审完整流程讲解" target="_blank">质量内审完整流程</a></span><span class="res-desc">B站搜索 · 策划到闭环</span></div></div>
+      <div class="res-item"><div class="res-cb">✓</div><div class="res-info"><span class="res-name"><a href="https://search.bilibili.com/all?keyword=CAPA纠正预防措施实战案例" target="_blank">CAPA 纠正预防措施</a></span><span class="res-desc">B站搜索 · 5Why + 鱼骨图</span></div></div>
+      <div class="res-item"><div class="res-cb">✓</div><div class="res-info"><span class="res-name"><a href="https://search.bilibili.com/all?keyword=客户审核陪审流程体系工程师" target="_blank">客户审核陪审流程</a></span><span class="res-desc">B站搜索 · JD 核心职责</span></div></div>
+      <div class="res-item"><div class="res-cb">✓</div><div class="res-info"><span class="res-name"><a href="https://search.bilibili.com/all?keyword=内审员资格考试备考指南" target="_blank">内审员考证指南</a></span><span class="res-desc">B站搜索 · CCAA / 质协</span></div></div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <div class="phase-title" style="font-size:14px">📄 文档模板搜索关键词（免费下载）</div>
+      <div class="sub" style="margin-top:8px"><span class="dot"></span><span class="sub-text">ISO9001 质量手册模板、内审检查表模板 word/excel、CAPA 纠正预防报告模板、管理评审输入输出资料清单、客户审核调查表模板、不符合项整改报告 8D 格式</span></div>
+      <div class="sub"><span class="dot"></span><span class="sub-text">优质渠道：品质协会论坛（ISO/IATF 表单）、CSDN 搜「ISO9001 培训 PPT」「IATF16949 内审」找精简课件</span></div>
+    </div>
+    <p style="margin-top:14px">📑 体系工程师岗位 · 自学汇总包 · 基于 JD 5 条职责 + 5 条任职要求拆解（气派科技等半导体封测企业方向）</p>
+  </section>
+  <section class="sys-sec" id="sys-s7">
+    <div class="sec-head"><div class="num">7</div><h3>📚 文字学习资料（书籍 / 文档 / 文章）</h3></div>
+    <p style="margin:0 0 12px;color:var(--muted);font-size:13px">以下为纯文字资料，适合通勤、排队等碎片时间阅读，无需看视频即可打基础。</p>
+    <div class="card">
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📕 书籍</span><a href="https://search.jd.com/Search?keyword=ISO+9001+2015" target="_blank">《ISO 9001:2015 质量管理体系 要求》</a>· 标准文本</span><span class="res-desc">七项原则 + PDCA 框架原文</span></div></div>
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📕 书籍</span><a href="https://search.jd.com/Search?keyword=IATF+16949+%E5%AE%9E%E6%96%BD%E6%8C%87%E5%8D%97" target="_blank">《IATF 16949 实施指南》</a></span><span class="res-desc">汽车行业体系落地方法</span></div></div>
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📕 书籍</span><a href="https://search.jd.com/Search?keyword=%E5%86%85%E9%83%A8%E5%AE%A1%E6%A0%B8%E5%91%98%E6%95%99%E7%A8%8B" target="_blank">《内部审核员教程》</a>· CCAA</span><span class="res-desc">审核策划、实施与技巧</span></div></div>
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📕 书籍</span><a href="https://search.jd.com/Search?keyword=ISO+14001" target="_blank">《ISO 14001 环境管理体系》</a></span><span class="res-desc">环境与职业健康安全体系</span></div></div>
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📕 书籍</span><a href="https://search.jd.com/Search?keyword=%E4%BA%94%E5%A4%A7%E6%A0%B8%E5%BF%83%E5%B7%A5%E5%85%B7%E6%89%8B%E5%86%8C" target="_blank">《五大核心工具手册》</a>· APQP/PPAP/FMEA/MSA/SPC</span><span class="res-desc">体系工程师必备工具书</span></div></div>
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📄 文档</span><a href="https://www.iso.org/" target="_blank">ISO 国际标准官网</a></span><span class="res-desc">标准原文与附录</span></div></div>
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📄 文档</span><a href="https://www.iatf-global-oversight.org/" target="_blank">IATF 全球监督官网</a></span><span class="res-desc">认证规则与审核要求</span></div></div>
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📄 文档</span><a href="https://www.ccaa.org.cn/" target="_blank">CCAA 中国认证认可协会</a></span><span class="res-desc">内审员报考与注册</span></div></div>
+      <div class="res-item"><div class="res-info"><span class="res-name"><span class="res-tag">📝 文章</span><a href="https://www.zhihu.com/search?type=content&q=ISO9001体系通俗讲解" target="_blank">知乎：ISO9001 体系通俗讲解</a></span><span class="res-desc">条款白话解读</span></div></div>
+    </div>
+    <p style="margin-top:14px">📑 体系工程师 · 岗位学习执行计划</p>
+  </section>
+  </div><!-- end careerSys -->
+
+</div><!-- end .main -->
+
+<script>
+// ===== JS 存活探测 =====
+(function(){ var m=document.getElementById('jsAlive'); if(m) m.style.display='inline'; })();
+
+// ===== 侧边栏折叠 / 展开 =====
+const body = document.body;
+var floatToggle = document.getElementById('floatToggle');
+var sideCollapse = document.getElementById('sideCollapse');
+var backdrop = document.getElementById('backdrop');
+
+function initNav(){
+  var w = window.innerWidth;
+  if(w < 820){ body.classList.add('collapsed'); } else { body.classList.remove('collapsed'); }
+}
+initNav();
+window.addEventListener('resize', initNav);
+
+function lockPulse(el){
+  if(!el) return;
+  el.style.pointerEvents = 'none';
+  clearTimeout(el._pt);
+  el._pt = setTimeout(function(){ el.style.pointerEvents = ''; }, 350);
+}
+function openNav(e){ if(e) e.stopPropagation(); body.classList.remove('collapsed'); lockPulse(backdrop); }
+function closeNav(e){ if(e) e.stopPropagation(); body.classList.add('collapsed'); lockPulse(floatToggle); }
+
+floatToggle.addEventListener('click', openNav);
+sideCollapse.addEventListener('click', closeNav);
+backdrop.addEventListener('click', closeNav);
+
+// ===== 职业切换 =====
+var currentCareer = 'cost';
+var tabCost = document.getElementById('tabCost');
+var tabHR = document.getElementById('tabHR');
+var tabBOM = document.getElementById('tabBOM');
+var tabPM = document.getElementById('tabPM');
+var tabSys = document.getElementById('tabSys');
+var careerCost = document.getElementById('careerCost');
+var careerHR = document.getElementById('careerHR');
+var careerBOM = document.getElementById('careerBOM');
+var careerPM = document.getElementById('careerPM');
+var careerSys = document.getElementById('careerSys');
+var sideTitle = document.getElementById('sideTitle');
+
+function switchCareer(c){
+  currentCareer = c;
+  tabCost.classList.remove('active'); tabHR.classList.remove('active'); tabBOM.classList.remove('active'); tabPM.classList.remove('active'); tabSys.classList.remove('active');
+  careerCost.classList.remove('active'); careerCost.style.display = 'none';
+  careerHR.classList.remove('active'); careerHR.style.display = 'none';
+  careerBOM.classList.remove('active'); careerBOM.style.display = 'none';
+  careerPM.classList.remove('active'); careerPM.style.display = 'none';
+  careerSys.classList.remove('active'); careerSys.style.display = 'none';
+  body.classList.remove('career-hr', 'career-bom', 'career-pm', 'career-sys');
+
+  if(c === 'cost'){
+    tabCost.classList.add('active');
+    careerCost.classList.add('active');
+    careerCost.style.display = '';
+    sideTitle.innerHTML = '小陈自用<br>学习计划';
+  } else if(c === 'hr'){
+    tabHR.classList.add('active');
+    careerHR.classList.add('active');
+    careerHR.style.display = '';
+    body.classList.add('career-hr');
+    sideTitle.innerHTML = '小陈自用<br>学习计划';
+  } else if(c === 'bom'){
+    tabBOM.classList.add('active');
+    careerBOM.classList.add('active');
+    careerBOM.style.display = '';
+    body.classList.add('career-bom');
+    sideTitle.innerHTML = '小陈自用<br>学习计划';
+  } else if(c === 'pm'){
+    tabPM.classList.add('active');
+    careerPM.classList.add('active');
+    careerPM.style.display = '';
+    body.classList.add('career-pm');
+    sideTitle.innerHTML = '小陈自用<br>学习计划';
+  } else {
+    tabSys.classList.add('active');
+    careerSys.classList.add('active');
+    careerSys.style.display = '';
+    body.classList.add('career-sys');
+    sideTitle.innerHTML = '小陈自用<br>学习计划';
+  }
+  showFirstSection(c);
+  window.scrollTo({top:0, behavior:'auto'});
+  renderAllProgress();
+  initRoadmap(c);
+  renderCal(c);
+}
+
+function showFirstSection(career){
+  // 先隐藏所有三个职业的全部 sections（!important 优先级最高，覆盖一切 CSS）
+  document.querySelectorAll('.sec, .hr-sec, .bom-sec, .pm-sec, .sys-sec').forEach(function(s){ s.style.setProperty('display','none','important'); });
+  // 再显示目标职业的第一个 section
+  var secClass = career === 'cost' ? '.sec' : (career === 'hr' ? '.hr-sec' : (career === 'bom' ? '.bom-sec' : (career === 'pm' ? '.pm-sec' : '.sys-sec')));
+  var sections = Array.from(document.querySelectorAll(secClass));
+  if(sections.length) sections[0].style.setProperty('display','block','important');
+  document.querySelectorAll('#sideNav a').forEach(function(a){ a.classList.remove('active'); });
+  var firstNav = document.querySelector('#sideNav a');
+  if(firstNav) firstNav.classList.add('active');
+}
+
+tabCost.addEventListener('click', function(){ switchCareer('cost'); });
+tabHR.addEventListener('click', function(){ switchCareer('hr'); });
+tabBOM.addEventListener('click', function(){ switchCareer('bom'); });
+tabPM.addEventListener('click', function(){ switchCareer('pm'); });
+tabSys.addEventListener('click', function(){ switchCareer('sys'); });
+
+// ===== 导航点击切换板块 =====
+var navAnchors = Array.from(document.querySelectorAll('#sideNav a'));
+navAnchors.forEach(function(a){
+  a.addEventListener('click', function(e){
+    e.preventDefault();
+    var idx = navAnchors.indexOf(a);
+    // 先隐藏所有三个职业的全部 sections（!important 优先级最高）
+    document.querySelectorAll('.sec, .hr-sec, .bom-sec, .pm-sec, .sys-sec').forEach(function(s){ s.style.setProperty('display','none','important'); });
+    // 再显示目标职业的对应 section
+    var secClass = currentCareer === 'cost' ? '.sec' : (currentCareer === 'hr' ? '.hr-sec' : (currentCareer === 'bom' ? '.bom-sec' : (currentCareer === 'pm' ? '.pm-sec' : '.sys-sec')));
+    var secs = Array.from(document.querySelectorAll(secClass));
+    if(secs[idx]){ secs[idx].style.setProperty('display','block','important'); window.scrollTo(0, 0); }
+    navAnchors.forEach(function(n){ n.classList.toggle('active', n === a); });
+    if(window.innerWidth < 820) closeNav();
+  });
+});
+
+// ===== 全局进度 =====
+var KEY = 'studyPlan_v3';
+var state = {};
+try{ state = JSON.parse(localStorage.getItem(KEY) || '{}'); }catch(e){ state={}; }
+
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
+
+function renderAllProgress(){
+  ['cost','hr','bom','pm','sys'].forEach(function(career){
+    var prefix = career === 'cost' ? '' : (career === 'hr' ? 'h' : (career === 'bom' ? 'b' : 'p'));
+    var cid = career==='cost'?'Cost':(career==='hr'?'HR':(career==='bom'?'BOM':(career==='pm'?'PM':'Sys')));
+    var checks = Array.from(document.querySelectorAll('#career'+cid+' .check[data-key]'));
+    var done = checks.filter(function(cb){ return cb.classList.contains('done'); }).length;
+    var pct = checks.length ? Math.round(done/checks.length*100) : 0;
+    var numEl = document.getElementById('pgNum_'+career);
+    var fillEl = document.getElementById('pgFill_'+career);
+    if(numEl) numEl.textContent = pct+'%';
+    if(fillEl) fillEl.style.width = pct+'%';
+
+    if(currentCareer === career){
+      var sideNum = document.getElementById('pgNumSide');
+      var sideFill = document.getElementById('pgFillSide');
+      if(sideNum) sideNum.textContent = pct+'%';
+      if(sideFill) sideFill.style.width = pct+'%';
+    }
+
+    var resList = document.getElementById('resList_'+career);
+    if(resList){
+      var items = resList.querySelectorAll('.res-item');
+      items.forEach(function(item){
+        var cb = item.querySelector('.res-cb');
+        var bar = item.querySelector('.rs-bar > i');
+        if(cb && bar){
+          var key = item.querySelector('.res-name a') ? item.querySelector('.res-name a').textContent.trim() : '';
+          var ep = state['ep_'+career+'_'+key] || 0;
+          var totalText = item.querySelector('.rs-num') ? item.querySelector('.rs-num').textContent : '';
+          var m = totalText.match(/(\d+)/);
+          var total = m ? parseInt(m[1]) : 1;
+          var w = Math.min(100, Math.round(ep/total*100));
+          bar.style.width = w+'%';
+          cb.classList.toggle('on', ep >= total);
+        }
+      });
+    }
+  });
+}
+
+document.querySelectorAll('.check').forEach(function(cb){
+  var key = cb.dataset.key;
+  if(state[key]){ cb.classList.add('done'); }
+  cb.addEventListener('click', function(){
+    cb.classList.toggle('done');
+    state[key] = cb.classList.contains('done') ? 1 : 0;
+    save(); renderAllProgress();
+  });
+});
+
+['cost','hr','bom','pm','sys'].forEach(function(career){
+  var btn = document.getElementById('resetBtn_'+career);
+  if(btn){
+    btn.addEventListener('click', function(){
+      if(confirm('确定清空 '+career.toUpperCase()+' 方向的所有勾选进度吗？')){
+        var containerId = career === 'cost' ? 'careerCost' : (career === 'hr' ? 'careerHR' : (career === 'bom' ? 'careerBOM' : (career === 'pm' ? 'careerPM' : 'careerSys')));
+        document.querySelectorAll('#'+containerId+' .check[data-key]').forEach(function(cb){
+          cb.classList.remove('done');
+          delete state[cb.dataset.key];
+        });
+        save(); renderAllProgress();
+      }
+    });
+  }
+});
+
+// ===== Roadmap tracking =====
+var ROAD_KEY_PREFIX = 'road_';
+
+function getRoadKey(career){ return ROAD_KEY_PREFIX + career; }
+
+function loadRoad(career){
+  try{ return JSON.parse(localStorage.getItem(getRoadKey(career)) || '{}'); } catch(e){ return {}; }
+}
+function saveRoad(career, data){
+  try{ localStorage.setItem(getRoadKey(career), JSON.stringify(data)); } catch(e){}
+}
+
+function totalOf(anchor){
+  var t = anchor && anchor.querySelector('.rs-num') ? anchor.querySelector('.rs-num').textContent : '';
+  var m = t.match(/(\d+)/);
+  return m ? parseInt(m[1]) : 0;
+}
+
+function logToday(career, key){
+  var road = loadRoad(career);
+  if(!road.log) road.log = {};
+  var today = new Date().toISOString().slice(0,10);
+  if(!road.log[today]) road.log[today] = [];
+  if(road.log[today].indexOf(key) === -1) road.log[today].push(key);
+  road.items[key].lastDate = today;
+  saveRoad(career, road);
+}
+
+function initRoadmap(career){
+  var road = loadRoad(career);
+  var containerId = career === 'cost' ? 'roadSummary_cost' : (career === 'hr' ? 'roadSummary_hr' : (career === 'bom' ? 'roadSummary_bom' : (career === 'pm' ? 'roadSummary_pm' : 'roadSummary_sys')));
+  var container = document.getElementById(containerId);
+  if(!container) return;
+
+  var careerBodyId = career === 'cost' ? 'careerCost' : (career === 'hr' ? 'careerHR' : (career === 'bom' ? 'careerBOM' : (career === 'pm' ? 'careerPM' : 'careerSys')));
+  var rows = Array.from(document.querySelectorAll('#'+careerBodyId+' .phase .res-item'));
+  if(rows.length === 0 && !road.inited){
+    var subs = Array.from(document.querySelectorAll('#'+careerBodyId+' .phase .sub-text'));
+    subs.forEach(function(sub, idx){
+      var link = sub.querySelector('a[href]');
+      if(link){
+        var name = link.textContent.trim();
+        var key = career+'_'+idx+'_'+name.slice(0,20);
+        if(!road.items) road.items = {};
+        if(!road.items[key]){
+          road.items[key] = { done:false, ep:0, total:totalOf(sub.parentElement), name:name };
+        }
+      }
+    });
+    road.inited = true;
+    saveRoad(career, road);
+  }
+
+  var parentSection = document.getElementById(containerId) ? document.getElementById(containerId).closest('section') : document.getElementById(careerBodyId);
+  var phaseDivs = parentSection ? Array.from(parentSection.querySelectorAll('.phase')) : [];
+  phaseDivs.forEach(function(phase){
+    var subs = phase.querySelectorAll(':scope > .sub');
+    subs.forEach(function(sub, sIdx){
+      var link = sub.querySelector('.sub-text a[href]');
+      if(!link) return;
+      var name = link.textContent.trim();
+      var key = career+'_'+phaseDivs.indexOf(phase)+'_'+sIdx+'_'+name.slice(0,20);
+
+      if(!road.items) road.items = {};
+      if(!road.items[key]){
+        road.items[key] = { done:false, ep:0, total:totalOf(sub), name:name };
+      }
+      var item = road.items[key];
+
+      var row = sub.closest('.sub') || sub;
+      var cb = row.querySelector('.road-cb');
+      if(!cb){
+        cb = document.createElement('div');
+        cb.className = 'res-cb road-cb';
+        cb.textContent = '✓';
+        row.querySelector('.sub-text').insertBefore(cb, row.querySelector('.sub-text').firstChild);
+      }
+      cb.classList.toggle('on', item.done);
+
+      cb.addEventListener('click', function(e){
+        e.stopPropagation();
+        item.done = !item.done;
+        if(item.done){
+          var tot = totalOf(row);
+          if(tot) item.ep = tot;
+          logToday(career, key);
+        } else {
+          item.ep = 0;
+        }
+        cb.classList.toggle('on', item.done);
+        var stVal = row.querySelector('.st-val b');
+        if(stVal && item.total) stVal.textContent = item.ep;
+        saveRoad(career, road);
+        renderSummary(career);
+        renderCal(career);
+      });
+
+      var minus = row.querySelector('.st-minus');
+      var plus = row.querySelector('.st-plus');
+      var stVal = row.querySelector('.st-val b');
+
+      if(stVal && item.total) stVal.textContent = item.ep;
+
+      if(minus) minus.addEventListener('click', function(e){
+        e.stopPropagation();
+        if(item.ep > 0){ item.ep--; saveRoad(career, road); if(stVal) stVal.textContent=item.ep; renderSummary(career); }
+      });
+      if(plus) plus.addEventListener('click', function(e){
+        e.stopPropagation();
+        var max = totalOf(row);
+        if(item.ep < max){ item.ep++; saveRoad(career, road); if(stVal) stVal.textContent=item.ep; renderSummary(career); }
+        if(item.ep >= max && !item.done){
+          item.done = true; item.lastDate = new Date().toISOString().slice(0,10);
+          var cb2 = row.querySelector('.road-cb');
+          if(cb2) cb2.classList.add('on');
+          logToday(career, key);
+          saveRoad(career, road);
+          renderSummary(career); renderCal(career);
+        }
+      });
+
+      if(link){
+        link.addEventListener('click', function(){
+          logToday(career, key);
+          saveRoad(career, road);
+          renderCal(career);
+        });
+      }
+    });
+  });
+
+  saveRoad(career, road);
+  renderSummary(career);
+  renderCal(career);
+}
+
+function renderSummary(career){
+  var road = loadRoad(career);
+  var items = road.items || {};
+  var keys = Object.keys(items);
+  var doneCount = 0, epSum = 0;
+  keys.forEach(function(k){
+    if(items[k].done) doneCount++;
+    epSum += (items[k].ep || 0);
+  });
+  var daysSet = new Set(Object.keys(road.log || {}));
+
+  var doneEl = document.getElementById('rsDone_'+career);
+  var epEl = document.getElementById('rsEp_'+career);
+  var daysEl = document.getElementById('rsDays_'+career);
+  var barEl = document.getElementById('rsBar_'+career);
+  if(doneEl) doneEl.textContent = doneCount;
+  if(epEl) epEl.textContent = epSum;
+  if(daysEl) daysEl.textContent = daysSet.size;
+  if(barEl) barEl.style.width = keys.length ? Math.round(doneCount/keys.length*100)+'%' : '0%';
+}
+
+// ===== Calendar =====
+function renderCal(career){
+  var road = loadRoad(career);
+  var log = road.log || {};
+  var now = new Date();
+  var y = (road.calYear || now.getFullYear());
+  var m = (road.calMonth != null ? road.calMonth : now.getMonth());
+  var grid = document.getElementById('calGrid_'+career);
+  var monthLabel = document.getElementById('calMonth_'+career);
+  if(!grid) return;
+
+  monthLabel.textContent = y+'年'+(m+1)+'月';
+  var firstDay = new Date(y, m, 1).getDay();
+  var daysInMonth = new Date(y, m+1, 0).getDate();
+  var todayStr = now.toISOString().slice(0,10);
+  var html = ['日','一','二','三','四','五','六'].map(function(d){ return '<div class="cal-cell" style="font-size:11px;color:var(--muted);cursor:default">'+d+'</div>'; }).join('');
+
+  for(var i=0;i<firstDay;i++) html += '<div class="cal-cell" style="cursor:default"></div>';
+  for(var d=1;d<=daysInMonth;d++){
+    var ds = y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    var courses = log[ds] || [];
+    var lv = courses.length === 0 ? 0 : (courses.length === 1 ? 1 : (courses.length <= 3 ? 2 : 3));
+    var isToday = ds === todayStr;
+    html += '<div class="cal-cell cd lv'+lv+(isToday?' today':'')+'" data-date="'+ds+'" data-career="'+career+'">'+d+'</div>';
+  }
+  grid.innerHTML = html;
+
+  grid.querySelectorAll('.cal-cell[data-date]').forEach(function(cell){
+    cell.addEventListener('click', function(){
+      var ds = cell.dataset.date;
+      var courses = log[ds] || [];
+      var detail = document.getElementById('calDetail_'+career);
+      if(detail){
+        if(courses.length === 0) detail.textContent = ds+' 无学习记录';
+        else detail.textContent = ds+' 学了：'+courses.map(function(k){ return (road.items&&road.items[k]?road.items[k].name:k); }).join('、');
+      }
+    });
+  });
+}
+
+['cost','hr','bom','pm','sys'].forEach(function(career){
+  document.querySelectorAll('.cal-prev[data-career="'+career+'"]').forEach(function(b){
+    b.addEventListener('click', function(){ var road=loadRoad(career); road.calMonth=(road.calMonth!=null?road.calMonth:new Date().getMonth())-1; if(road.calMonth<0){road.calMonth=11;road.calYear=(road.calYear||new Date().getFullYear())-1;} saveRoad(career,road); renderCal(career); });
+  });
+  document.querySelectorAll('.cal-next[data-career="'+career+'"]').forEach(function(b){
+    b.addEventListener('click', function(){ var road=loadRoad(career); road.calMonth=(road.calMonth!=null?road.calMonth:new Date().getMonth())+1; if(road.calMonth>11){road.calMonth=0;road.calYear=(road.calYear||new Date().getFullYear())+1;} saveRoad(career,road); renderCal(career); });
+  });
+});
+
+['cost','hr','bom','pm','sys'].forEach(function(career){
+  document.querySelectorAll('.road-reset[data-career="'+career+'"]').forEach(function(b){
+    b.addEventListener('click', function(){
+      if(confirm('确定重置 '+career.toUpperCase()+' 路线图的所有学习进度吗？')){
+        localStorage.removeItem(getRoadKey(career));
+        initRoadmap(career);
+        renderAllProgress();
+      }
+    });
+  });
+});
+
+// Export/Import
+['cost','hr','bom','pm','sys'].forEach(function(career){
+  document.querySelectorAll('.road-export[data-career="'+career+'"]').forEach(function(b){
+    b.addEventListener('click', function(){
+      var data = { road: loadRoad(career), state:{}, ts: new Date().toISOString() };
+      var prefix = career === 'cost' ? '' : (career === 'hr' ? 'h' : 'b');
+      document.querySelectorAll('.check[data-key^="'+prefix+'"]').forEach(function(cb){
+        data.state[cb.dataset.key] = cb.classList.contains('done')?1:0;
+      });
+      var blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a'); a.href=url; a.download='learning-progress-'+career+'.json'; a.click(); URL.revokeObjectURL(url);
+    });
+  });
+  document.querySelectorAll('.road-import[data-career="'+career+'"]').forEach(function(b){
+    b.addEventListener('click', function(){ document.querySelector('.road-file[data-career="'+career+'"]').click(); });
+  });
+  document.querySelectorAll('.road-file[data-career="'+career+'"]').forEach(function(inp){
+    inp.addEventListener('change', function(e){
+      var f = e.target.files[0]; if(!f) return;
+      var reader = new FileReader();
+      reader.onload = function(ev){
+        try{
+          var data = JSON.parse(ev.target.result);
+          if(data.road) saveRoad(career, data.road);
+          if(data.state){
+            Object.keys(data.state).forEach(function(k){
+              state[k]=data.state[k]; var cb=document.querySelector('.check[data-key="'+k+'"]');
+              if(cb){if(data.state[k])cb.classList.add('done');else cb.classList.remove('done');}
+            }); save();
+          }
+          initRoadmap(career); renderAllProgress();
+          alert('导入成功！');
+        }catch(err){ alert('导入失败：'+err.message); }
+      };
+      reader.readAsText(f);
+      inp.value='';
+    });
+  });
+});
+
+// GitHub Gist Cloud Sync
+['cost','hr','bom','pm','sys'].forEach(function(career){
+  document.querySelectorAll('.gist-toggle[data-career="'+career+'"]').forEach(function(b){
+    b.addEventListener('click', function(){
+      var panel = document.querySelector('.gist-panel-'+career);
+      if(panel) panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    });
+  });
+  document.querySelectorAll('.gist-set[data-career="'+career+'"]').forEach(function(b){
+    b.addEventListener('click', function(){
+      var tokenEl = document.querySelector('.gist-token[data-career="'+career+'"]');
+      var idEl = document.querySelector('.gist-id-input[data-career="'+career+'"]');
+      var road = loadRoad(career);
+      if(tokenEl) road.gistToken = tokenEl.value.trim();
+      if(idEl) road.gistId = idEl.value.trim();
+      saveRoad(career, road);
+      var statusEl = document.querySelector('.sync-status-'+career);
+      if(statusEl) { statusEl.textContent = '✅ 设置已保存'; statusEl.className = 'sync-status sync-status-'+career+' ok'; setTimeout(function(){statusEl.textContent='';},3000); }
+    });
+  });
+  document.querySelectorAll('.gist-upload[data-career="'+career+'"]').forEach(function(b){
+    b.addEventListener('click', async function(){
+      var statusEl = document.querySelector('.sync-status-'+career);
+      if(!statusEl) return;
+      var road = loadRoad(career);
+      var token = road.gistToken || '';
+      if(!token){ statusEl.textContent = '❌ 请先填写 GitHub 令牌'; statusEl.className='sync-status sync-status-'+career+' err'; return; }
+      statusEl.textContent = '⏳ 上传中...';
+      try{
+        var payload = { road: road, state:{}, ts: new Date().toISOString(), career: career };
+        var prefix = career === 'cost' ? '' : (career === 'hr' ? 'h' : 'b');
+        document.querySelectorAll('.check[data-key^="'+prefix+'"]').forEach(function(cb){
+          payload.state[cb.dataset.key] = cb.classList.contains('done')?1:0;
+        });
+        var bodyJson = JSON.stringify({ description: (career==='cost'?'数据分析师成本方向学习进度':(career==='hr'?'HR数据专家学习进度':'产品数据工程师BOM学习进度')), public: false, files: { 'progress.json': { content: JSON.stringify(payload) } } });
+        var url, opts;
+        if(road.gistId){
+          url = 'https://api.github.com/gists/'+road.gistId;
+          opts = { method:'PATCH', headers:{ Authorization:'token '+token, 'Accept':'application/vnd.github.v3+json' }, body:bodyJson };
+        } else {
+          url = 'https://api.github.com/gists';
+          opts = { method:'POST', headers:{ Authorization:'token '+token, 'Accept':'application/vnd.github.v3+json' }, body:bodyJson };
+        }
+        var resp = await fetch(url, opts);
+        var data = await resp.json();
+        if(resp.ok && data.id){
+          if(!road.gistId){ road.gistId = data.id; saveRoad(career, road); var idInput = document.querySelector('.gist-id-input[data-career="'+career+'"]'); if(idInput) idInput.value=data.id; }
+          statusEl.textContent = '☁ 已上传到云端（Gist: '+data.id.slice(0,8)+'…）';
+          statusEl.className = 'sync-status sync-status-'+career+' ok';
+        } else {
+          throw new Error((data.message||'HTTP '+resp.status));
+        }
+      }catch(err){ statusEl.textContent = '❌ 上传失败：'+err.message; statusEl.className='sync-status sync-status-'+career+' err'; }
+    });
+  });
+  document.querySelectorAll('.gist-download[data-career="'+career+'"]').forEach(function(b){
+    b.addEventListener('click', async function(){
+      var statusEl = document.querySelector('.sync-status-'+career);
+      if(!statusEl) return;
+      var road = loadRoad(career);
+      var token = road.gistToken || '';
+      var gid = road.gistId || '';
+      if(!token || !gid){ statusEl.textContent = '❌ 请先填写令牌和 Gist ID'; statusEl.className='sync-status sync-status-'+career+' err'; return; }
+      statusEl.textContent = '⏳ 下载中...';
+      try{
+        var resp = await fetch('https://api.github.com/gists/'+gid, { headers:{ Authorization:'token '+token } });
+        var data = await resp.json();
+        if(resp.ok && data.files && data.files['progress.json']){
+          var payload = JSON.parse(data.files['progress.json'].content);
+          if(payload.road) saveRoad(career, payload.road);
+          if(payload.state){
+            Object.keys(payload.state).forEach(function(k){
+              state[k]=payload.state[k]; var cb=document.querySelector('.check[data-key="'+k+'"]');
+              if(cb){if(payload.state[k])cb.classList.add('done');else cb.classList.remove('done');}
+            }); save();
+          }
+          initRoadmap(career); renderAllProgress();
+          statusEl.textContent = '☁ 已从云端同步（Gist: '+gid.slice(0,8)+'…）';
+          statusEl.className = 'sync-status sync-status-'+career+' ok';
+        } else { throw new Error('Gist 中未找到 progress.json'); }
+      }catch(err){ statusEl.textContent = '❌ 下载失败：'+err.message; statusEl.className='sync-status sync-status-'+career+' err'; }
+    });
+  });
+});
+
+// ===== Init on load =====
+renderAllProgress();
+initRoadmap('cost');
+initRoadmap('hr');
+initRoadmap('bom');
+initRoadmap('pm');
+initRoadmap('sys');
+showFirstSection('cost');
+careerHR.style.display = 'none';
+careerBOM.style.display = 'none';
+careerPM.style.display = 'none';
+careerSys.style.display = 'none';
+
+// ===== 调试：显示当前激活的 section（部署稳定后可删除）=====
+(function(){
+  var dbg=document.createElement('div');
+  dbg.id='_dbg'; dbg.style.cssText='position:fixed;bottom:4px;right:8px;z-index:99999;background:#ff0;color:red;font-size:11px;padding:2px 6px;font-family:monospace;border-radius:4px';
+  document.body.appendChild(dbg);
+  function upd(){ var v=[]; document.querySelectorAll('.sec,.hr-sec,.bom-sec,.pm-sec,.sys-sec').forEach(function(s){ if(s.style.display!=='none')v.push(s.id); }); dbg.textContent='active:['+v.join(',')+'] career:'+window.currentCareer; }
+  upd();
+  // 监听导航点击
+  document.querySelectorAll('#sideNav a').forEach(function(a){ a.addEventListener('click',function(){ setTimeout(upd,50); }); });
+  // 监听职业切换
+  ['tabCost','tabHR','tabBOM','tabPM','tabSys'].forEach(function(id){ var el=document.getElementById(id); if(el) el.addEventListener('click',function(){ setTimeout(upd,100); }); });
+})();
+</script>
+</body>
+</html>

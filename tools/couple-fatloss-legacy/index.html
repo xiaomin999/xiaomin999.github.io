@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>情侣双人减脂打卡助手</title>
+  <link rel="stylesheet" href="css/style.css?v=3" />
+</head>
+<body>
+
+  <!-- 顶部状态栏 -->
+  <header class="status-bar">
+    <div class="status-time" id="statusTime">--:--</div>
+    <div class="status-icons">
+      <span class="status-badge" id="cycleBadge">—</span>
+      <button class="status-avatar" id="weatherToggle" title="切换天气">☀️</button>
+    </div>
+  </header>
+
+  <!-- 欢迎 Hero -->
+  <section class="hero-card">
+    <div class="hero-visual">
+      <div class="hero-blob"></div>
+      <svg class="mascot" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="mBody" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#C4B5FD"/>
+            <stop offset="100%" stop-color="#A78BFA"/>
+          </linearGradient>
+        </defs>
+        <!-- 身体 -->
+        <ellipse cx="100" cy="130" rx="62" ry="52" fill="url(#mBody)" />
+        <ellipse cx="100" cy="140" rx="36" ry="28" fill="#EDE9FE" opacity=".7" />
+        <!-- 耳朵 -->
+        <circle cx="48" cy="92" r="14" fill="#C4B5FD" />
+        <circle cx="152" cy="92" r="14" fill="#C4B5FD" />
+        <circle cx="50" cy="94" r="8" fill="#EDE9FE" />
+        <circle cx="150" cy="94" r="8" fill="#EDE9FE" />
+        <!-- 头 -->
+        <ellipse cx="100" cy="100" rx="58" ry="50" fill="#DDD6FE" />
+        <!-- 眼睛 -->
+        <circle cx="78" cy="96" r="5" fill="#374151" />
+        <circle cx="122" cy="96" r="5" fill="#374151" />
+        <circle cx="80" cy="94" r="1.8" fill="#fff" />
+        <circle cx="124" cy="94" r="1.8" fill="#fff" />
+        <!-- 鼻子嘴 -->
+        <ellipse cx="100" cy="108" rx="5" ry="3.5" fill="#F472B6" />
+        <path d="M100 112 q-6 6 -12 2" stroke="#374151" stroke-width="2.5" fill="none" stroke-linecap="round" />
+        <path d="M100 112 q6 6 12 2" stroke="#374151" stroke-width="2.5" fill="none" stroke-linecap="round" />
+        <!-- 腮红 -->
+        <circle cx="64" cy="112" r="8" fill="#F9A8D4" opacity=".55" />
+        <circle cx="136" cy="112" r="8" fill="#F9A8D4" opacity=".55" />
+        <!-- 手 -->
+        <ellipse cx="55" cy="135" rx="10" ry="16" fill="#C4B5FD" transform="rotate(-20 55 135)" />
+        <ellipse cx="145" cy="135" rx="10" ry="16" fill="#C4B5FD" transform="rotate(20 145 135)" />
+        <!-- 爱心 -->
+        <path d="M100 52 c-12 -12 -28 -4 -28 8 0 14 28 28 28 28 s28 -14 28 -28 c0 -12 -16 -20 -28 -8" fill="#F472B6" />
+      </svg>
+      <div class="progress-ring-wrap">
+        <svg class="progress-ring" viewBox="0 0 100 100">
+          <circle class="ring-bg" cx="50" cy="50" r="42" />
+          <circle class="ring-bar" id="heroRingBar" cx="50" cy="50" r="42" />
+        </svg>
+        <div class="progress-ring-text" id="heroRingText">0%</div>
+      </div>
+    </div>
+    <div class="hero-content">
+      <div class="hero-label">今日打卡</div>
+      <h1 id="heroGreet">嗨，减脂搭档 💑</h1>
+      <p id="heroSub">—</p>
+      <p id="heroQuote">今天也要一起加油呀 ✨</p>
+    </div>
+  </section>
+
+  <!-- 今日提示条 -->
+  <div id="tipBar" class="tip-bar"></div>
+
+  <!-- 主体内容 -->
+  <main class="app-main">
+
+    <!-- ============ 今日打卡 ============ -->
+    <section id="tab-today" class="tab-panel active">
+
+      <!-- 饮食板块 -->
+      <div class="card diet-card">
+        <div class="card-title">
+          <span class="title-icon">🍱</span>
+          <span>饮食记录</span>
+          <span class="muted small" id="dietLimitHint" style="margin-left:auto"></span>
+        </div>
+        <div id="dietBlocks"></div>
+        <div class="water-section">
+          <div class="water-ring-row">
+            <div class="water-info">
+              <span class="water-num" id="waterText">0 / 2000 ml</span>
+              <span class="water-tip">小口慢喝，轻松达标</span>
+            </div>
+            <div class="water-input">
+              <input type="number" id="water" min="0" step="100" placeholder="ml" />
+              <label for="water">饮水</label>
+            </div>
+          </div>
+          <div class="water-bar-wrap">
+            <div class="water-bar"><div id="waterFill" class="water-fill"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 男生运动独立记录区 -->
+      <div class="card card-male">
+        <div class="card-title">
+          <span class="title-icon male">🏃</span>
+          <span>男主运动</span>
+          <span class="tag-male">固定计划</span>
+        </div>
+        <div id="maleSportPlan" class="sport-plan-hint"></div>
+        <div class="row">
+          <label class="field">
+            <span>跑步公里</span>
+            <input type="number" id="maleRun" min="0" step="0.1" placeholder="晴天 5" />
+          </label>
+          <label class="field">
+            <span>或跳绳个数</span>
+            <input type="number" id="maleSkip" min="0" step="100" placeholder="雨天 3800" />
+          </label>
+        </div>
+        <label class="check-row">
+          <input type="checkbox" id="maleStrength" />
+          <span>完成配套力量训练视频</span>
+        </label>
+        <div id="maleVideos" class="video-list"></div>
+      </div>
+
+      <!-- 女生运动独立记录区 -->
+      <div class="card card-female">
+        <div class="card-title">
+          <span class="title-icon female">💃</span>
+          <span>女主运动</span>
+          <span class="tag-female">随机推荐</span>
+        </div>
+        <div id="femaleSportPlan" class="sport-plan-hint"></div>
+
+        <div class="mode-switch">
+          <label class="radio"><input type="radio" name="femaleMode" value="solo" checked /><span>单人随机训练</span></label>
+          <label class="radio"><input type="radio" name="femaleMode" value="couple" /><span>跟随情侣运动</span></label>
+        </div>
+
+        <div id="femaleSoloBox">
+          <div class="random-controls">
+            <select id="femaleFilter" class="select">
+              <option value="">全部训练</option>
+              <option value="无跑跳">无跑跳</option>
+              <option value="新手友好">新手友好</option>
+              <option value="矿泉水瓶器械">矿泉水瓶器械</option>
+              <option value="全身燃脂">全身燃脂</option>
+              <option value="局部塑形">局部塑形</option>
+            </select>
+            <button id="femaleRefresh" class="btn btn-primary">🎲 重新随机</button>
+          </div>
+          <div id="femaleRandomCard" class="random-card">
+            <div class="loading" id="femaleRandomLoading" style="display:none">联网抽取中…</div>
+            <div id="femaleRandomContent"></div>
+          </div>
+        </div>
+
+        <div id="femaleCoupleBox" style="display:none">
+          <div class="couple-follow-hint" id="femaleCoupleHint"></div>
+          <label class="check-row">
+            <input type="checkbox" id="femaleCoupleDone" />
+            <span>已跟随男主完成情侣休闲运动</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- 体重 / 自评 / 备注 -->
+      <div class="card">
+        <div class="card-title"><span class="title-icon">⚖️</span><span>体重 & 自评</span></div>
+        <div class="row">
+          <label class="field">
+            <span>男主体重</span>
+            <input type="number" id="weightMale" step="0.1" placeholder="kg" />
+          </label>
+          <label class="field">
+            <span>女主体重</span>
+            <input type="number" id="weightFemale" step="0.1" placeholder="kg" />
+          </label>
+        </div>
+        <div class="field rating-field">
+          <span>今日心情</span>
+          <div class="stars" id="ratingStars">
+            <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
+          </div>
+        </div>
+        <label class="field">
+          <span>备注</span>
+          <textarea id="note" rows="2" placeholder="今天的感觉、特殊情况…"></textarea>
+        </label>
+        <label class="check-row">
+          <input type="checkbox" id="cheatOver" />
+          <span>今日放纵餐超标</span>
+        </label>
+      </div>
+
+      <div class="action-bar">
+        <button id="saveToday" class="btn btn-save">💾 保存今日打卡</button>
+        <button id="resetToday" class="btn btn-ghost">清空</button>
+      </div>
+    </section>
+
+    <!-- ============ 随机训练 ============ -->
+    <section id="tab-random" class="tab-panel">
+      <div class="panel-head"><h2>🎲 女生随机训练库</h2><span class="muted small">每日一键刷新</span></div>
+      <div class="card">
+        <div class="random-controls">
+          <select id="randomPool" class="select">
+            <option value="fat_loss">减脂日 · 高强度库</option>
+            <option value="cheat">放纵日 · 舒缓库</option>
+          </select>
+          <select id="randomFilter2" class="select">
+            <option value="">全部训练</option>
+            <option value="无跑跳">无跑跳</option>
+            <option value="新手友好">新手友好</option>
+            <option value="矿泉水瓶器械">矿泉水瓶器械</option>
+            <option value="全身燃脂">全身燃脂</option>
+            <option value="局部塑形">局部塑形</option>
+          </select>
+          <button id="randomDraw2" class="btn btn-primary">🎲 抽取一套</button>
+        </div>
+        <div id="randomLibInfo" class="muted small" style="margin:8px 0 12px"></div>
+        <div id="randomPoolList" class="pool-list"></div>
+      </div>
+    </section>
+
+    <!-- ============ 计划总览 ============ -->
+    <section id="tab-plan" class="tab-panel">
+      <div class="panel-head"><h2>📅 7天计划</h2></div>
+      <div class="seg" id="planSeg">
+        <button class="seg-btn active" data-week="周一">周一</button>
+        <button class="seg-btn" data-week="周二">周二</button>
+        <button class="seg-btn" data-week="周三">周三</button>
+        <button class="seg-btn" data-week="周四">周四</button>
+        <button class="seg-btn" data-week="周五">周五</button>
+        <button class="seg-btn" data-week="周六">周六</button>
+        <button class="seg-btn" data-week="周日">周日</button>
+      </div>
+      <div id="planDetail"></div>
+    </section>
+
+    <!-- ============ 数据看板 ============ -->
+    <section id="tab-dashboard" class="tab-panel">
+      <div class="panel-head"><h2>📊 数据看板</h2><span class="muted small">男女数据分离</span></div>
+      <div id="dashboard"></div>
+    </section>
+
+    <!-- ============ 设置 ============ -->
+    <section id="tab-settings" class="tab-panel">
+      <div class="panel-head"><h2>⚙️ 设置</h2></div>
+      <div class="card">
+        <div class="card-title"><span class="title-icon">🔔</span><span>定时推送</span></div>
+        <label class="check-row"><input type="checkbox" id="notifyToggle" /><span>开启浏览器通知</span></label>
+        <div class="muted small" id="notifyStatus" style="margin-left:28px"></div>
+        <button id="notifyTest" class="btn btn-ghost" style="margin-top:12px">发送测试通知</button>
+        <div class="reminder-list" id="reminderList"></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="title-icon">📐</span><span>可调参数</span></div>
+        <div id="paramDoc" class="doc"></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="title-icon">🗑️</span><span>数据管理</span></div>
+        <div class="row" style="margin-top:8px">
+          <button id="exportData" class="btn btn-ghost">导出数据</button>
+          <button id="importData" class="btn btn-ghost">导入数据</button>
+        </div>
+        <input type="file" id="importFile" accept="application/json" style="display:none" />
+        <button id="clearData" class="btn btn-danger">清空全部打卡数据</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 浮起底部导航 -->
+  <nav class="tab-bar">
+    <button class="tab-btn active" data-tab="today">
+      <span class="tab-icon">📝</span>
+      <span>打卡</span>
+    </button>
+    <button class="tab-btn" data-tab="random">
+      <span class="tab-icon">🎲</span>
+      <span>随机</span>
+    </button>
+    <button class="tab-btn" data-tab="plan">
+      <span class="tab-icon">📅</span>
+      <span>计划</span>
+    </button>
+    <button class="tab-btn" data-tab="dashboard">
+      <span class="tab-icon">📊</span>
+      <span>看板</span>
+    </button>
+    <button class="tab-btn" data-tab="settings">
+      <span class="tab-icon">⚙️</span>
+      <span>设置</span>
+    </button>
+  </nav>
+
+  <!-- 轻提示 -->
+  <div id="toast" class="toast"></div>
+  <div id="appName" style="display:none">情侣双人减脂打卡助手</div>
+
+  <script src="js/data.js?v=3"></script>
+  <script src="js/app.js?v=3"></script>
+</body>
+</html>

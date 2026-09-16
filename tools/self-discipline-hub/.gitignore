@@ -1,0 +1,7 @@
+# 敏感令牌，切勿提交
+.gh_token
+
+# 临时校验/清理脚本
+_check.js
+_check.py
+_check.out

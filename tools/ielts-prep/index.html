@@ -1,0 +1,1602 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>雅思学习平台 · IELTS Prep</title>
+<style>
+  :root{
+    --bg:#f5f7fb; --panel:#ffffff; --ink:#1f2733; --sub:#6b7686;
+    --line:#e7ebf1; --brand:#4f6ef7; --brand-d:#3a55d9; --brand-soft:#eef2ff;
+    --green:#27ae60; --red:#e74c3c; --amber:#f39c12; --purple:#8e5cf7;
+    --shadow:0 4px 18px rgba(31,39,51,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg); color:var(--ink); display:flex; min-height:100vh;
+  }
+  /* Sidebar */
+  .sidebar{
+    width:222px; background:var(--panel); border-right:1px solid var(--line);
+    display:flex; flex-direction:column; padding:18px 12px; position:sticky; top:0; height:100vh;
+  }
+  .logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:17px;padding:6px 10px 16px}
+  .logo .dot{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,var(--brand),var(--purple));display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px}
+  .nav{display:flex;flex-direction:column;gap:4px}
+  .nav button{
+    display:flex;align-items:center;gap:11px;padding:11px 12px;border:none;background:transparent;
+    border-radius:10px;color:var(--sub);font-size:14.5px;cursor:pointer;text-align:left;width:100%;font-weight:500;
+  }
+  .nav button:hover{background:var(--bg)}
+  .nav button.active{background:var(--brand-soft);color:var(--brand-d);font-weight:600}
+  .nav .ico{font-size:17px;width:20px;text-align:center}
+  .side-foot{margin-top:auto;font-size:11.5px;color:var(--sub);padding:10px;border-top:1px solid var(--line);line-height:1.6}
+  .accent-toggle{display:flex;gap:6px;margin-top:8px}
+  .accent-toggle button{flex:1;border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px;font-size:12px;cursor:pointer;color:var(--sub)}
+  .accent-toggle button.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+
+  /* Main */
+  .main{flex:1;padding:26px 30px;max-width:1080px;margin:0 auto;width:100%}
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+  .topbar h1{font-size:22px}
+  .topbar .streak{display:flex;gap:14px;align-items:center}
+  .pill{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:7px 14px;font-size:13px;box-shadow:var(--shadow);display:flex;align-items:center;gap:6px}
+  .view{display:none;animation:fade .25s ease}
+  .view.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow);margin-bottom:18px}
+  .card h2{font-size:17px;margin-bottom:6px}
+  .card .desc{color:var(--sub);font-size:13.5px;margin-bottom:14px;line-height:1.6}
+
+  /* Dashboard path */
+  .path{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:6px}
+  .step{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:16px;position:relative;transition:.2s}
+  .step.done{border-color:#bfe9cd;background:#f3fbf5}
+  .step .num{position:absolute;top:14px;right:14px;width:24px;height:24px;border-radius:50%;background:#fff;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--sub)}
+  .step.done .num{background:var(--green);color:#fff;border-color:var(--green)}
+  .step .t{font-weight:600;font-size:15px;margin-bottom:4px}
+  .step .s{font-size:12.5px;color:var(--sub);line-height:1.5}
+  .step .go{margin-top:12px;display:inline-block;color:var(--brand-d);font-weight:600;font-size:13px;cursor:pointer}
+
+  .stat-row{display:flex;gap:14px;flex-wrap:wrap}
+  .stat{flex:1;min-width:120px;background:var(--bg);border-radius:12px;padding:15px;border:1px solid var(--line)}
+  .stat .v{font-size:26px;font-weight:700}
+  .stat .l{font-size:12.5px;color:var(--sub);margin-top:3px}
+
+  /* Words */
+  .goal-pick{display:flex;gap:10px;margin:6px 0 18px}
+  .goal-pick button{padding:12px 22px;border:1px solid var(--line);background:#fff;border-radius:12px;font-size:15px;cursor:pointer;font-weight:600;color:var(--sub)}
+  .goal-pick button.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+  .btn{background:var(--brand);color:#fff;border:none;padding:12px 22px;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer}
+  .btn:hover{background:var(--brand-d)}
+  .btn.ghost{background:#fff;color:var(--brand-d);border:1px solid var(--brand);box-shadow:none}
+  .btn.sm{padding:8px 14px;font-size:13px}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+
+  .flash{background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);min-height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;text-align:center;position:relative}
+  .flash .play{width:60px;height:60px;border-radius:50%;background:var(--brand-soft);color:var(--brand-d);display:flex;align-items:center;justify-content:center;font-size:26px;cursor:pointer;margin-bottom:14px;border:none}
+  .flash .word{font-size:34px;font-weight:700;letter-spacing:.5px}
+  .flash .ipa{color:var(--sub);font-size:16px;margin-top:6px}
+  .flash .pos{display:inline-block;background:var(--bg);color:var(--sub);font-size:12px;padding:2px 9px;border-radius:8px;margin-top:10px}
+  .flash .flip-hint{color:var(--sub);font-size:13px;margin-top:18px;cursor:pointer;text-decoration:underline}
+  .flash .back{display:none;width:100%}
+  .flash .back .cn{font-size:22px;font-weight:600;margin-bottom:10px}
+  .flash .back .ex{background:var(--bg);border-radius:12px;padding:14px;font-size:14.5px;line-height:1.7;color:#33404f;text-align:left;position:relative}
+  .flash .back .ex .mini{position:absolute;top:8px;right:8px;background:#fff;border:1px solid var(--line);border-radius:8px;width:30px;height:30px;cursor:pointer;font-size:14px}
+  .flash .back .col{margin-top:12px;font-size:13px;color:var(--purple);background:#f6f1ff;padding:8px 12px;border-radius:10px;display:inline-block}
+  .flash .actions{display:flex;gap:12px;margin-top:22px}
+  .flash .actions .btn.know{background:var(--green)}
+  .flash .actions .btn.dont{background:var(--red)}
+  .progress{height:7px;background:var(--line);border-radius:5px;overflow:hidden;margin-bottom:16px}
+  .progress > i{display:block;height:100%;background:var(--brand);width:0;transition:.3s}
+  .ctrls-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+
+  /* Shadowing */
+  .sen{display:flex;align-items:center;gap:14px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:12px;box-shadow:var(--shadow)}
+  .sen .txt{flex:1;font-size:15.5px;line-height:1.6}
+  .sen .tag{font-size:11px;color:var(--sub);background:var(--bg);padding:2px 8px;border-radius:7px;margin-right:8px}
+  .sen .mini{background:var(--brand-soft);color:var(--brand-d);border:none;border-radius:10px;width:42px;height:42px;font-size:18px;cursor:pointer}
+  .sen .rec{background:#fff;border:1px solid var(--red);color:var(--red);border-radius:10px;width:42px;height:42px;font-size:16px;cursor:pointer}
+  .sen .rec.on{background:var(--red);color:#fff;animation:pulse 1s infinite}
+  @keyframes pulse{50%{opacity:.6}}
+  .sen .playback{display:none;width:100%;margin-top:8px}
+  .self-check{font-size:12.5px;color:var(--sub);margin-top:6px;display:none;align-items:center;gap:8px}
+  .self-check button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:5px 10px;font-size:12px;cursor:pointer}
+  .self-check button.g{color:var(--green);border-color:#bfe9cd}
+  .self-check button.y{color:var(--amber);border-color:#fde3b3}
+  .self-check button.r{color:var(--red);border-color:#f5c2bb}
+
+  /* Reading */
+  .pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+  .pcard{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow);cursor:pointer;transition:.2s}
+  .pcard:hover{transform:translateY(-2px)}
+  .pcard .cat{font-size:11.5px;color:#fff;background:var(--brand);padding:3px 10px;border-radius:8px;display:inline-block;margin-bottom:10px}
+  .pcard h3{font-size:16.5px;margin-bottom:8px}
+  .pcard p{font-size:13.5px;color:var(--sub);line-height:1.6}
+  .pcard{position:relative}
+  .ai-badge{display:inline-block;background:#ffe4e6;color:#be185d;padding:2px 8px;border-radius:6px;font-size:11px;margin-right:4px;margin-bottom:4px;font-weight:600}
+  .ai-badge.today{background:linear-gradient(135deg,#fef3c7,#fde68a);color:#92400e}
+  .read-toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:12px 0 18px;padding:12px;background:var(--panel);border:1px solid var(--line);border-radius:12px}
+  .read-toolbar input[type=text]{flex:1;min-width:180px;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:#fff;font-size:14px}
+  .read-toolbar input[type=number]{width:60px;padding:8px;border:1px solid var(--line);border-radius:8px;background:#fff;font-size:14px}
+  .read-toolbar .autoswitch{font-size:13.5px;color:var(--ink);display:inline-flex;align-items:center;gap:6px;padding:0 8px}
+  .lex-expand-bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:10px 0 14px;padding:10px 12px;background:#fef9c3;border:1px dashed #facc15;border-radius:10px}
+.lex-target{font-size:13.5px;color:#854d0e}
+.lex-target b{color:#1f2937}
+.lex-unit{font-size:13px;color:var(--sub)}
+.lex-expand-hint{font-size:12px;color:#854d0e;flex-basis:100%}
+.lex-expand-bar input[type=text],.lex-expand-bar input[type=number]{padding:6px 10px;border:1px solid var(--line);border-radius:6px;font-size:13.5px;background:#fff}
+.lex-expand-bar input[type=number]{width:64px}
+  .reader{display:none}
+  .reader .text{font-size:16px;line-height:1.95;color:#2a3340;background:var(--bg);border-radius:14px;padding:20px 22px;margin:14px 0}
+  .reader .text .word-hl{cursor:pointer;border-bottom:1px dotted var(--brand)}
+  .q{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-top:12px}
+  .q .qt{font-weight:600;font-size:14.5px;margin-bottom:10px}
+  .q label{display:block;padding:9px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;cursor:pointer;font-size:14px}
+  .q label.ok{background:#f3fbf5;border-color:#bfe9cd;color:var(--green)}
+  .q label.no{background:#fdf0ee;border-color:#f5c2bb;color:var(--red)}
+  .q .fb{font-size:13px;margin-top:8px;display:none}
+
+  /* Methods */
+  .m-card{display:flex;gap:16px;align-items:flex-start}
+  .m-card .em{font-size:30px;background:var(--brand-soft);width:58px;height:58px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .m-card h3{font-size:16px;margin-bottom:5px}
+  .m-card .why{font-size:12.5px;color:var(--purple);margin-bottom:6px}
+  .m-card p{font-size:13.5px;color:#44505f;line-height:1.7}
+  .src{font-size:11.5px;color:var(--sub);margin-top:8px;font-style:italic}
+
+  .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 22px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:.3s;z-index:99}
+  .toast.show{opacity:1}
+  /* Lex Query */
+  .lex-toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:8px 0 12px}
+  .lex-tabs{display:flex;flex-wrap:wrap;gap:6px;flex:1 1 320px}
+  .lex-tabs button{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer;color:var(--ink)}
+  .lex-tabs button.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .lex-tabs button small{opacity:.7;margin-left:4px}
+  .lex-search{display:flex;gap:8px;flex:1 1 280px}
+  .lex-search input,.lex-search select{flex:1;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font-size:14px}
+  .lex-search select{max-width:130px;flex:0 0 130px}
+  .lex-actions{display:flex;gap:6px;flex-wrap:wrap}
+  .lex-summary{font-size:13.5px;color:var(--sub);margin-bottom:10px}
+  .lex-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;max-height:68vh;overflow:auto;padding-right:6px}
+  .lex-item{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:4px}
+  .lex-item.mastered{border-color:#86efac;background:linear-gradient(180deg,#f0fdf4,var(--panel))}
+  .lex-item-top{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+  .lex-item-top .w{font-weight:600;font-size:16px;color:var(--ink)}
+  .lex-item-top .ipa{color:var(--sub);font-size:13px}
+  .lex-item-top .pos{color:var(--accent);font-size:12px}
+  .lex-item-top .spacer{flex:1}
+  .lex-item-top .badge{font-size:11px;padding:2px 8px;border-radius:999px;background:#dbeafe;color:#1e40af}
+  .lex-item-top .badge.mastered{background:#86efac;color:#166534}
+  .lex-item-top .badge.learning{background:#fde68a;color:#92400e}
+  .lex-cn{font-size:14px;color:var(--ink)}
+  .lex-ex{font-size:12.5px;color:var(--sub);font-style:italic;line-height:1.5}
+  .lex-col{font-size:12px;color:var(--accent);background:rgba(91,141,239,.08);padding:4px 8px;border-radius:6px;align-self:flex-start}
+  .lex-btns{display:flex;gap:6px;margin-top:6px}
+  .lex-btns button{padding:4px 10px;font-size:12px;border-radius:6px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+  .lex-btns button:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .lex-btns button.del:hover{background:#ef4444;border-color:#ef4444}
+  @media(max-width:760px){.lex-tabs button{padding:5px 9px;font-size:12px}}
+  .toast.show{opacity:1}
+  .empty{text-align:center;color:var(--sub);padding:40px;font-size:14px}
+  .donemsg{background:#f3fbf5;border:1px solid #bfe9cd;color:#1f8a48;border-radius:12px;padding:16px;text-align:center;font-size:14.5px}
+  @media(max-width:760px){
+    .sidebar{position:fixed;left:0;top:0;z-index:50;transform:translateX(-100%);transition:.25s}
+    .sidebar.open{transform:none}
+    .main{padding:18px}
+    .menu-btn{display:flex!important}
+  }
+  .menu-btn{display:none;background:var(--panel);border:1px solid var(--line);border-radius:10px;width:40px;height:40px;align-items:center;justify-content:center;font-size:20px;cursor:pointer}
+
+  /* Bank picker */
+  .goal-pick button{cursor:pointer}
+  /* Video call */
+  .call-stage{display:flex;gap:16px;margin:14px 0;flex-wrap:wrap}
+  .call-partner{flex:1;min-width:280px;background:linear-gradient(135deg,#eef2ff,#f6f1ff);border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;align-items:center;text-align:center}
+  .call-partner .av{width:64px;height:64px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:34px;box-shadow:var(--shadow);margin-bottom:10px}
+  .call-partner .meta{font-size:13px;color:var(--sub);margin-bottom:10px}
+  .call-partner .prompt{font-size:20px;font-weight:600;line-height:1.6;color:var(--ink);background:#fff;border-radius:14px;padding:18px 20px;width:100%;box-shadow:var(--shadow)}
+  .call-self{width:220px;position:relative;background:#1f2733;border-radius:16px;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .call-self video{width:100%;height:260px;object-fit:cover;transform:scaleX(-1)}
+  .call-self .self-label{position:absolute;left:10px;bottom:10px;background:rgba(0,0,0,.5);color:#fff;font-size:12px;padding:3px 9px;border-radius:8px}
+  .rec-result{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px}
+  .call-ctrls{display:flex;gap:10px;flex-wrap:wrap}
+  .call-ctrls .btn.rec-on{background:var(--red);border-color:var(--red);color:#fff}
+  @media(max-width:760px){.call-self{width:100%;height:200px}.call-self video{height:200px}}
+  /* AI 助手 */
+  .ai-keybox{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:14px;margin-top:12px}
+  .ai-keybox label{font-size:13px;color:var(--sub);display:block;margin-bottom:8px}
+  .ai-keyrow{display:flex;gap:8px;flex-wrap:wrap}
+  .ai-keyrow input{flex:1;min-width:200px}
+  .ai-keyrow select{width:auto}
+  .ai-hint{font-size:12px;color:var(--sub);margin-top:10px;line-height:1.6}
+  .ai-hint a{color:var(--ink);font-weight:600}
+  .ai-actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:10px}
+  .ai-act{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:14px}
+  .ai-act-t{font-weight:600;margin-bottom:8px}
+  .ai-act input{width:100%;margin-bottom:0}
+  .ai-chat{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:14px;height:300px;overflow-y:auto;margin-bottom:12px;display:flex;flex-direction:column;gap:10px}
+  .ai-msg{padding:10px 13px;border-radius:12px;max-width:85%;line-height:1.6;white-space:pre-wrap;font-size:14px}
+  .ai-msg.bot{background:#eef2ff;color:var(--ink);align-self:flex-start}
+  .ai-msg.me{background:var(--ink);color:#fff;align-self:flex-end}
+  .ai-inputrow{display:flex;gap:10px}
+  .ai-inputrow input{flex:1}
+</style>
+</head>
+<body>
+<div class="sidebar" id="sidebar">
+  <div class="logo"><span class="dot">雅</span>雅思学习平台</div>
+  <nav class="nav">
+    <button data-view="home" class="active"><span class="ico">🏠</span>首页 · 今日计划</button>
+    <button data-view="words"><span class="ico">📚</span>每日单词</button>
+    <button data-view="review"><span class="ico">🔁</span>间隔复习</button>
+    <button data-view="shadow"><span class="ico">🎙️</span>语句跟读</button>
+    <button data-view="reading"><span class="ico">📖</span>短文阅读</button>
+    <button data-view="call"><span class="ico">📞</span>视频通话练习</button>
+    <button data-view="methods"><span class="ico">💡</span>学习方法</button>
+    <button data-view="stats"><span class="ico">📊</span>我的统计</button>
+    <button data-view="lex"><span class="ico">🔎</span>词库查询</button>
+    <button data-view="ai"><span class="ico">🤖</span>通义千问 AI</button>
+  </nav>
+  <div class="side-foot">
+    发音引擎：浏览器内置语音合成
+    <div class="accent-toggle">
+      <button id="accUk" class="on">🇬🇧 英音</button>
+      <button id="accUs">🇺🇸 美音</button>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="menu-btn" id="menuBtn">☰</button>
+      <h1 id="pageTitle">今日学习计划</h1>
+    </div>
+    <div class="streak">
+      <span class="pill">🔥 连续 <b id="streakTop">0</b> 天</span>
+      <span class="pill">📚 已学 <b id="learnedTop">0</b> 词</span>
+    </div>
+  </div>
+
+  <!-- HOME -->
+  <section class="view active" id="v-home">
+    <div class="card">
+      <h2>🗺️ 科学每日学习路径</h2>
+      <div class="desc">基于间隔重复、主动回忆、影子跟读、可理解输入与输出反馈五大实证方法，帮你用最短时间稳定提分。</div>
+      <div class="path" id="pathList"></div>
+    </div>
+    <div class="card">
+      <h2>📈 今日概览</h2>
+      <div class="stat-row" style="margin-top:8px">
+        <div class="stat"><div class="v" id="sNew">0</div><div class="l">今日新词</div></div>
+        <div class="stat"><div class="v" id="sRev">0</div><div class="l">待复习</div></div>
+        <div class="stat"><div class="v" id="sShadow">0</div><div class="l">今日跟读</div></div>
+        <div class="stat"><div class="v" id="sRead">0</div><div class="l">已读短文</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORDS -->
+  <section class="view" id="v-words">
+    <div class="card" id="wordSetup">
+      <h2>📚 每日单词</h2>
+      <div class="desc">选择词库（可按行业切换），再选今天要学习的新词数量。每个单词都配有发音、音标、释义、例句与固定搭配，点击喇叭即可听读。</div>
+      <div style="font-size:13.5px;color:var(--sub);margin:4px 0 8px">选择词库（按行业）：</div>
+      <div class="goal-pick" id="bankPick"></div>
+      <div id="customBox" style="display:none;margin:14px 0;padding:14px;background:var(--bg);border-radius:12px">
+        <div style="font-weight:600;margin-bottom:8px">➕ 添加单词到「我的词库」</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <input id="cw_word" placeholder="单词" style="flex:1;min-width:90px;padding:8px 10px;border:1px solid var(--line);border-radius:8px">
+          <input id="cw_ipa" placeholder="音标 /xxx/" style="flex:1;min-width:90px;padding:8px 10px;border:1px solid var(--line);border-radius:8px">
+          <input id="cw_cn" placeholder="中文释义" style="flex:1;min-width:90px;padding:8px 10px;border:1px solid var(--line);border-radius:8px">
+        </div>
+        <input id="cw_ex" placeholder="英文例句（可选）" style="width:100%;margin-top:8px;padding:8px 10px;border:1px solid var(--line);border-radius:8px">
+        <button class="btn sm" id="addWord" style="margin-top:10px">添加单词</button>
+        <span id="customCount" style="font-size:12px;color:var(--sub);margin-left:10px"></span>
+      </div>
+      <div style="font-size:13.5px;color:var(--sub);margin-bottom:8px">今日目标：</div>
+      <div class="goal-pick" id="goalPick">
+        <button data-n="10">10 个</button>
+        <button data-n="20" class="on">20 个</button>
+        <button data-n="30">30 个</button>
+      </div>
+      <button class="btn" id="startWords">开始今日学习 →</button>
+    </div>
+    <div id="wordSession" style="display:none">
+      <div class="ctrls-row">
+        <div class="progress" style="flex:1;margin:0"><i id="wordProg"></i></div>
+        <span id="wordCount" style="font-size:13px;color:var(--sub);margin-left:12px"></span>
+      </div>
+      <div class="flash" id="flash">
+        <button class="play" id="flashPlay">🔊</button>
+        <div class="word" id="fWord">word</div>
+        <div class="ipa" id="fIpa"></div>
+        <div class="pos" id="fPos"></div>
+        <div class="flip-hint" id="flipHint">点击查看释义 / 例句 ↻</div>
+        <div class="back" id="fBack">
+          <div class="cn" id="fCn"></div>
+          <div class="ex" id="fEx"></div>
+          <div class="col" id="fCol"></div>
+        </div>
+        <div class="actions" id="fActions" style="display:none">
+          <button class="btn dont" id="btnDont">😣 还没记住</button>
+          <button class="btn know" id="btnKnow">😎 已掌握</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REVIEW -->
+  <section class="view" id="v-review">
+    <div class="card">
+      <h2>🔁 间隔复习（主动回忆）</h2>
+      <div class="desc">系统按 1→3→7→14→30 天的遗忘曲线安排复习。看到单词先<b>回忆释义</b>，再揭晓核对——主动提取比重读记忆效率高数倍。</div>
+      <div id="reviewBox"></div>
+    </div>
+  </section>
+
+  <!-- SHADOW -->
+  <section class="view" id="v-shadow">
+    <div class="card">
+      <h2>🎙️ 语句跟读（影子跟读法）</h2>
+      <div class="desc">先听原音，再点红色按钮<b>录下自己的跟读</b>，回放对比找差距。每天 10–15 分钟，听说同步提升。⚠️ 录音需在 https 或 localhost 环境打开本页才可用。</div>
+      <div id="senList"></div>
+    </div>
+  </section>
+
+  <!-- READING -->
+  <section class="view" id="v-reading">
+    <div class="card">
+      <h2>📖 短文阅读（可理解输入）</h2>
+      <div class="desc">选取略高于当前水平的雅思话题短文，听全文或点词发音，读完做理解题检验理解。</div>
+      <div class="read-toolbar">
+        <input type="text" id="recTopic" placeholder="主题（如：人工智能对就业的影响）" />
+        <input type="number" id="recCount" min="1" max="10" value="3" />
+        <button class="btn" id="recBatchBtn">🤖 AI 批量生成</button>
+        <label class="autoswitch"><input type="checkbox" id="autoDailyRec" /> 每日自动推荐</label>
+        <span class="rec-status" id="recStatus"></span>
+      </div>
+      <div class="pgrid" id="pgrid"></div>
+      <div class="reader" id="reader">
+        <button class="btn ghost sm" id="backRead">← 返回列表</button>
+        <h2 id="rTitle" style="margin-top:14px"></h2>
+        <div style="display:flex;gap:10px;margin:10px 0">
+          <button class="btn sm" id="rPlay">🔊 听全文</button>
+          <button class="btn ghost sm" id="rPlaySlow">🐢 慢速听</button>
+        </div>
+        <div class="text" id="rText"></div>
+        <div id="rQuiz"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CALL -->
+  <section class="view" id="v-call">
+    <div class="card">
+      <h2>📞 视频通话口语练习</h2>
+      <div class="desc">像打视频电话一样练口语：打开摄像头，屏幕上是「AI 搭档」给的提问 / 话题，你看着屏幕<b>快速读懂并说出来</b>。可录音回放对比，还能用语音识别把你说的话转成文字自查。</div>
+      <div class="call-stage">
+        <div class="call-partner">
+          <div class="av">🤖</div>
+          <div class="meta"><span id="callRole">搭档</span> · <span id="callTopic">话题</span></div>
+          <div class="prompt" id="callPrompt">点击「开始通话」获取第一题</div>
+        </div>
+        <div class="call-self">
+          <video id="callVideo" autoplay playsinline muted></video>
+          <div class="self-label">你</div>
+        </div>
+      </div>
+      <div id="recResult" class="rec-result" style="display:none">
+        <div style="font-size:12.5px;color:var(--sub);margin-bottom:4px">🎤 你刚才说的：</div>
+        <div id="recText" style="font-size:15px;line-height:1.7;color:#2a3340"></div>
+        <audio id="callAudio" controls style="width:100%;margin-top:8px"></audio>
+      </div>
+      <div class="call-ctrls">
+        <button class="btn" id="callStart">🎥 开始通话</button>
+        <button class="btn ghost" id="callHear">🔊 听原音</button>
+        <button class="btn" id="callRec">⏺ 录音回答</button>
+        <button class="btn ghost" id="callRecognize">🗣️ 识别我说的话</button>
+        <button class="btn" id="callNext">⏭ 下一题</button>
+        <button class="btn ghost" id="callStop">⛔ 挂断</button>
+      </div>
+      <div class="desc" style="margin-top:12px;font-size:12.5px">⚠️ 摄像头 / 麦克风需授权；语音识别在 Chrome / Edge 上效果最好，Firefox 可能不支持（可改用录音回放自评）。</div>
+    </div>
+  </section>
+
+  <!-- METHODS -->
+  <section class="view" id="v-methods">
+    <div class="card">
+      <h2>💡 实证有效的英语学习方法</h2>
+      <div class="desc">以下方法均来自语言认知科学研究与雅思高分学员实践，已融入本平台的功能设计中。</div>
+      <div id="methodsList"></div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="view" id="v-stats">
+    <div class="card">
+      <h2>📊 学习统计</h2>
+      <div class="stat-row" style="margin-top:8px">
+        <div class="stat"><div class="v" id="stStreak">0</div><div class="l">连续学习天数</div></div>
+        <div class="stat"><div class="v" id="stLearned">0</div><div class="l">累计掌握单词</div></div>
+        <div class="stat"><div class="v" id="stDue">0</div><div class="l">待复习单词</div></div>
+        <div class="stat"><div class="v" id="stDays">0</div><div class="l">累计学习天数</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>📅 近 14 天打卡</h2>
+      <div id="calBox" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"></div>
+      <button class="btn ghost sm" id="resetBtn" style="margin-top:16px">重置全部学习数据</button>
+    </div>
+  </section>
+
+  <!-- LEXICON QUERY (词库查询) -->
+  <section class="view" id="v-lex">
+    <div class="card">
+      <h2>🔎 词库查询 · 全行业</h2>
+      <div class="desc">按词库筛选、搜索、按掌握状态过滤，可批量标记掌握/重置，或单个删除。AI 在「通义千问」生成的行业词库会自动出现在「我的词库」里。</div>
+      <div class="lex-toolbar">
+        <div class="lex-tabs" id="lexTabs"></div>
+        <div class="lex-search">
+          <input id="lexQ" type="search" placeholder="搜索单词 / 释义 / 例句 / 搭配…" />
+          <select id="lexFilter">
+            <option value="all">全部</option>
+            <option value="new">未学</option>
+            <option value="learning">学习中</option>
+            <option value="mastered">已掌握</option>
+          </select>
+        </div>
+        <div class="lex-actions">
+          <button class="btn sm" id="lexMarkAll">本页全标掌握</button>
+          <button class="btn sm" id="lexUnmarkAll">本页全取消</button>
+          <button class="btn ghost sm" id="lexExportBtn">导出 CSV</button>
+        </div>
+        <input type="number" id="lexExpandN" style="display:none" value="30" />
+      </div>
+      <div class="lex-expand-bar" id="lexExpandBar"></div>
+      <div class="lex-summary" id="lexSummary"></div>
+      <div class="lex-list" id="lexList"></div>
+    </div>
+  </section>
+
+  <!-- AI ASSISTANT (通义千问) -->
+  <section class="view" id="v-ai">
+    <div class="card">
+      <h2>🤖 通义千问 AI 助手</h2>
+      <div class="desc">连接阿里云通义千问大模型，帮你即时答疑、生成单词/短文、出口语题。生成的内容可一键存入文库，平台内容永不枯竭。</div>
+      <div class="ai-keybox">
+        <label>API Key（仅保存在本机浏览器 localStorage，不经过任何服务器，也不会发给我）</label>
+        <div class="ai-keyrow">
+          <input id="qwenKey" type="password" placeholder="粘贴你的 DashScope API Key，形如 sk-..." />
+          <select id="qwenModel">
+            <option value="qwen-turbo">qwen-turbo（快·省）</option>
+            <option value="qwen-plus" selected>qwen-plus（均衡）</option>
+            <option value="qwen-max">qwen-max（最强）</option>
+            <option value="qwen-long">qwen-long（长文本）</option>
+          </select>
+          <button class="btn" id="saveQwen">保存</button>
+        </div>
+        <div class="ai-keyrow" style="margin-top:8px">
+          <input id="qwenProxy" type="text" placeholder="代理 URL（可选）：如 https://你的代理.com （如遇网络拦截才需填）" />
+          <button class="btn ghost" id="testQwenBtn">🔌 测试连接</button>
+        </div>
+        <div class="ai-hint">没有 Key？打开 <a href="https://dashscope.console.aliyun.com/" target="_blank" rel="noopener">阿里云百炼控制台</a> → 右上角「API Key 管理」→ 创建并复制。新用户有免费额度，日常学习绰绰有余。<br>
+        <b>遇到 “网络错误：Failed to fetch” 怎么办？</b> 这通常是浏览器扩展（AdBlock、隐私保护、企业代理）拦截了请求，或某些网络环境对 dashscope.aliyuncs.com 的跨域有限制。<br>
+        1) 先点上方「🔌 测试连接」看返回的具体原因；2) 尝试在 <b>隐身/无痕窗口</b>打开本页（默认无扩展）；3) 若仍不通，可填一个 <b>CORS 代理</b> 到「代理 URL」（你的代理或自建反代，只把请求转发到 dashscope，返回时加 <code>Access-Control-Allow-Origin: *</code> 即可）。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>⚡ 一键生成内容（自动存入对应文库）</h3>
+      <div class="ai-actions">
+        <div class="ai-act">
+          <div class="ai-act-t">📚 生成行业词库</div>
+          <input id="genIndustry" placeholder="行业，如：厨房家电 / 跨境电商 / 医疗" />
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <select id="genCount"><option>15</option><option selected>20</option><option>30</option><option>40</option></select>
+            <button class="btn" id="genWordsBtn">生成并存入「我的词库」</button>
+          </div>
+        </div>
+        <div class="ai-act">
+          <div class="ai-act-t">📖 生成阅读短文</div>
+          <input id="genTopic" placeholder="主题，如：可持续能源 / 智能家居" />
+          <button class="btn" id="genPassageBtn" style="margin-top:8px">生成并加入阅读库</button>
+        </div>
+        <div class="ai-act">
+          <div class="ai-act-t">🎙️ 生成口语/跟读题</div>
+          <input id="genSpeak" placeholder="场景，如：产品介绍 / 旅行" />
+          <button class="btn" id="genSpeakBtn" style="margin-top:8px">生成跟读句子</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>💬 自由提问 / 讲词</h3>
+      <div class="ai-chat" id="aiChat"></div>
+      <div class="ai-inputrow">
+        <input id="aiInput" placeholder="例如：讲解单词 sustainable 的用法 / 帮我出 5 个雅思口语 Part 2 话题" />
+        <button class="btn" id="aiSend">发送</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===================== 数据 ===================== */
+const WORDS = [
+ {w:"abandon",ipa:"/əˈbændən/",pos:"v.",cn:"放弃；遗弃",ex:"The company decided to abandon the failed project.",col:"abandon a plan / abandon hope"},
+ {w:"accurate",ipa:"/ˈækjərət/",pos:"adj.",cn:"准确的；精确的",ex:"We need accurate data to make the right decision.",col:"accurate information / painfully accurate"},
+ {w:"achieve",ipa:"/əˈtʃiːv/",pos:"v.",cn:"实现；达到",ex:"She worked hard to achieve her career goals.",col:"achieve success / achieve a target"},
+ {w:"acquire",ipa:"/əˈkwaɪər/",pos:"v.",cn:"获得；习得",ex:"Children acquire language skills naturally.",col:"acquire knowledge / acquire a habit"},
+ {w:"adapt",ipa:"/əˈdæpt/",pos:"v.",cn:"适应；调整",ex:"Plants must adapt to changing climates.",col:"adapt to / adapt oneself"},
+ {w:"adequate",ipa:"/ˈædɪkwət/",pos:"adj.",cn:"足够的；适当的",ex:"The supply of food was not adequate for everyone.",col:"adequate preparation / adequate to"},
+ {w:"analyze",ipa:"/ˈænəlaɪz/",pos:"v.",cn:"分析",ex:"Scientists analyze the samples carefully.",col:"analyze data / analyze the cause"},
+ {w:"approach",ipa:"/əˈproʊtʃ/",pos:"n./v.",cn:"方法；接近",ex:"We need a new approach to solve this problem.",col:"a practical approach / approach a task"},
+ {w:"assess",ipa:"/əˈses/",pos:"v.",cn:"评估；评定",ex:"Teachers assess students by their performance.",col:"assess risk / assess the impact"},
+ {w:"assume",ipa:"/əˈsuːm/",pos:"v.",cn:"假设；认为",ex:"We cannot assume that the trend will continue.",col:"assume responsibility / assume that"},
+ {w:"attribute",ipa:"/əˈtrɪbjuːt/",pos:"v.",cn:"把…归因于",ex:"The rise in sales is attributed to the new policy.",col:"attribute to / attribute success"},
+ {w:"authority",ipa:"/əˈθɔːrəti/",pos:"n.",cn:"权威；当局",ex:"The local authority approved the building plan.",col:"an authority on / in authority"},
+ {w:"available",ipa:"/əˈveɪləbl/",pos:"adj.",cn:"可获得的；有空的",ex:"Tickets are available online at a low price.",col:"become available / readily available"},
+ {w:"benefit",ipa:"/ˈbenɪfɪt/",pos:"n./v.",cn:"益处；受益",ex:"Regular exercise benefits both body and mind.",col:"mutual benefit / benefit from"},
+ {w:"category",ipa:"/ˈkætəɡɔːri/",pos:"n.",cn:"类别；种类",ex:"Books are divided into several categories.",col:"a broad category / fall into a category"},
+ {w:"challenge",ipa:"/ˈtʃælɪndʒ/",pos:"n./v.",cn:"挑战",ex:"Climate change is a global challenge.",col:"face a challenge / meet the challenge"},
+ {w:"circumstance",ipa:"/ˈsɜːrkəmstæns/",pos:"n.",cn:"情况；环境",ex:"Under no circumstances should we give up.",col:"under the circumstances / in normal circumstances"},
+ {w:"comprehensive",ipa:"/ˌkɑːmprɪˈhensɪv/",pos:"adj.",cn:"全面的；综合的",ex:"The report gives a comprehensive analysis.",col:"a comprehensive study / comprehensive cover"},
+ {w:"conclude",ipa:"/kənˈkluːd/",pos:"v.",cn:"得出结论；结束",ex:"We can conclude that the method is effective.",col:"conclude from / conclude a speech"},
+ {w:"conduct",ipa:"/kənˈdʌkt/",pos:"v.",cn:"进行；实施",ex:"The experiment was conducted last month.",col:"conduct research / conduct a survey"},
+ {w:"consequence",ipa:"/ˈkɑːnsɪkwens/",pos:"n.",cn:"后果；结果",ex:"Pollution has serious consequences for health.",col:"as a consequence / face the consequences"},
+ {w:"considerable",ipa:"/kənˈsɪdərəbl/",pos:"adj.",cn:"相当大的",ex:"The project requires considerable effort.",col:"a considerable amount / considerable influence"},
+ {w:"consist",ipa:"/kənˈsɪst/",pos:"v.",cn:"由…组成",ex:"The team consists of five experts.",col:"consist of / consist in"},
+ {w:"constant",ipa:"/ˈkɑːnstənt/",pos:"adj.",cn:"持续的；不变的",ex:"The machine makes a constant noise.",col:"constant change / a constant problem"},
+ {w:"consume",ipa:"/kənˈsuːm/",pos:"v.",cn:"消耗；消费",ex:"Cars consume a large amount of energy.",col:"consume energy / consume time"},
+ {w:"context",ipa:"/ˈkɑːntekst/",pos:"n.",cn:"语境；背景",ex:"You should understand a word in its context.",col:"in context / social context"},
+ {w:"create",ipa:"/kriˈeɪt/",pos:"v.",cn:"创造；创建",ex:"The app was created to help learners.",col:"create value / create an impression"},
+ {w:"cultural",ipa:"/ˈkʌltʃərəl/",pos:"adj.",cn:"文化的",ex:"Food reflects cultural traditions.",col:"cultural difference / cultural identity"},
+ {w:"decline",ipa:"/dɪˈklaɪn/",pos:"v./n.",cn:"下降；衰退",ex:"The number of visitors declined sharply.",col:"on the decline / a sharp decline"},
+ {w:"demonstrate",ipa:"/ˈdemənstreɪt/",pos:"v.",cn:"证明；展示",ex:"The study demonstrates a clear link.",col:"demonstrate ability / clearly demonstrate"},
+ {w:"depend",ipa:"/dɪˈpend/",pos:"v.",cn:"依赖；取决于",ex:"Success depends on your effort.",col:"depend on / depend upon"},
+ {w:"distinct",ipa:"/dɪˈstɪŋkt/",pos:"adj.",cn:"明显的；独特的",ex:"There are two distinct opinions.",col:"a distinct feature / distinct from"},
+ {w:"distribute",ipa:"/dɪˈstrɪbjuːt/",pos:"v.",cn:"分配；分发",ex:"The charity distributed food to the poor.",col:"distribute resources / widely distributed"},
+ {w:"diverse",ipa:"/daɪˈvɜːrs/",pos:"adj.",cn:"多样的；不同的",ex:"The city has a diverse population.",col:"diverse culture / a diverse range"},
+ {w:"document",ipa:"/ˈdɑːkjument/",pos:"v./n.",cn:"记录；文件",ex:"The process was carefully documented.",col:"a formal document / document the evidence"},
+ {w:"dominate",ipa:"/ˈdɑːmɪneɪt/",pos:"v.",cn:"支配；主导",ex:"The company dominates the market.",col:"dominate the field / be dominated by"},
+ {w:"economy",ipa:"/ɪˈkɑːnəmi/",pos:"n.",cn:"经济；节约",ex:"The local economy is growing steadily.",col:"the global economy / a weak economy"},
+ {w:"environment",ipa:"/ɪnˈvaɪrənmənt/",pos:"n.",cn:"环境",ex:"We must protect the natural environment.",col:"the environment / a safe environment"},
+ {w:"establish",ipa:"/ɪˈstæblɪʃ/",pos:"v.",cn:"建立；确立",ex:"The school was established in 1990.",col:"establish a system / establish contact"},
+ {w:"evaluate",ipa:"/ɪˈvæljueɪt/",pos:"v.",cn:"评价；评估",ex:"We should evaluate the results objectively.",col:"evaluate performance / evaluate the risk"},
+ {w:"evidence",ipa:"/ˈevɪdəns/",pos:"n.",cn:"证据；迹象",ex:"There is evidence that the plan works.",col:"strong evidence / in evidence"},
+ {w:"evolve",ipa:"/ɪˈvɑːlv/",pos:"v.",cn:"进化；逐步发展",ex:"Technology continues to evolve rapidly.",col:"evolve into / constantly evolve"},
+ {w:"expand",ipa:"/ɪkˈspænd/",pos:"v.",cn:"扩大；扩展",ex:"The business expanded to other cities.",col:"expand the market / expand on"},
+ {w:"exploit",ipa:"/ɪkˈsplɔɪt/",pos:"v.",cn:"利用；开发",ex:"We should exploit renewable resources.",col:"exploit resources / exploit an opportunity"},
+ {w:"factor",ipa:"/ˈfæktər/",pos:"n.",cn:"因素",ex:"Price is a key factor in buying.",col:"a decisive factor / multiple factors"},
+ {w:"feature",ipa:"/ˈfiːtʃər/",pos:"n./v.",cn:"特征；以…为特色",ex:"The phone features a large screen.",col:"a key feature / feature in"},
+ {w:"financial",ipa:"/faɪˈnænʃl/",pos:"adj.",cn:"财务的；金融的",ex:"The project needs financial support.",col:"financial crisis / financial aid"},
+ {w:"function",ipa:"/ˈfʌŋkʃən/",pos:"n./v.",cn:"功能；运行",ex:"The device functions well in cold weather.",col:"a basic function / function as"},
+ {w:"global",ipa:"/ˈɡloʊbl/",pos:"adj.",cn:"全球的",ex:"Global warming affects everyone.",col:"global market / global issue"},
+ {w:"goal",ipa:"/ɡoʊl/",pos:"n.",cn:"目标",ex:"Our goal is to reduce pollution.",col:"achieve a goal / a long-term goal"},
+ {w:"hypothesis",ipa:"/haɪˈpɑːθəsɪs/",pos:"n.",cn:"假设",ex:"The hypothesis was later proven true.",col:"test a hypothesis / a working hypothesis"},
+ {w:"identify",ipa:"/aɪˈdentɪfaɪ/",pos:"v.",cn:"识别；确认",ex:"We must identify the root cause.",col:"identify a problem / identify with"},
+ {w:"impact",ipa:"/ˈɪmpækt/",pos:"n./v.",cn:"影响；冲击",ex:"The policy had a positive impact.",col:"have an impact / environmental impact"},
+ {w:"implement",ipa:"/ˈɪmplɪment/",pos:"v.",cn:"实施；执行",ex:"The new law will be implemented soon.",col:"implement a plan / implement changes"},
+ {w:"income",ipa:"/ˈɪnkʌm/",pos:"n.",cn:"收入",ex:"Her income increased this year.",col:"annual income / a steady income"},
+ {w:"indicate",ipa:"/ˈɪndɪkeɪt/",pos:"v.",cn:"表明；指示",ex:"The data indicates a clear trend.",col:"indicate that / clearly indicate"},
+ {w:"individual",ipa:"/ˌɪndɪˈvɪdʒuəl/",pos:"adj./n.",cn:"个体的；个人",ex:"Each individual learns at their own pace.",col:"an individual case / individual rights"},
+ {w:"inevitable",ipa:"/ɪnˈevɪtəbl/",pos:"adj.",cn:"不可避免的",ex:"Change is inevitable in life.",col:"an inevitable result / seemingly inevitable"},
+ {w:"inhibit",ipa:"/ɪnˈhɪbɪt/",pos:"v.",cn:"抑制；阻碍",ex:"Fear can inhibit creative thinking.",col:"inhibit growth / inhibit the process"},
+ {w:"initial",ipa:"/ɪˈnɪʃl/",pos:"adj.",cn:"最初的；开始的",ex:"The initial response was positive.",col:"the initial stage / initial cost"},
+ {w:"invest",ipa:"/ɪnˈvest/",pos:"v.",cn:"投资；投入",ex:"The firm invested in new technology.",col:"invest in / invest time"},
+ {w:"involve",ipa:"/ɪnˈvɑːlv/",pos:"v.",cn:"涉及；包含",ex:"The job involves a lot of travel.",col:"involve risk / get involved"},
+ {w:"isolate",ipa:"/ˈaɪsəleɪt/",pos:"v.",cn:"隔离；孤立",ex:"The village was isolated by the flood.",col:"isolate from / socially isolate"},
+ {w:"legislate",ipa:"/ˈledʒɪsleɪt/",pos:"v.",cn:"立法",ex:"The government legislated to protect privacy.",col:"legislate for / legislate against"},
+ {w:"major",ipa:"/ˈmeɪdʒər/",pos:"adj.",cn:"主要的；重大的",ex:"There is a major difference between them.",col:"a major problem / major changes"},
+ {w:"method",ipa:"/ˈmeθəd/",pos:"n.",cn:"方法",ex:"This is an effective teaching method.",col:"a new method / use a method"},
+ {w:"minimal",ipa:"/ˈmɪnɪml/",pos:"adj.",cn:"最小的；极少的",ex:"The risk is minimal if you follow the rules.",col:"minimal effort / minimal impact"},
+ {w:"monitor",ipa:"/ˈmɑːnɪtər/",pos:"v.",cn:"监测；监督",ex:"Doctors monitor the patient's heart rate.",col:"monitor progress / closely monitor"},
+ {w:"natural",ipa:"/ˈnætʃrəl/",pos:"adj.",cn:"自然的",ex:"Solar power is a natural source of energy.",col:"natural resources / a natural reaction"},
+ {w:"negative",ipa:"/ˈneɡətɪv/",pos:"adj.",cn:"负面的；消极的",ex:"The news had a negative effect on sales.",col:"a negative impact / negative attitude"},
+ {w:"notion",ipa:"/ˈnoʊʃn/",pos:"n.",cn:"观念；想法",ex:"He has no notion of how difficult it is.",col:"the notion that / a strange notion"},
+ {w:"objective",ipa:"/əbˈdʒektɪv/",pos:"adj./n.",cn:"客观的；目标",ex:"We must stay objective in the debate.",col:"an objective view / achieve the objective"},
+ {w:"obtain",ipa:"/əbˈteɪn/",pos:"v.",cn:"获得；得到",ex:"You can obtain the form online.",col:"obtain permission / obtain results"},
+ {w:"obvious",ipa:"/ˈɑːbviəs/",pos:"adj.",cn:"明显的",ex:"It is obvious that he is tired.",col:"an obvious mistake / it is obvious that"},
+ {w:"occupy",ipa:"/ˈɑːkjupaɪ/",pos:"v.",cn:"占据；占用",ex:"The new building occupies a large area.",col:"occupy space / occupy oneself"},
+ {w:"occur",ipa:"/əˈkɜːr/",pos:"v.",cn:"发生；出现",ex:"The accident occurred yesterday.",col:"occur to / occur frequently"},
+ {w:"outcome",ipa:"/ˈaʊtkʌm/",pos:"n.",cn:"结果；成果",ex:"The outcome of the meeting was positive.",col:"the final outcome / a favourable outcome"},
+ {w:"participate",ipa:"/pɑːrˈtɪsɪpeɪt/",pos:"v.",cn:"参与；参加",ex:"Many students participated in the event.",col:"participate in / actively participate"},
+ {w:"perceive",ipa:"/pərˈsiːv/",pos:"v.",cn:"感知；认为",ex:"She is perceived as a reliable leader.",col:"perceive as / perceive a change"},
+ {w:"persist",ipa:"/pərˈsɪst/",pos:"v.",cn:"坚持；持续",ex:"If you persist, you will succeed.",col:"persist in / persist with"},
+ {w:"phenomenon",ipa:"/fəˈnɑːmɪnən/",pos:"n.",cn:"现象",ex:"Global warming is a worrying phenomenon.",col:"a natural phenomenon / a social phenomenon"},
+ {w:"pollution",ipa:"/pəˈluːʃn/",pos:"n.",cn:"污染",ex:"Air pollution harms people's health.",col:"reduce pollution / noise pollution"},
+ {w:"positive",ipa:"/ˈpɑːzətɪv/",pos:"adj.",cn:"积极的；正面的",ex:"She has a positive attitude to life.",col:"a positive effect / positive feedback"},
+ {w:"potential",ipa:"/pəˈtenʃl/",pos:"adj./n.",cn:"潜在的；潜力",ex:"The plan has great potential.",col:"realize potential / potential risk"},
+ {w:"poverty",ipa:"/ˈpɑːvərti/",pos:"n.",cn:"贫困",ex:"Education helps reduce poverty.",col:"live in poverty / alleviate poverty"},
+ {w:"predict",ipa:"/prɪˈdɪkt/",pos:"v.",cn:"预测",ex:"It is hard to predict the future.",col:"predict that / predict the result"},
+ {w:"primary",ipa:"/ˈpraɪmeri/",pos:"adj.",cn:"主要的；首要的",ex:"The primary aim is to save lives.",col:"primary goal / primary school"},
+ {w:"principle",ipa:"/ˈprɪnsəpl/",pos:"n.",cn:"原则；原理",ex:"Honesty is a basic principle.",col:"in principle / a general principle"},
+ {w:"procedure",ipa:"/prəˈsiːdʒər/",pos:"n.",cn:"程序；步骤",ex:"Follow the safety procedure carefully.",col:"a standard procedure / legal procedure"},
+ {w:"promote",ipa:"/prəˈmoʊt/",pos:"v.",cn:"促进；提升",ex:"The campaign promotes healthy eating.",col:"promote growth / promote understanding"},
+ {w:"publish",ipa:"/ˈpʌblɪʃ/",pos:"v.",cn:"出版；发布",ex:"The journal published his research.",col:"publish a book / publish online"},
+ {w:"pursue",ipa:"/pərˈsuː/",pos:"v.",cn:"追求；从事",ex:"She decided to pursue a career in medicine.",col:"pursue a goal / pursue studies"},
+ {w:"relevant",ipa:"/ˈreləvənt/",pos:"adj.",cn:"相关的",ex:"Please give relevant examples.",col:"relevant to / relevant information"},
+ {w:"reliable",ipa:"/rɪˈlaɪəbl/",pos:"adj.",cn:"可靠的",ex:"We need a reliable source of data.",col:"a reliable friend / reliable evidence"},
+ {w:"remove",ipa:"/rɪˈmuːv/",pos:"v.",cn:"移除；去掉",ex:"Please remove the obstacles in time.",col:"remove from / remove a barrier"},
+ {w:"research",ipa:"/rɪˈsɜːrtʃ/",pos:"n./v.",cn:"研究",ex:"They research the causes of disease.",col:"carry out research / scientific research"},
+ {w:"resource",ipa:"/ˈriːsɔːrs/",pos:"n.",cn:"资源",ex:"Water is a precious resource.",col:"natural resources / scarce resources"},
+ {w:"restrict",ipa:"/rɪˈstrɪkt/",pos:"v.",cn:"限制；约束",ex:"The law restricts the use of plastic.",col:"restrict to / restrict access"},
+ {w:"reveal",ipa:"/rɪˈviːl/",pos:"v.",cn:"揭示；显示",ex:"The report reveals serious problems.",col:"reveal that / reveal a secret"},
+ {w:"significant",ipa:"/sɪɡˈnɪfɪkənt/",pos:"adj.",cn:"重要的；显著的",ex:"There was a significant change.",col:"a significant number / statistically significant"},
+ {w:"similar",ipa:"/ˈsɪmələr/",pos:"adj.",cn:"相似的",ex:"The two cases are quite similar.",col:"similar to / broadly similar"},
+ {w:"source",ipa:"/sɔːrs/",pos:"n.",cn:"来源；根源",ex:"The sun is the source of energy.",col:"a reliable source / from a source"},
+ {w:"specific",ipa:"/spəˈsɪfɪk/",pos:"adj.",cn:"具体的；特定的",ex:"Please give a specific example.",col:"specific to / a specific purpose"},
+ {w:"strategy",ipa:"/ˈstrætədʒi/",pos:"n.",cn:"策略；战略",ex:"We need a clear strategy.",col:"a marketing strategy / develop a strategy"},
+ {w:"structure",ipa:"/ˈstrʌktʃər/",pos:"n.",cn:"结构；构造",ex:"The essay has a clear structure.",col:"social structure / the structure of"},
+ {w:"sufficient",ipa:"/səˈfɪʃnt/",pos:"adj.",cn:"足够的",ex:"We have sufficient evidence now.",col:"sufficient for / sufficient to"},
+ {w:"survey",ipa:"/ˈsɜːrveɪ/",pos:"n./v.",cn:"调查",ex:"A survey shows rising prices.",col:"conduct a survey / a national survey"},
+ {w:"sustain",ipa:"/səˈsteɪn/",pos:"v.",cn:"维持；支撑",ex:"We must sustain economic growth.",col:"sustain life / sustain development"},
+ {w:"technology",ipa:"/tekˈnɑːlədʒi/",pos:"n.",cn:"科技；技术",ex:"Technology changes our daily life.",col:"modern technology / information technology"},
+ {w:"tendency",ipa:"/ˈtendənsi/",pos:"n.",cn:"趋势；倾向",ex:"There is a tendency to work late.",col:"a tendency to / show a tendency"},
+ {w:"theory",ipa:"/ˈθiːəri/",pos:"n.",cn:"理论",ex:"Einstein proposed the relativity theory.",col:"in theory / a scientific theory"},
+ {w:"transport",ipa:"/trænsˈpɔːrt/",pos:"n./v.",cn:"交通；运输",ex:"Public transport reduces traffic jams.",col:"public transport / transport goods"},
+ {w:"ultimate",ipa:"/ˈʌltɪmət/",pos:"adj.",cn:"最终的；根本的",ex:"The ultimate goal is world peace.",col:"the ultimate aim / ultimate responsibility"},
+ {w:"undergo",ipa:"/ˌʌndərˈɡoʊ/",pos:"v.",cn:"经历；承受",ex:"The patient underwent an operation.",col:"undergo change / undergo treatment"},
+ {w:"unique",ipa:"/juˈniːk/",pos:"adj.",cn:"独特的；唯一的",ex:"Each person has a unique voice.",col:"a unique feature / unique to"},
+ {w:"valid",ipa:"/ˈvælɪd/",pos:"adj.",cn:"有效的；合理的",ex:"Your ticket is still valid.",col:"a valid reason / valid for"},
+ {w:"vary",ipa:"/ˈveri/",pos:"v.",cn:"变化；不同",ex:"Prices vary from city to city.",col:"vary from / vary according to"},
+ {w:"vehicle",ipa:"/ˈviːəkl/",pos:"n.",cn:"车辆；工具",ex:"Electric vehicles are becoming popular.",col:"a motor vehicle / a vehicle for"},
+ {w:"welfare",ipa:"/ˈwelfer/",pos:"n.",cn:"福利；福祉",ex:"The government cares about social welfare.",col:"social welfare / child welfare"},
+ {w:"whereas",ipa:"/ˌwerˈæz/",pos:"conj.",cn:"然而；鉴于",ex:"He is rich whereas his brother is poor.",col:"(used to contrast)"}
+];
+
+/* 分行业词库：厨房家电（用户本职行业）/ 职场 / 医疗，均为独立 Bank */
+const KITCHEN_WORDS=[
+ {w:"appliance",ipa:"/əˈplaɪəns/",pos:"n.",cn:"家用电器",ex:"Kitchen appliances make cooking easier.",col:"household appliance / smart appliance"},
+ {w:"blender",ipa:"/ˈblendər/",pos:"n.",cn:"搅拌机；破壁机",ex:"She uses a blender to make morning smoothies.",col:"immersion blender / high-speed blender"},
+ {w:"vacuum",ipa:"/ˈvækjuːm/",pos:"n./adj.",cn:"真空",ex:"A vacuum sealer removes air from the bag.",col:"vacuum sealer / vacuum bag"},
+ {w:"seal",ipa:"/siːl/",pos:"v./n.",cn:"密封；封口",ex:"The bag must seal completely to keep food fresh.",col:"airtight seal / seal the bag"},
+ {w:"sealer",ipa:"/ˈsiːlər/",pos:"n.",cn:"封口机",ex:"A food sealer extends shelf life.",col:"vacuum sealer / heat sealer"},
+ {w:"motor",ipa:"/ˈmoʊtər/",pos:"n.",cn:"电机；马达",ex:"The motor powers the blender blades.",col:"high-speed motor / brushless motor"},
+ {w:"blade",ipa:"/bleɪd/",pos:"n.",cn:"刀叶；刀片",ex:"The stainless steel blade is very sharp.",col:"replaceable blade / four blades"},
+ {w:"jar",ipa:"/dʒɑːr/",pos:"n.",cn:"杯体；玻璃罐",ex:"The blender jar holds one liter of liquid.",col:"glass jar / measuring jar"},
+ {w:"wattage",ipa:"/ˈwɑːtɪdʒ/",pos:"n.",cn:"功率",ex:"Check the wattage before you buy.",col:"high wattage / low wattage"},
+ {w:"capacity",ipa:"/kəˈpæsəti/",pos:"n.",cn:"容量",ex:"The jug has a 1.5 liter capacity.",col:"large capacity / tank capacity"},
+ {w:"liter",ipa:"/ˈliːtər/",pos:"n.",cn:"升",ex:"This model holds two liters.",col:"per liter / 1.5 liter"},
+ {w:"speed",ipa:"/spiːd/",pos:"n.",cn:"速度；档位",ex:"Choose a suitable speed for the task.",col:"variable speed / low speed"},
+ {w:"setting",ipa:"/ˈsetɪŋ/",pos:"n.",cn:"设置；档位",ex:"Use the pulse setting to crush ice.",col:"default setting / speed setting"},
+ {w:"pulse",ipa:"/pʌls/",pos:"n./v.",cn:"点动；脉冲",ex:"Pulse the blender to mix the sauce.",col:"pulse mode / pulse button"},
+ {w:"preserve",ipa:"/prɪˈzɜːrv/",pos:"v.",cn:"保存；保鲜",ex:"Vacuum packing preserves food freshness.",col:"preserve freshness / preserve flavor"},
+ {w:"fresh",ipa:"/freʃ/",pos:"adj.",cn:"新鲜的",ex:"Keep herbs fresh for longer.",col:"fresh produce / fresh food"},
+ {w:"freezer",ipa:"/ˈfriːzər/",pos:"n.",cn:"冷冻室；冰柜",ex:"Put the meat in the freezer.",col:"chest freezer / deep freezer"},
+ {w:"refrigerator",ipa:"/rɪˈfrɪdʒəreɪtər/",pos:"n.",cn:"冰箱",ex:"Store leftovers in the refrigerator.",col:"French-door refrigerator"},
+ {w:"microwave",ipa:"/ˈmaɪkrəweɪv/",pos:"n.",cn:"微波炉",ex:"Heat the meal in the microwave.",col:"microwave oven / microwave safe"},
+ {w:"temperature",ipa:"/ˈtemprətʃər/",pos:"n.",cn:"温度",ex:"Keep a low storage temperature.",col:"ambient temperature / set temperature"},
+ {w:"leak",ipa:"/liːk/",pos:"v./n.",cn:"漏；渗漏",ex:"The bag should not leak any air.",col:"leak-proof / water leak"},
+ {w:"rust",ipa:"/rʌst/",pos:"v./n.",cn:"生锈",ex:"Steel parts can rust over time.",col:"rust-proof / anti-rust"},
+ {w:"durable",ipa:"/ˈdʊrəbl/",pos:"adj.",cn:"耐用的",ex:"We need durable materials for daily use.",col:"durable product / durable design"},
+ {w:"material",ipa:"/məˈtɪriəl/",pos:"n.",cn:"材料",ex:"BPA-free material is safer for food.",col:"raw material / food-grade material"},
+ {w:"plastic",ipa:"/ˈplæstɪk/",pos:"n./adj.",cn:"塑料",ex:"Food-grade plastic is safe to use.",col:"plastic container / recycled plastic"},
+ {w:"steel",ipa:"/stiːl/",pos:"n.",cn:"钢；不锈钢",ex:"The blade is made of stainless steel.",col:"stainless steel / steel body"},
+ {w:"battery",ipa:"/ˈbætəri/",pos:"n.",cn:"电池",ex:"Cordless models run on a battery.",col:"rechargeable battery / battery life"},
+ {w:"cordless",ipa:"/ˈkɔːrdləs/",pos:"adj.",cn:"无线的；无绳的",ex:"A cordless blender is easy to move.",col:"cordless design / cordless motor"},
+ {w:"portable",ipa:"/ˈpɔːrtəbl/",pos:"adj.",cn:"便携的",ex:"Portable gadgets suit small kitchens.",col:"portable device / portable size"},
+ {w:"lightweight",ipa:"/ˈlaɪtweɪt/",pos:"adj.",cn:"轻量的",ex:"Lightweight bodies are easy to carry.",col:"lightweight build / lightweight design"},
+ {w:"efficient",ipa:"/ɪˈfɪʃnt/",pos:"adj.",cn:"高效的",ex:"An efficient motor saves power.",col:"energy efficient / highly efficient"},
+ {w:"energy",ipa:"/ˈenərdʒi/",pos:"n.",cn:"能量；能耗",ex:"Eco mode helps save energy.",col:"energy saving / energy consumption"},
+ {w:"noise",ipa:"/nɔɪz/",pos:"n.",cn:"噪音",ex:"Low-noise motors are very popular.",col:"reduce noise / noise level"},
+ {w:"convenient",ipa:"/kənˈviːniənt/",pos:"adj.",cn:"方便的",ex:"It is convenient for daily cooking.",col:"convenient to use / convenient design"},
+ {w:"function",ipa:"/ˈfʌŋkʃən/",pos:"n.",cn:"功能",ex:"This model has many useful functions.",col:"multi-function / main function"},
+ {w:"safety",ipa:"/ˈseɪfti/",pos:"n.",cn:"安全",ex:"Safety locks prevent accidents.",col:"safety feature / safety standard"},
+ {w:"button",ipa:"/ˈbʌtn/",pos:"n.",cn:"按钮",ex:"Press the start button to begin.",col:"touch button / power button"},
+ {w:"design",ipa:"/dɪˈzaɪn/",pos:"n./v.",cn:"设计",ex:"The design is user-friendly.",col:"ergonomic design / industrial design"},
+ {w:"warranty",ipa:"/ˈwɔːrənti/",pos:"n.",cn:"保修；质保",ex:"The product has a two-year warranty.",col:"under warranty / warranty period"},
+ {w:"quality",ipa:"/ˈkwɑːləti/",pos:"n.",cn:"质量",ex:"Our quality control is very strict.",col:"high quality / quality control"},
+ {w:"cost",ipa:"/kɔːst/",pos:"n.",cn:"成本；价格",ex:"We must reduce the production cost.",col:"low cost / unit cost"},
+ {w:"market",ipa:"/ˈmɑːrkɪt/",pos:"n.",cn:"市场",ex:"We plan to enter the overseas market.",col:"market demand / target market"},
+ {w:"customer",ipa:"/ˈkʌstəmər/",pos:"n.",cn:"客户；顾客",ex:"Listen to customer feedback.",col:"customer satisfaction / loyal customer"},
+ {w:"BPA-free",ipa:"/ˌbiː piː eɪ ˈfriː/",pos:"adj.",cn:"不含双酚A的",ex:"Choose BPA-free plastic for safety.",col:"BPA-free material / BPA-free cup"},
+ {w:"leak-proof",ipa:"/ˈliːk pruːf/",pos:"adj.",cn:"防漏的",ex:"The container is fully leak-proof.",col:"leak-proof lid / leak-proof bag"}
+];
+const CAREER_WORDS=[
+ {w:"meeting",ipa:"/ˈmiːtɪŋ/",pos:"n.",cn:"会议",ex:"We have a meeting every Monday.",col:"team meeting / hold a meeting"},
+ {w:"deadline",ipa:"/ˈdedlaɪn/",pos:"n.",cn:"截止期限",ex:"We must finish before the deadline.",col:"meet the deadline / tight deadline"},
+ {w:"colleague",ipa:"/ˈkɑːliːɡ/",pos:"n.",cn:"同事",ex:"My colleague helped with the report.",col:"a trusted colleague / work colleague"},
+ {w:"project",ipa:"/ˈprɑːdʒekt/",pos:"n.",cn:"项目",ex:"She leads a new product project.",col:"manage a project / project plan"},
+ {w:"manager",ipa:"/ˈmænɪdʒər/",pos:"n.",cn:"经理；管理者",ex:"The manager approved the plan.",col:"project manager / sales manager"},
+ {w:"budget",ipa:"/ˈbʌdʒɪt/",pos:"n.",cn:"预算",ex:"We need to control the budget.",col:"within budget / annual budget"},
+ {w:"schedule",ipa:"/ˈskedʒuːl/",pos:"n./v.",cn:"日程；安排",ex:"Let us schedule a call tomorrow.",col:"tight schedule / schedule a meeting"},
+ {w:"deliver",ipa:"/dɪˈlɪvər/",pos:"v.",cn:"交付；运送",ex:"We will deliver the results on time.",col:"deliver a project / deliver value"},
+ {w:"feedback",ipa:"/ˈfiːdbæk/",pos:"n.",cn:"反馈",ex:"Please give me your feedback.",col:"customer feedback / constructive feedback"},
+ {w:"proposal",ipa:"/prəˈpoʊzl/",pos:"n.",cn:"提案；建议",ex:"He wrote a clear business proposal.",col:"make a proposal / project proposal"},
+ {w:"negotiate",ipa:"/nɪˈɡoʊʃieɪt/",pos:"v.",cn:"谈判；协商",ex:"We negotiate the price with suppliers.",col:"negotiate a deal / negotiate with"},
+ {w:"client",ipa:"/ˈklaɪənt/",pos:"n.",cn:"客户；委托人",ex:"The client requested a change.",col:"key client / satisfy the client"},
+ {w:"report",ipa:"/rɪˈpɔːrt/",pos:"n./v.",cn:"报告",ex:"She submitted the weekly report.",col:"write a report / annual report"},
+ {w:"target",ipa:"/ˈtɑːrɡɪt/",pos:"n.",cn:"目标",ex:"We reached the sales target.",col:"target market / meet the target"},
+ {w:"performance",ipa:"/pərˈfɔːrməns/",pos:"n.",cn:"绩效；表现",ex:"His performance improved this quarter.",col:"performance review / job performance"},
+ {w:"teamwork",ipa:"/ˈtiːmwɜːrk/",pos:"n.",cn:"团队合作",ex:"Teamwork makes the project succeed.",col:"good teamwork / teamwork skills"},
+ {w:"communicate",ipa:"/kəˈmjuːnɪkeɪt/",pos:"v.",cn:"沟通；交流",ex:"We communicate by email daily.",col:"communicate with / clear communication"},
+ {w:"responsibility",ipa:"/rɪˌspɑːnsəˈbɪləti/",pos:"n.",cn:"职责；责任",ex:"This is my main responsibility.",col:"take responsibility / job responsibility"},
+ {w:"promotion",ipa:"/prəˈmoʊʃn/",pos:"n.",cn:"晋升；促销",ex:"She earned a promotion last year.",col:"get a promotion / sales promotion"},
+ {w:"salary",ipa:"/ˈsæləri/",pos:"n.",cn:"薪水",ex:"The salary is paid monthly.",col:"annual salary / salary increase"}
+];
+const MEDICAL_WORDS=[
+ {w:"symptom",ipa:"/ˈsɪmptəm/",pos:"n.",cn:"症状",ex:"A fever is a common symptom.",col:"show symptoms / early symptom"},
+ {w:"diagnosis",ipa:"/ˌdaɪəɡˈnoʊsɪs/",pos:"n.",cn:"诊断",ex:"The doctor gave a clear diagnosis.",col:"make a diagnosis / final diagnosis"},
+ {w:"treatment",ipa:"/ˈtriːtmənt/",pos:"n.",cn:"治疗；处理",ex:"The treatment worked well.",col:"medical treatment / receive treatment"},
+ {w:"patient",ipa:"/ˈpeɪʃnt/",pos:"n.",cn:"病人；患者",ex:"The patient recovered quickly.",col:"treat a patient / patient care"},
+ {w:"prescribe",ipa:"/prɪˈskraɪb/",pos:"v.",cn:"开处方",ex:"The doctor prescribed some medicine.",col:"prescribe medicine / prescribe for"},
+ {w:"vaccine",ipa:"/ˈvæksiːn/",pos:"n.",cn:"疫苗",ex:"The vaccine prevents the disease.",col:"get a vaccine / flu vaccine"},
+ {w:"infection",ipa:"/ɪnˈfekʃn/",pos:"n.",cn:"感染",ex:"Wash hands to avoid infection.",col:"prevent infection / bacterial infection"},
+ {w:"chronic",ipa:"/ˈkrɑːnɪk/",pos:"adj.",cn:"慢性的",ex:"He has a chronic illness.",col:"chronic disease / chronic pain"},
+ {w:"surgery",ipa:"/ˈsɜːrdʒəri/",pos:"n.",cn:"手术",ex:"She needed heart surgery.",col:"perform surgery / minor surgery"},
+ {w:"recovery",ipa:"/rɪˈkʌvəri/",pos:"n.",cn:"康复；恢复",ex:"His recovery took two weeks.",col:"speed recovery / full recovery"},
+ {w:"nutrition",ipa:"/nuˈtrɪʃn/",pos:"n.",cn:"营养",ex:"Good nutrition aids recovery.",col:"balanced nutrition / nutrition advice"},
+ {w:"preventive",ipa:"/prɪˈventɪv/",pos:"adj.",cn:"预防的",ex:"Preventive care saves lives.",col:"preventive measure / preventive medicine"},
+ {w:"clinic",ipa:"/ˈklɪnɪk/",pos:"n.",cn:"诊所",ex:"Visit the clinic for a checkup.",col:"dental clinic / local clinic"},
+ {w:"ambulance",ipa:"/ˈæmbjələns/",pos:"n.",cn:"救护车",ex:"Call an ambulance at once.",col:"by ambulance / ambulance service"},
+ {w:"emergency",ipa:"/ɪˈmɜːrdʒənsi/",pos:"n.",cn:"紧急情况",ex:"This is a medical emergency.",col:"in an emergency / emergency room"},
+ {w:"therapy",ipa:"/ˈθerəpi/",pos:"n.",cn:"疗法；治疗",ex:"She received physical therapy.",col:"physical therapy / speech therapy"},
+ {w:"dose",ipa:"/doʊs/",pos:"n.",cn:"剂量",ex:"Take the correct dose of medicine.",col:"a high dose / daily dose"},
+ {w:"allergic",ipa:"/əˈlɜːrdʒɪk/",pos:"adj.",cn:"过敏的",ex:"He is allergic to peanuts.",col:"be allergic to / allergic reaction"},
+ {w:"hospital",ipa:"/ˈhɑːspɪtl/",pos:"n.",cn:"医院",ex:"They took her to the hospital.",col:"go to hospital / local hospital"},
+ {w:"physician",ipa:"/fɪˈzɪʃn/",pos:"n.",cn:"内科医生",ex:"The physician explained the test.",col:"a chief physician / attending physician"}
+];
+const BANKS={academic:WORDS,kitchen:KITCHEN_WORDS,career:CAREER_WORDS,medical:MEDICAL_WORDS};
+function allWords(){return BANKS.academic.concat(BANKS.kitchen,BANKS.career,BANKS.medical,(state.customWords||[]));}
+function findWord(k){return allWords().find(x=>x.w===k)||null;}
+function currentBankWords(){return state.currentBank==='custom'?(state.customWords||[]):(BANKS[state.currentBank]||WORDS);}
+const BANK_NAMES={academic:"📘 学术通用",kitchen:"🍳 厨房家电",career:"💼 职场",medical:"🏥 医疗","custom":"⭐ 我的词库"};
+
+/* 视频通话场景：伙伴提问（提词），用户看着屏幕快速读懂并说出来 */
+const CALL_SCENARIOS=[
+ {role:"雅思考官",topic:"Part 1 · 日常",q:"What kind of kitchen appliances do you use in your daily life?"},
+ {role:"雅思考官",topic:"Part 2 · 描述",q:"Describe a useful household appliance you cannot live without."},
+ {role:"产品演示",topic:"真空封口机",q:"Let me introduce our new vacuum sealer, which keeps food fresh much longer."},
+ {role:"客户沟通",topic:"产品答疑",q:"Could you explain the benefits of BPA-free materials in your products?"},
+ {role:"雅思考官",topic:"Part 1 · 工作",q:"What do you find most challenging in your current job?"},
+ {role:"团队会议",topic:"项目汇报",q:"Please give a quick update on the progress of your project."},
+ {role:"雅思考官",topic:"Part 3 · 观点",q:"Do you think smart home appliances improve people's quality of life?"},
+ {role:"销售场景",topic:"海外客户",q:"Our blender features a durable motor and a large one-point-five liter jar."},
+ {role:"雅思考官",topic:"Part 2 · 经历",q:"Describe a time you learned to use a new machine or tool."},
+ {role:"产品培训",topic:"搅拌机卖点",q:"The high-speed motor and stainless steel blades make smoothies in seconds."},
+ {role:"雅思考官",topic:"Part 1 · 健康",q:"How do you keep a balanced and healthy lifestyle?"},
+ {role:"客户沟通",topic:"售后",q:"The product is still under warranty, so we can replace it for free."},
+ {role:"雅思考官",topic:"Part 3 · 科技",q:"How has technology changed the way we cook at home?"},
+ {role:"面试场景",topic:"英文面试",q:"Could you tell me about your main responsibilities at work?"},
+ {role:"雅思考官",topic:"Part 2 · 物品",q:"Describe an electronic device you bought recently and why."},
+ {role:"产品演示",topic:"保鲜方案",q:"Vacuum packing preserves freshness and reduces food waste at home."}
+];
+
+let SENTENCES = [
+ {tag:"口语 Part 2",en:"I strongly believe that education plays a vital role in personal development."},
+ {tag:"环境",en:"One of the most significant challenges we face today is climate change."},
+ {tag:"科技",en:"Technology has greatly improved our quality of life in recent decades."},
+ {tag:"社会",en:"In my opinion, people should take more responsibility for their local community."},
+ {tag:"工作",en:"A balanced lifestyle is essential for both productivity and happiness."},
+ {tag:"教育",en:"Reading extensively helps expand vocabulary and sharpen critical thinking."},
+ {tag:"健康",en:"Regular exercise and a healthy diet can significantly reduce health risks."},
+ {tag:"文化",en:"Tourism promotes cultural exchange and mutual understanding between nations."},
+ {tag:"城市",en:"Urbanization brings economic opportunities but also creates environmental pressure."},
+ {tag:"媒体",en:"Social media has transformed the way we communicate and share information."},
+ {tag:"经济",en:"Sustainable development requires a balance between growth and conservation."},
+ {tag:"家庭",en:"Family support is a crucial factor in a child's emotional well-being."},
+ {tag:"学习",en:"Active recall is far more effective than simply re-reading your notes."},
+ {tag:"未来",en:"I am convinced that renewable energy will replace fossil fuels in the future."},
+ {tag:"观点",en:"Although it is expensive, the long-term benefits clearly outweigh the costs."},
+ {tag:"总结",en:"To sum up, small daily habits can lead to remarkable long-term progress."}
+];
+
+const PASSAGES = [
+ {cat:"环境",title:"塑料污染的影响",text:"Plastic pollution has become one of the most pressing environmental issues of our time. Every year, millions of tons of plastic waste enter the oceans, harming marine life and damaging fragile ecosystems. Many marine animals mistake plastic for food, which can be fatal. The problem is worsened by the fact that most plastic is not biodegradable and can persist for centuries. To address this, governments have introduced bans on single-use plastics, while companies are developing biodegradable alternatives. However, individual action remains essential. By reducing consumption, reusing containers, and recycling properly, ordinary people can make a measurable difference. Ultimately, solving plastic pollution requires cooperation between governments, businesses, and citizens.",quiz:[{q:"海洋动物面临塑料污染的主要危险是什么？",a:["它们误把塑料当食物","塑料让海水变咸","塑料阻碍阳光"],correct:0},{q:"文章认为解决塑料污染需要什么？",a:["仅靠政府立法","政府、企业与公民合作","停止使用所有包装"],correct:1}]},
+ {cat:"科技",title:"远程办公及其影响",text:"The rise of remote work has fundamentally changed the modern workplace. Advances in communication technology allow employees to perform their duties from almost anywhere with an internet connection. Proponents argue that remote work improves productivity, reduces commuting time, and offers greater flexibility for family life. Critics, however, point out that it can blur the boundary between work and personal life, and may reduce spontaneous collaboration among colleagues. A hybrid model, combining office and home work, is increasingly seen as the best compromise. Nevertheless, the long-term effects on company culture and employee well-being are still being studied by researchers around the world.",quiz:[{q:"支持远程办公的人认为它有什么好处？",a:["提高生产力与灵活性","完全消除工作压力","让公司不再需要网络"],correct:0},{q:"混合办公模式指什么？",a:["只在家里工作","办公室与居家结合","完全回到办公室"],correct:1}]},
+ {cat:"教育",title:"双语教育的益处",text:"Bilingual education, where students learn in two languages, has gained attention for its cognitive and social benefits. Research suggests that bilingual individuals often develop stronger problem-solving skills and greater mental flexibility. Learning two languages also deepens cultural awareness and opens doors to broader academic and career opportunities. However, implementing such programs can be challenging, as it requires trained teachers and carefully designed curricula. Critics worry that splitting instructional time may slow progress in either language. Despite these concerns, many educators believe that, with proper support, bilingual education enriches rather than hinders a child's development.",quiz:[{q:"研究表明双语者往往具备什么优势？",a:["更强的解决问题能力","更差的记忆力","只会一种文化视角"],correct:0},{q:"实施双语教育的主要挑战是？",a:["学生太多","需要训练有素的教师与课程","教材太便宜"],correct:1}]},
+ {cat:"健康",title:"睡眠的重要性",text:"Sleep is far more than a period of rest; it is a vital process that supports nearly every system in the body. During deep sleep, the brain consolidates memories and clears waste products, while the body repairs tissue and strengthens the immune system. Chronic sleep deprivation has been linked to poor concentration, weakened immunity, and a higher risk of heart disease. Despite this, many people treat sleep as optional, sacrificing it for work or entertainment. Experts recommend seven to eight hours of quality sleep each night, along with consistent schedules. Prioritizing sleep is not a luxury but a foundation of long-term health and performance.",quiz:[{q:"深度睡眠期间大脑主要做什么？",a:["巩固记忆并清除废物","停止工作","只做噩梦"],correct:0},{q:"长期睡眠不足会导致什么？",a:["注意力下降与免疫力减弱","视力变好","不再需要运动"],correct:0}]},
+ {cat:"社会",title:"城市化与城市生活",text:"Urbanization, the movement of people from rural areas to cities, is a defining trend of the modern era. It drives economic growth by concentrating labor, capital, and innovation in urban centers. Cities also offer better access to education, healthcare, and cultural activities. Yet rapid urban expansion often outpaces infrastructure, leading to traffic congestion, housing shortages, and environmental degradation. Ensuring that cities remain livable requires thoughtful planning, investment in public transport, and green spaces. The challenge for the coming decades will be to make urbanization sustainable, so that its benefits are shared by all residents rather than a privileged few.",quiz:[{q:"城市化通常如何推动经济增长？",a:["把劳动力、资本与创新集中到城市","让人们回到农村","减少所有投资"],correct:0},{q:"文章认为让城市宜居需要什么？",a:["合理的规划与公共交通投资","停止一切建设","取消绿地去盖楼"],correct:0}]}
+];
+
+const METHODS = [
+ {em:"🔁",t:"间隔重复 Spaced Repetition",why:"遗忘曲线实证 · 比死记硬背省约 60% 时间",p:"按 1→3→7→14→30 天递增复习，在你即将遗忘时及时巩固。本平台「间隔复习」模块自动排程到期单词，无需手动安排。",src:"来源：IELTS Mumbai 脑科学博客；IELTS-GPT 认知心理学研究"},
+ {em:"🧠",t:"主动回忆 Active Recall",why:"提取记忆强于被动重读",p:"看到单词先逼自己回忆释义，再揭晓核对。本平台复习采用「先考后揭」模式，强制大脑提取，记忆更牢。",src:"来源：LinguaClasses 备考指南；IELTS-GPT 研究"},
+ {em:"🎙️",t:"影子跟读 Shadowing",why:"口译员黄金训练法 · 听说同练",p:"听原音后延迟 1–2 秒同步模仿语音语调，每天 10–15 分钟。本平台「语句跟读」支持录音回放对比，建立反馈闭环。",src:"来源：新航道；高軒教育；领跑点教育"},
+ {em:"📚",t:"语境 + 主题词汇",why:"在句子与搭配中学词",p:"每个单词配例句与固定搭配（collocation），并按话题组织。避免 A–Z 孤立背词，建立「词网」更易提取运用。",src:"来源：LinguaClasses 词汇策略；高軒教育主题式词汇法"},
+ {em:"👂",t:"多感官学习 Multisensory",why:"视听动并用 · 激活更多脑区",p:"朗读结合听觉、点词即听发音。本平台所有文本均可点击发音，把「看」变成「看+听+读」。",src:"来源：IELTS Mumbai 多感官学习研究"},
+ {em:"📖",t:"可理解输入 Comprehensible Input",why:"材料略高于当前水平最有效",p:"选取雅思话题短文，难度贴合目标分数。先听懂读懂大意，再抠细节，避免「听天书」式无效输入。",src:"来源：IELTS-GPT 最近发展区理论"},
+ {em:"🎯",t:"每日微目标 + 打卡",why:"激活多巴胺 · 坚持即胜利",p:"每天固定 10/20/30 词 + 跟读 + 阅读，养成习惯。本平台记录连续打卡天数与进度，把大目标拆成可执行的小步。",src:"来源：IELTS Mumbai 目标设定与动机研究"},
+ {em:"🔄",t:"输出倒逼输入 + 反馈",why:"肚里有货更要倒得出",p:"每周写英文周记、跟读录音回听自评。输出暴露短板，再针对性输入，形成「学—用—改」闭环。",src:"来源：领跑点教育；LinguaClasses 反馈循环"}
+];
+
+/* ===================== 状态 ===================== */
+const KEY="ielts_state_v1";
+let state=load();
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||defaults();}catch(e){return defaults();}}
+function defaults(){return{dailyGoal:20,accent:"uk",currentBank:"academic",customWords:[],words:{},dailyLog:{},lastDate:null,streak:0,activeDays:{},shadowCount:0,readIds:[],qwenKey:"",qwenModel:"qwen-plus",qwenProxy:"",generatedPassages:[],autoDailyRec:false,lastRecDate:null,dailyRecCount:0};}
+function save(){localStorage.setItem(KEY,JSON.stringify(state));}
+function today(){return new Date().toISOString().slice(0,10);}
+function log(){const t=today();if(!state.dailyLog[t])state.dailyLog[t]={newWords:0,review:0,shadow:0,reading:[]};return state.dailyLog[t];}
+function initStreak(){const t=today();if(state.lastDate){const d=(Date.parse(t)-Date.parse(state.lastDate))/864e5;if(d>1)state.streak=0;}save();}
+function markActive(){const t=today();if(state.lastDate!==t){if(state.lastDate){const d=(Date.parse(t)-Date.parse(state.lastDate))/864e5;state.streak=(d===1)?(state.streak||0)+1:1;}else state.streak=1;state.lastDate=t;}if(!state.activeDays)state.activeDays={};state.activeDays[t]=true;save();}
+
+/* ===================== 语音 ===================== */
+let voices=[];
+function loadVoices(){voices=speechSynthesis.getVoices();}
+if('speechSynthesis'in window){loadVoices();speechSynthesis.onvoiceschanged=loadVoices;}
+function speak(text,rate){rate=rate||0.92;if(!('speechSynthesis'in window)){toast('当前浏览器不支持语音合成');return;}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=state.accent==='uk'?'en-GB':'en-US';u.rate=rate;const v=voices.find(x=>x.lang===u.lang)||voices.find(x=>x.lang&&x.lang.startsWith('en'));if(v)u.voice=v;speechSynthesis.speak(u);}
+
+/* ===================== 工具 ===================== */
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),1800);}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+/* ===================== 导航 ===================== */
+const titles={home:"今日学习计划",words:"每日单词",review:"间隔复习",shadow:"语句跟读",reading:"短文阅读",call:"视频通话练习",methods:"学习方法",stats:"我的统计",ai:"通义千问 AI 助手",lex:"词库查询 · 全行业"};
+document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>{showView(b.dataset.view);document.getElementById('sidebar').classList.remove('open');});
+document.getElementById('menuBtn').onclick=()=>document.getElementById('sidebar').classList.toggle('open');
+function showView(v){if(v!=='call'&&callStream)stopCall();document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===v));document.querySelectorAll('.view').forEach(s=>s.classList.remove('active'));document.getElementById('v-'+v).classList.add('active');document.getElementById('pageTitle').textContent=titles[v];if(v==='home')renderHome();if(v==='review')renderReview();if(v==='shadow')renderShadow();if(v==='reading'){renderReading();tryDailyRecommend();}if(v==='stats')renderStats();if(v==='methods')renderMethods();if(v==='words')resetWordsView();if(v==='call')renderCall();if(v==='ai')renderAI();if(v==='lex')renderLex();window.scrollTo(0,0);}
+function resetWordsView(){renderBankPick();document.getElementById('wordSetup').style.display='block';document.getElementById('wordSession').style.display='none';}
+
+/* ===================== 首页 ===================== */
+function dueWords(){const now=Date.now();return Object.keys(state.words).filter(k=>state.words[k].next<=now);}
+function renderHome(){
+  initStreak();
+  const lg=log();
+  const steps=[
+    {t:"① 热身跟读",s:"影子跟读 3–5 句，激活口腔肌肉",done:lg.shadow>0,view:'shadow'},
+    {t:"② 背新词",s:"今日目标 "+state.dailyGoal+" 个新词（可改）",done:lg.newWords>=state.dailyGoal,view:'words'},
+    {t:"③ 间隔复习",s:"复习到期单词，主动回忆",done:(lg.review||0)>0,view:'review'},
+    {t:"④ 短文输入",s:"读 1 篇话题短文 + 听全文",done:(lg.reading||[]).length>0,view:'reading'}
+  ];
+  document.getElementById('pathList').innerHTML=steps.map(s=>`
+    <div class="step ${s.done?'done':''}">
+      <div class="num">${s.done?'✓':''}</div>
+      <div class="t">${s.t}</div>
+      <div class="s">${s.s}</div>
+      <span class="go" onclick="showView('${s.view}')">${s.done?'再练一次':'去完成 →'}</span>
+    </div>`).join('');
+  document.getElementById('sNew').textContent=lg.newWords;
+  document.getElementById('sRev').textContent=dueWords().length;
+  document.getElementById('sShadow').textContent=lg.shadow;
+  document.getElementById('sRead').textContent=(lg.reading||[]).length;
+  document.getElementById('streakTop').textContent=state.streak||0;
+  document.getElementById('learnedTop').textContent=Object.keys(state.words).length;
+}
+
+/* ===================== 每日单词 ===================== */
+let sessionQueue=[],sessionIdx=0;
+document.querySelectorAll('#goalPick button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#goalPick button').forEach(x=>x.classList.remove('on'));b.classList.add('on');state.dailyGoal=+b.dataset.n;save();});
+document.getElementById('startWords').onclick=()=>{
+  const src=currentBankWords();
+  if(!src||src.length===0){toast('当前词库为空，请先添加单词');return;}
+  const seen=new Set(Object.keys(state.words));
+  let pool=src.filter(w=>!seen.has(w.w));
+  if(pool.length===0){toast('该词库已全部学完，去「间隔复习」或切换其它词库');return;}
+  pool=shuffle(pool).slice(0,Math.min(state.dailyGoal,pool.length));
+  if(pool.length<state.dailyGoal)toast('词库剩余 '+pool.length+' 个，先学这些');
+  sessionQueue=pool;sessionIdx=0;
+  document.getElementById('wordSetup').style.display='none';
+  document.getElementById('wordSession').style.display='block';
+  showFlash();
+};
+function showFlash(){
+  if(sessionIdx>=sessionQueue.length){finishSession();return;}
+  const w=sessionQueue[sessionIdx];
+  document.getElementById('fWord').textContent=w.w;
+  document.getElementById('fIpa').textContent=w.ipa;
+  document.getElementById('fPos').textContent=w.pos;
+  document.getElementById('fCn').textContent=w.cn;
+  document.getElementById('fEx').innerHTML=w.ex+' <button class="mini" onclick="speak(\''+w.ex.replace(/'/g,"\\'")+'\')">🔊</button>';
+  document.getElementById('fCol').textContent='搭配：'+w.col;
+  document.getElementById('fBack').style.display='none';
+  document.getElementById('fActions').style.display='none';
+  document.getElementById('flipHint').style.display='block';
+  const p=((sessionIdx)/sessionQueue.length)*100;
+  document.getElementById('wordProg').style.width=p+'%';
+  document.getElementById('wordCount').textContent=(sessionIdx+1)+' / '+sessionQueue.length;
+  speak(w.w);
+}
+document.getElementById('flashPlay').onclick=()=>speak(document.getElementById('fWord').textContent);
+document.getElementById('flipHint').onclick=()=>{
+  document.getElementById('fBack').style.display='block';
+  document.getElementById('flipHint').style.display='none';
+  document.getElementById('fActions').style.display='flex';
+  speak(sessionQueue[sessionIdx].ex);
+};
+function markWord(known){
+  const w=sessionQueue[sessionIdx];
+  const rec=state.words[w.w]||{box:0,correct:0,wrong:0,next:0};
+  if(known){rec.box=Math.min(5,rec.box+1);rec.correct++;}
+  else{rec.box=0;rec.wrong++;}
+  const intervals=[1,3,7,14,30,60];
+  rec.next=Date.now()+intervals[rec.box]*864e5;
+  state.words[w.w]=rec;
+  const lg=log();lg.newWords++;markActive();save();
+  document.getElementById('wordProg').style.width=((sessionIdx+1)/sessionQueue.length)*100+'%';
+  sessionIdx++;
+  showFlash();
+}
+document.getElementById('btnKnow').onclick=()=>markWord(true);
+document.getElementById('btnDont').onclick=()=>markWord(false);
+function finishSession(){
+  document.getElementById('wordSession').style.display='none';
+  document.getElementById('wordSetup').style.display='block';
+  renderHome();
+  toast('今日新词学习完成！共 '+sessionQueue.length+' 个');
+}
+
+/* ===================== 间隔复习 ===================== */
+function renderReview(){
+  const box=document.getElementById('reviewBox');
+  const due=dueWords();
+  if(due.length===0){box.innerHTML='<div class="donemsg">🎉 暂时没有到期单词，全部复习完毕！<br>去学习新词或跟读吧。</div>';return;}
+  box.innerHTML='<div class="desc" style="margin-bottom:14px">今天有 <b>'+due.length+'</b> 个单词到期，开始主动回忆吧。</div><div id="revFlash"></div>';
+  let q=shuffle(due),i=0;
+  function show(){
+    if(i>=q.length){box.innerHTML='<div class="donemsg">✅ 本轮复习完成，共 '+q.length+' 个单词！记忆又牢固了一层。</div>';renderHome();return;}
+    const k=q[i];const w=findWord(k);const rec=state.words[k];
+    const fl=document.getElementById('revFlash');
+    fl.className='flash';
+    fl.innerHTML=`
+      <button class="play" onclick="speak('${k}')">🔊</button>
+      <div class="word">${k}</div>
+      <div class="ipa">${w.ipa} · ${w.pos}</div>
+      <div class="flip-hint" id="revHint">先回忆释义，再点击揭晓 ↻</div>
+      <div class="back" id="revBack" style="display:none">
+        <div class="cn">${w.cn}</div>
+        <div class="ex">${w.ex}</div>
+        <div class="col">搭配：${w.col}</div>
+      </div>
+      <div class="actions" id="revAct" style="display:none">
+        <button class="btn dont" onclick="revMark(${i},false)">😣 想错了</button>
+        <button class="btn know" onclick="revMark(${i},true)">😎 想对了</button>
+      </div>`;
+    document.getElementById('revHint').onclick=()=>{document.getElementById('revBack').style.display='block';document.getElementById('revHint').style.display='none';document.getElementById('revAct').style.display='flex';speak(w.ex);};
+    speak(k);
+  }
+  window.revMark=(idx,ok)=>{
+    const k=q[idx];const rec=state.words[k];
+    if(ok)rec.box=Math.min(5,rec.box+1);else rec.box=Math.max(0,rec.box-1);
+    const intervals=[1,3,7,14,30,60];
+    rec.next=Date.now()+intervals[rec.box]*864e5;
+    state.words[k]=rec;
+    const lg=log();lg.review=(lg.review||0)+1;markActive();save();
+    i++;show();
+  };
+  show();
+}
+
+/* ===================== 语句跟读 ===================== */
+function renderShadow(){
+  const box=document.getElementById('senList');
+  box.innerHTML=SENTENCES.map((s,idx)=>`
+    <div class="sen" id="sen${idx}">
+      <div class="txt"><span class="tag">${s.tag}</span>${s.en}</div>
+      <button class="mini" title="听原音" onclick="speak('${s.en.replace(/'/g,"\\'")}')">🔊</button>
+      <button class="rec" title="录音跟读" onclick="toggleRec(${idx})" id="rec${idx}">●</button>
+      <audio class="playback" id="pb${idx}" controls></audio>
+      <div class="self-check" id="sc${idx}">
+        自评：
+        <button class="g" onclick="selfEval(${idx},'good')">流利</button>
+        <button class="y" onclick="selfEval(${idx},'ok')">一般</button>
+        <button class="r" onclick="selfEval(${idx},'bad')">需改进</button>
+      </div>
+    </div>`).join('');
+}
+let mediaRecorder=null,recChunks=[],curRecIdx=-1;
+window.toggleRec=(idx)=>{
+  if(curRecIdx===idx&&mediaRecorder&&mediaRecorder.state==='recording'){mediaRecorder.stop();return;}
+  if(!navigator.mediaDevices||!window.MediaRecorder){toast('录音需 https/localhost 环境，先听原音跟读吧');return;}
+  navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
+    mediaRecorder=new MediaRecorder(stream);recChunks=[];
+    mediaRecorder.ondataavailable=e=>{if(e.data&&e.data.size>0)recChunks.push(e.data);};
+    mediaRecorder.onstop=()=>{
+      const blob=new Blob(recChunks,{type:'audio/webm'});
+      const pb=document.getElementById('pb'+idx);
+      pb.src=URL.createObjectURL(blob);pb.style.display='block';
+      document.getElementById('sc'+idx).style.display='flex';
+      stream.getTracks().forEach(t=>t.stop());
+      const b=document.getElementById('rec'+idx);
+      b.classList.remove('on');b.textContent='●';curRecIdx=-1;
+    };
+    mediaRecorder.start();curRecIdx=idx;
+    const b=document.getElementById('rec'+idx);
+    b.classList.add('on');b.textContent='■';
+  }).catch(()=>toast('无法访问麦克风（需授权或 https 环境）'));
+};
+window.selfEval=(idx,level)=>{
+  const lg=log();lg.shadow++;state.shadowCount++;markActive();save();
+  const map={good:'👍 流利，保持！',ok:'🙂 不错，多练几遍',bad:'💪 没关系，明天再来'};
+  toast(map[level]);renderHome();
+};
+
+/* ===================== 短文阅读 ===================== */
+function allPassages(){return (state.generatedPassages||[]).concat(PASSAGES);}
+function renderReading(){
+  document.getElementById('pgrid').style.display='grid';
+  document.getElementById('reader').style.display='none';
+  document.getElementById('autoDailyRec').checked=!!state.autoDailyRec;
+  document.getElementById('recStatus').textContent='今日已推荐 '+state.dailyRecCount+' 篇';
+  const today=today();
+  document.getElementById('pgrid').innerHTML=allPassages().map((p,i)=>{
+    const isAi=!!p._ai;
+    const isToday=isAi && p._date===today;
+    const badges=(isToday?'<span class="ai-badge today">🤖 今日推荐</span>':'')+(isAi?'<span class="ai-badge">AI</span>':'');
+    return `<div class="pcard" onclick="openPassage(${i})">
+      <span class="cat">${p.cat}</span>
+      ${badges}
+      <h3>${p.title}</h3>
+      <p>${p.text.slice(0,60)}…</p>
+    </div>`;
+  }).join('');
+}
+let curPassage=-1;
+window.openPassage=(i)=>{
+  const p=allPassages()[i];curPassage=i;
+  document.getElementById('pgrid').style.display='none';
+  document.getElementById('reader').style.display='block';
+  document.getElementById('rTitle').textContent=p.title;
+  // word highlight for click-to-speak
+  document.getElementById('rText').innerHTML=p.text.replace(/([A-Za-z][A-Za-z'-]+)/g,'<span class="word-hl" onclick="speak(\'$1\')">$1</span>');
+  document.getElementById('rQuiz').innerHTML=p.quiz.map((q,qi)=>`
+    <div class="q" id="q${i}_${qi}">
+      <div class="qt">${qi+1}. ${q.q}</div>
+      ${q.a.map((a,ai)=>`<label onclick="answer(${i},${qi},${ai},this)">${a}</label>`).join('')}
+      <div class="fb" id="fb${i}_${qi}"></div>
+    </div>`).join('');
+  if(!state.readIds.includes(i)){state.readIds.push(i);const lg=log();lg.reading=lg.reading||[];if(!lg.reading.includes(i))lg.reading.push(i);markActive();save();renderHome();}
+};
+document.getElementById('backRead').onclick=renderReading;
+document.getElementById('rPlay').onclick=()=>{if(curPassage>=0)speak(allPassages()[curPassage].text);};
+document.getElementById('rPlaySlow').onclick=()=>{if(curPassage>=0)speak(allPassages()[curPassage].text,0.7);};
+window.answer=(pi,qi,ai,el)=>{
+  const q=allPassages()[pi].quiz[qi];const box=document.getElementById('q'+pi+'_'+qi);
+  box.querySelectorAll('label').forEach(l=>{l.onclick=null;});
+  if(ai===q.correct){el.classList.add('ok');document.getElementById('fb'+pi+'_'+qi).textContent='✅ 回答正确！';document.getElementById('fb'+pi+'_'+qi).style.color='var(--green)';}
+  else{el.classList.add('no');box.querySelectorAll('label')[q.correct].classList.add('ok');document.getElementById('fb'+pi+'_'+qi).textContent='❌ 正确答案已标绿。';document.getElementById('fb'+pi+'_'+qi).style.color='var(--red)';}
+  document.getElementById('fb'+pi+'_'+qi).style.display='block';
+};
+
+/* ===================== 学习方法 ===================== */
+function renderMethods(){
+  document.getElementById('methodsList').innerHTML=METHODS.map(m=>`
+    <div class="card m-card" style="margin-bottom:14px">
+      <div class="em">${m.em}</div>
+      <div>
+        <h3>${m.t}</h3>
+        <div class="why">${m.why}</div>
+        <p>${m.p}</p>
+        <div class="src">${m.src}</div>
+      </div>
+    </div>`).join('');
+}
+
+/* ===================== 统计 ===================== */
+function renderStats(){
+  document.getElementById('stStreak').textContent=state.streak||0;
+  document.getElementById('stLearned').textContent=Object.keys(state.words).length;
+  document.getElementById('stDue').textContent=dueWords().length;
+  document.getElementById('stDays').textContent=Object.keys(state.activeDays||{}).length||0;
+  // calendar last 14 days
+  const box=document.getElementById('calBox');const days=[];
+  for(let i=13;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const key=d.toISOString().slice(0,10);const has=state.dailyLog[key]&&((state.dailyLog[key].newWords>0)||(state.dailyLog[key].shadow>0)||((state.dailyLog[key].reading||[]).length>0));days.push({key,has});}
+  box.innerHTML=days.map((d,i)=>{const dt=d.key.slice(5);return `<div title="${d.key}" style="width:38px;height:46px;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;${d.has?'background:var(--green);color:#fff':'background:var(--bg);color:var(--sub);border:1px solid var(--line)'}">${dt}<span style="font-size:14px;margin-top:2px">${d.has?'🔥':'·'}</span></div>`;}).join('');
+}
+document.getElementById('resetBtn').onclick=()=>{if(confirm('确定清空所有学习数据？此操作不可撤销。')){localStorage.removeItem(KEY);state=defaults();save();toast('已重置');renderStats();renderHome();}};
+
+/* ===================== 词库查询（Lex Query）===================== */
+let lexBank='all';
+function getLexWords(){
+  if(lexBank==='all') return allWords();
+  if(lexBank==='custom') return state.customWords||[];
+  return BANKS[lexBank]||[];
+}
+function lexStatus(word){
+  const rec=state.words[word];
+  if(!rec) return 'new';
+  if(rec.mastered) return 'mastered';
+  return 'learning';
+}
+function renderLex(){
+  const tabs=document.getElementById('lexTabs');
+  const list=[
+    {id:'all',label:'🌐 全部',n:allWords().length},
+    {id:'academic',label:'📘 学术',n:BANKS.academic.length},
+    {id:'kitchen',label:'🍳 厨房家电',n:BANKS.kitchen.length},
+    {id:'career',label:'💼 职场',n:BANKS.career.length},
+    {id:'medical',label:'🏥 医疗',n:BANKS.medical.length},
+    {id:'custom',label:'⭐ 我的词库',n:(state.customWords||[]).length}
+  ];
+  tabs.innerHTML=list.map(t=>`<button data-id="${t.id}" class="${t.id===lexBank?'active':''}">${t.label}<small>${t.n}</small></button>`).join('');
+  tabs.querySelectorAll('button').forEach(b=>b.onclick=()=>{lexBank=b.dataset.id;renderLex();});
+  renderLexExpandBar();
+  renderLexList();
+}
+function renderLexExpandBar(){
+  const bar=document.getElementById('lexExpandBar');
+  if(!bar)return;
+  const map={academic:'学术通用',kitchen:'厨房家电行业',career:'职场商务',medical:'医疗健康'};
+  if(map[lexBank]){
+    bar.innerHTML=`
+      <span class="lex-target">当前词库：<b>${map[lexBank]}</b></span>
+      <input type="number" id="lexExpandN" min="5" max="80" value="30" />
+      <span class="lex-unit">词</span>
+      <button class="btn" id="lexExpandBtn">➕ AI 联网扩充</button>
+      <button class="btn ghost" id="lexExpandSmartBtn">🎯 智能补盲</button>
+      <span class="lex-expand-hint">联网扩充：基于近年互联网/电商/外贸/职场流行语；智能补盲：自动找出你还没学的相邻高频词</span>`;
+    document.getElementById('lexExpandBtn').onclick=()=>expandBank(lexBank,+document.getElementById('lexExpandN').value||30);
+    document.getElementById('lexExpandSmartBtn').onclick=()=>expandBankSmart(lexBank);
+  } else if(lexBank==='custom'){
+    bar.innerHTML=`
+      <span class="lex-target">我的词库：</span>
+      <input type="text" id="lexAddInput" placeholder="单词 / 短语（自动查释义）" style="flex:1;min-width:160px"/>
+      <button class="btn" id="lexAddBtn">➕ 添加</button>
+      <button class="btn ghost" id="lexExpandBtn2">➕ AI 批量扩充</button>
+      <span class="lex-expand-hint">可手动逐词添加，或一次 AI 批量生成 30 词</span>`;
+    document.getElementById('lexAddBtn').onclick=lexAddSingle;
+    document.getElementById('lexExpandBtn2').onclick=()=>expandBank('custom',+document.getElementById('lexExpandN').value||30);
+  } else {
+    bar.innerHTML=`<span class="lex-expand-hint">切换到具体词库后可点击「➕ AI 联网扩充」或「🎯 智能补盲」自动增加词数</span>`;
+  }
+}
+function renderLexList(){
+  const q=(document.getElementById('lexQ').value||'').toLowerCase().trim();
+  const f=document.getElementById('lexFilter').value;
+  const all=getLexWords();
+  let arr=all.filter(w=>{
+    if(f!=='all'&&lexStatus(w.w)!==f) return false;
+    if(!q) return true;
+    return (w.w+' '+w.cn+' '+w.ex+' '+w.col).toLowerCase().includes(q);
+  });
+  document.getElementById('lexSummary').textContent=`共 ${all.length} 个 · 筛选后 ${arr.length} 个（${f==='all'?'全部':f==='new'?'未学':f==='learning'?'学习中':'已掌握'}${q?' · 关键词「'+q+'」':''}）`;
+  const list=document.getElementById('lexList');
+  if(arr.length===0){list.innerHTML='<div class="donemsg">没有匹配的单词</div>';return;}
+  list.innerHTML=arr.map((w,i)=>{
+    const st=lexStatus(w.w);
+    return `<div class="lex-item ${st==='mastered'?'mastered':''}" data-i="${i}">
+      <div class="lex-item-top">
+        <span class="w" onclick="speak('${w.w.replace(/'/g,"\\'")}')">${w.w}</span>
+        <span class="ipa">${w.ipa||''}</span>
+        <span class="pos">${w.pos||''}</span>
+        <span class="spacer"></span>
+        <span class="badge ${st}">${st==='new'?'未学':st==='learning'?'学习中':'已掌握'}</span>
+      </div>
+      <div class="lex-cn">${w.cn||''}</div>
+      <div class="lex-ex">${w.ex||''}</div>
+      <div class="lex-col">${w.col||''}</div>
+      <div class="lex-btns">
+        <button onclick="lexToggleMaster('${w.w}')">${st==='mastered'?'取消掌握':'标掌握'}</button>
+        ${lexBank==='custom'?'<button class="del" onclick="lexDelWord(\''+w.w+'\')">删除</button>':''}
+      </div>
+    </div>`;
+  }).join('');
+}
+window.lexToggleMaster=(w)=>{
+  const cur=state.words[w]||{stage:0,due:0,right:0,wrong:0,history:[]};
+  cur.mastered=!cur.mastered;
+  state.words[w]=cur;save();
+  renderLexList();renderStats();renderHome();
+};
+window.lexDelWord=(w)=>{
+  if(lexBank!=='custom')return;
+  if(!confirm('确定从「我的词库」删除「'+w+'」？'))return;
+  state.customWords=(state.customWords||[]).filter(x=>x.w!==w);
+  delete state.words[w];save();
+  renderLex();renderHome();
+};
+document.getElementById('lexQ').oninput=renderLexList;
+document.getElementById('lexFilter').onchange=renderLexList;
+
+function expandBank(bank,n){
+  if(!qwenReady())return;
+  n=Math.max(5,Math.min(80,n||30));
+  const map={academic:'学术通用英语（雅思核心词汇，涵盖教育/科技/环境/社会/文化/健康/经济）',kitchen:'厨房家电行业（含小家电、真空机/封口机/搅拌机/破壁机/咖啡机/电烤箱等品类）的产品研发与营销词汇',career:'职场商务英语（含会议、汇报、谈判、项目管理、求职面试、邮件沟通）',medical:'医疗健康英语（含就诊、问诊、药品、症状、医院科室、慢病管理）',custom:'厨房家电或日常英语'};
+  const existing=(bank==='custom'?state.customWords:BANKS[bank])||[];
+  const exclude=new Set(existing.map(w=>w.w.toLowerCase()));
+  const excludeList=Array.from(exclude).slice(0,50).join(', ');
+  const btn=document.getElementById('lexExpandBtn')||document.getElementById('lexExpandBtn2');
+  const oldLabel=btn?btn.textContent:'';
+  if(btn)setBusy(btn,true,'⏳ AI 生成中…');
+  const sys='你是英语词汇专家。只返回一个 JSON 数组，不要任何解释或 Markdown。元素格式：{"w":"英文单词（小写）","ipa":"/国际音标/","pos":"词性如 n./v./adj.","cn":"中文释义","ex":"一句英文例句","col":"常见搭配"}。要求：①严格去重（不要输出已列出的词）；②优先使用近 2–3 年互联网/电商/跨境电商/外贸/产品评测/职场等真实语境中的高频表达；③例句与搭配贴近真实生活或职场；④w 全部小写、纯英文（不要包含中文、空格、标点）。';
+  const user='请生成 '+n+' 个「'+target[bank]+'」高频实用英文单词，目标人群为中国成人英语学习者（雅思 5.5–7.0 水平）。**重要**：以下词已经在词库里，绝对不要重复输出（可绕开同义词但词形须不同）：'+excludeList+'。';
+  callQwen(sys,user,txt=>{
+    const arr=parseJSON(txt);
+    if(!Array.isArray(arr)||!arr.length){toast('解析失败：'+txt.slice(0,80));if(btn)setBusy(btn,false,oldLabel);return;}
+    const target=bank==='custom'?state.customWords:BANKS[bank];
+    const before=target.length;
+    arr.forEach(w=>{if(!w||!w.w)return;w.w=(w.w+'').toLowerCase().trim();if(!w.w||exclude.has(w.w))return;target.push(w);exclude.add(w.w);});
+    const added=target.length-before;
+    // 持久化：把新增词也复制到 customWords，保证刷新后不丢失
+    if(bank!=='custom'&&added>0){
+      if(!state.customWords)state.customWords=[];
+      const cusEx=new Set(state.customWords.map(x=>x.w.toLowerCase()));
+      let mirrored=0;
+      for(let i=before;i<target.length;i++){
+        if(!cusEx.has(target[i].w)){state.customWords.push(target[i]);cusEx.add(target[i].w);mirrored++;}
+      }
+      if(mirrored>0)toast('✅ 已扩充 '+added+' 词（已同步 '+mirrored+' 词到「我的词库」持久保存，刷新不丢）');
+      else toast('✅ 已扩充 '+added+' 词');
+    }else{
+      toast('✅ 已扩充 '+added+' 词（请求 '+arr.length+'，去重后入库 '+added+'）');
+    }
+    save();
+    if(btn)setBusy(btn,false,oldLabel);
+    renderLex();renderHome();renderStats();
+  },err=>{if(btn)setBusy(btn,false,oldLabel);toast('扩充失败：'+err);});
+}
+const target={academic:'学术通用英语（雅思核心词汇，涵盖教育/科技/环境/社会/文化/健康/经济）',kitchen:'厨房家电行业（含小家电、真空机/封口机/搅拌机/破壁机/咖啡机/电烤箱等品类）的产品研发与营销词汇',career:'职场商务英语（含会议、汇报、谈判、项目管理、求职面试、邮件沟通）',medical:'医疗健康英语（含就诊、问诊、药品、症状、医院科室、慢病管理）',custom:'厨房家电或日常英语'};
+
+function expandBankSmart(bank){
+  if(!qwenReady())return;
+  const existing=(bank==='custom'?state.customWords:BANKS[bank])||[];
+  if(!existing.length){toast('词库为空，请先用「AI 联网扩充」');return;}
+  const sample=existing.slice(0,40).map(w=>w.w+'('+w.cn+')').join('; ');
+  const btn=document.getElementById('lexExpandSmartBtn');
+  if(btn)setBusy(btn,true,'⏳ 智能补盲中…');
+  const n=30;
+  const sys='你是英语词汇专家。只返回一个 JSON 数组，不要任何解释或 Markdown。元素格式：{"w":"英文单词（小写）","ipa":"/国际音标/","pos":"词性","cn":"中文释义","ex":"一句英文例句","col":"常见搭配"}。';
+  const user='以下是该词库已收录的样本词（含中文释义）：'+sample+'。请基于此「词库画像」智能补全 30 个**未被收录、但属于同一词库体系的高频必备词**——优先：①同领域相邻词（如材料/参数/工艺/法规/竞品术语等）；②近 2–3 年新兴概念词；③同义词中较冷门但实用的。要求小写纯英文，不要与已有词重复。';
+  callQwen(sys,user,txt=>{
+    const arr=parseJSON(txt);
+    if(!Array.isArray(arr)||!arr.length){toast('解析失败：'+txt.slice(0,80));if(btn)setBusy(btn,false,'🎯 智能补盲');return;}
+    const exclude=new Set(existing.map(w=>w.w.toLowerCase()));
+    const target=bank==='custom'?state.customWords:BANKS[bank];
+    const before=target.length;
+    arr.forEach(w=>{if(!w||!w.w)return;w.w=(w.w+'').toLowerCase().trim();if(!w.w||exclude.has(w.w))return;target.push(w);exclude.add(w.w);});
+    const added=target.length-before;
+    if(bank!=='custom'&&added>0){
+      if(!state.customWords)state.customWords=[];
+      const cusEx=new Set(state.customWords.map(x=>x.w.toLowerCase()));
+      let mirrored=0;
+      for(let i=before;i<target.length;i++){if(!cusEx.has(target[i].w)){state.customWords.push(target[i]);cusEx.add(target[i].w);mirrored++;}}
+      if(mirrored>0)toast('✅ 智能补盲 '+added+' 词（已同步 '+mirrored+' 词到「我的词库」持久保存）');
+      else toast('✅ 智能补盲 '+added+' 词');
+    }else{
+      toast('✅ 智能补盲 '+added+' 词');
+    }
+    save();
+    if(btn)setBusy(btn,false,'🎯 智能补盲');
+    renderLex();renderHome();renderStats();
+  },err=>{if(btn)setBusy(btn,false,'🎯 智能补盲');toast('失败：'+err);});
+}
+
+function lexAddSingle(){
+  const inp=document.getElementById('lexAddInput');
+  if(!inp)return;
+  const w=inp.value.trim();
+  if(!w){toast('请先输入单词');return;}
+  if(!qwenReady())return;
+  const btn=document.getElementById('lexAddBtn');
+  if(btn)setBusy(btn,true,'⏳ 查询…');
+  const sys='你是英语词典助手。只返回一个 JSON 对象：{"w":"小写单词","ipa":"/音标/","pos":"词性","cn":"中文释义","ex":"一句例句","col":"搭配"}。';
+  const user='请查单词「'+w+'」的音标、词性、中文释义、英文例句、常见搭配，并按 JSON 返回。注意：短语请把 w 拆为原样但小写。';
+  callQwen(sys,user,txt=>{
+    const obj=parseJSON(txt);
+    if(!obj||!obj.w){toast('解析失败：'+txt.slice(0,80));if(btn)setBusy(btn,false,'➕ 添加');return;}
+    obj.w=obj.w.toLowerCase().trim();
+    if(!state.customWords)state.customWords=[];
+    if(state.customWords.some(x=>x.w===obj.w)){toast('该词已在「我的词库」中');if(btn)setBusy(btn,false,'➕ 添加');return;}
+    state.customWords.push(obj);inp.value='';
+    save();
+    if(btn)setBusy(btn,false,'➕ 添加');
+    toast('✅ 已添加 '+obj.w);
+    renderLex();renderHome();renderStats();
+  },err=>{if(btn)setBusy(btn,false,'➕ 添加');toast('失败：'+err);});
+}
+document.getElementById('lexMarkAll').onclick=()=>{
+  const arr=getLexWords().filter(w=>{
+    const f=document.getElementById('lexFilter').value;const q=(document.getElementById('lexQ').value||'').toLowerCase().trim();
+    if(f!=='all'&&lexStatus(w.w)!==f)return false;
+    if(q&&!(w.w+' '+w.cn+' '+w.ex+' '+w.col).toLowerCase().includes(q))return false;
+    return true;
+  });
+  arr.forEach(w=>{const c=state.words[w.w]||{stage:0,due:0,right:0,wrong:0,history:[]};c.mastered=true;state.words[w.w]=c;});
+  save();renderLexList();renderStats();renderHome();toast('已标掌握 '+arr.length+' 个');
+};
+document.getElementById('lexUnmarkAll').onclick=()=>{
+  const arr=getLexWords().filter(w=>{
+    const f=document.getElementById('lexFilter').value;const q=(document.getElementById('lexQ').value||'').toLowerCase().trim();
+    if(f!=='all'&&lexStatus(w.w)!==f)return false;
+    if(q&&!(w.w+' '+w.cn+' '+w.ex+' '+w.col).toLowerCase().includes(q))return false;
+    return true;
+  });
+  arr.forEach(w=>{if(state.words[w.w])state.words[w.w].mastered=false;});
+  save();renderLexList();renderStats();renderHome();toast('已取消 '+arr.length+' 个');
+};
+document.getElementById('lexExportBtn').onclick=()=>{
+  const arr=getLexWords();
+  const lines=['word,ipa,pos,cn,example,collocation,status'];
+  arr.forEach(w=>{const st=lexStatus(w.w);lines.push([w.w,w.ipa,w.pos,w.cn,(w.ex||'').replace(/"/g,'""'),(w.col||'').replace(/"/g,'""'),st].map(x=>'"'+(x||'')+'"').join(','));});
+  const blob=new Blob(["\uFEFF"+lines.join('\n')],{text:'text/csv'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='ielts-vocab-'+lexBank+'.csv';a.click();
+  toast('已导出 CSV');
+};
+
+/* ===================== 发音口音 ===================== */
+document.getElementById('accUk').onclick=()=>setAcc('uk');
+document.getElementById('accUs').onclick=()=>setAcc('us');
+function setAcc(a){state.accent=a;save();document.getElementById('accUk').classList.toggle('on',a==='uk');document.getElementById('accUs').classList.toggle('on',a==='us');toast(a==='uk'?'已切换为英音 🇬🇧':'已切换为美音 🇺🇸');}
+
+/* ===================== 词库（按行业）选择器 ===================== */
+const BANK_ORDER=['academic','kitchen','career','medical','custom'];
+function renderBankPick(){
+  const box=document.getElementById('bankPick');
+  box.innerHTML=BANK_ORDER.map(b=>`<button data-b="${b}" class="${state.currentBank===b?'on':''}">${BANK_NAMES[b]}</button>`).join('');
+  box.querySelectorAll('button').forEach(btn=>btn.onclick=()=>{
+    state.currentBank=btn.dataset.b;save();
+    box.querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+    btn.classList.add('on');
+    document.getElementById('customBox').style.display=state.currentBank==='custom'?'block':'none';
+    updateCustomCount();
+  });
+  document.getElementById('customBox').style.display=state.currentBank==='custom'?'block':'none';
+  updateCustomCount();
+}
+function updateCustomCount(){const n=(state.customWords||[]).length;document.getElementById('customCount').textContent=n?'已添加 '+n+' 个单词':'尚未添加';}
+document.getElementById('addWord').onclick=()=>{
+  const w=document.getElementById('cw_word').value.trim();
+  const ipa=document.getElementById('cw_ipa').value.trim();
+  const cn=document.getElementById('cw_cn').value.trim();
+  const ex=document.getElementById('cw_ex').value.trim();
+  if(!w||!cn){toast('请至少填写单词和中文释义');return;}
+  state.customWords=state.customWords||[];
+  if(state.customWords.some(x=>x.w===w)){toast('该词已存在');return;}
+  state.customWords.push({w,ipa:ipa||'',pos:'',cn,ex:ex||'',col:''});
+  save();
+  document.getElementById('cw_word').value='';document.getElementById('cw_ipa').value='';document.getElementById('cw_cn').value='';document.getElementById('cw_ex').value='';
+  updateCustomCount();toast('已添加到「我的词库」');
+};
+
+/* ===================== 视频通话练习 ===================== */
+let callStream=null,callRec=null,callChunks=[],callIdx=-1,recog=null;
+function renderCall(){
+  callIdx=Math.floor(Math.random()*CALL_SCENARIOS.length);
+  showScenario();
+}
+function showScenario(){
+  const s=CALL_SCENARIOS[callIdx];
+  document.getElementById('callRole').textContent=s.role;
+  document.getElementById('callTopic').textContent=s.topic;
+  document.getElementById('callPrompt').textContent=s.q;
+  document.getElementById('recResult').style.display='none';
+}
+function startCall(){
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){toast('当前环境不支持摄像头（需 https/localhost）');return;}
+  navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(stream=>{
+    callStream=stream;
+    document.getElementById('callVideo').srcObject=stream;
+    toast('通话已接通，看屏幕上的话题并说出来吧');
+  }).catch(()=>toast('无法访问摄像头/麦克风（需授权或 https 环境）'));
+}
+function stopCall(){
+  if(callStream){callStream.getTracks().forEach(t=>t.stop());callStream=null;}
+  document.getElementById('callVideo').srcObject=null;
+  if(callRec&&callRec.state==='recording')callRec.stop();
+}
+function callNext(){callIdx=(callIdx+1)%CALL_SCENARIOS.length;showScenario();if(callStream)speak(CALL_SCENARIOS[callIdx].q);}
+document.getElementById('callStart').onclick=startCall;
+document.getElementById('callStop').onclick=stopCall;
+document.getElementById('callHear').onclick=()=>{if(callIdx>=0)speak(CALL_SCENARIOS[callIdx].q);};
+document.getElementById('callNext').onclick=callNext;
+document.getElementById('callRec').onclick=()=>{
+  if(callIdx<0){toast('请先开始通话');return;}
+  if(!callStream){toast('请先点「开始通话」开启摄像头与麦克风');return;}
+  const btn=document.getElementById('callRec');
+  if(callRec&&callRec.state==='recording'){callRec.stop();return;}
+  if(!window.MediaRecorder){toast('当前浏览器不支持录音');return;}
+  callChunks=[];
+  callRec=new MediaRecorder(callStream);
+  callRec.ondataavailable=e=>{if(e.data&&e.data.size>0)callChunks.push(e.data);};
+  callRec.onstop=()=>{
+    const blob=new Blob(callChunks,{type:'audio/webm'});
+    document.getElementById('callAudio').src=URL.createObjectURL(blob);
+    document.getElementById('recResult').style.display='block';
+    document.getElementById('recText').textContent='（点下方播放键听回放，对比原音找差距）';
+    btn.classList.remove('rec-on');btn.textContent='⏺ 录音回答';
+  };
+  callRec.start();
+  btn.classList.add('rec-on');btn.textContent='⏹ 停止';
+  toast('开始录音，请说出你的回答…');
+};
+document.getElementById('callRecognize').onclick=()=>{
+  if(callIdx<0){toast('请先开始通话');return;}
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){toast('当前浏览器不支持语音识别（建议 Chrome/Edge）');return;}
+  if(recog&&recog._busy){toast('正在识别中…');return;}
+  const r=new SR();r.lang=state.accent==='uk'?'en-GB':'en-US';r.interimResults=false;r.maxAlternatives=1;r._busy=true;recog=r;
+  toast('请说出你的回答…');
+  r.onresult=ev=>{const t=ev.results[0][0].transcript;document.getElementById('recText').textContent=t;document.getElementById('recResult').style.display='block';};
+  r.onerror=()=>toast('识别失败，可改用录音回放');
+  r.onend=()=>{r._busy=false;};
+  r.start();
+};
+
+/* ===================== 通义千问 AI 助手 ===================== */
+const QWEN_URL="https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions";
+function renderAI(){
+  document.getElementById('qwenKey').value=state.qwenKey||'';
+  document.getElementById('qwenModel').value=state.qwenModel||'qwen-plus';
+  document.getElementById('qwenProxy').value=state.qwenProxy||'';
+}
+function saveQwen(){
+  state.qwenKey=document.getElementById('qwenKey').value.trim();
+  state.qwenModel=document.getElementById('qwenModel').value;
+  state.qwenProxy=document.getElementById('qwenProxy').value.trim();
+  save();toast('已保存通义千问设置 ✅');
+}
+function qwenReady(){if(!state.qwenKey){toast('请先在上方填入通义千问 API Key');document.getElementById('qwenKey').focus();return false;}return true;}
+function getQwenUrl(){
+  const p=(state.qwenProxy||"").trim();
+  if(!p) return {url:QWEN_URL,via:"直连 dashscope.aliyuncs.com"};
+  if(/\/chat\/completions\/?$/.test(p)) return {url:p,via:"代理("+p+")"};
+  return {url:p.replace(/\/+$/,"")+"/compatible-mode/v1/chat/completions",via:"代理("+p+")"};
+}
+async function callQwen(system,user,onOk,onErr){
+  const body={model:state.qwenModel,messages:[{role:"system",content:system},{role:"user",content:user}],temperature:0.8};
+  const {url,via}=getQwenUrl();
+  const tryOnce=async()=>{
+    const ctl=new AbortController();const t=setTimeout(()=>ctl.abort(),60000);
+    try{
+      const r=await fetch(url,{method:"POST",mode:"cors",signal:ctl.signal,headers:{"Content-Type":"application/json","Authorization":"Bearer "+state.qwenKey},body:JSON.stringify(body)});
+      clearTimeout(t);
+      const j=await r.json().catch(()=>({}));
+      if(!r.ok||!j.choices||!j.choices[0]){
+        const msg=(j.error&&(j.error.message||j.error.code))||("HTTP "+r.status);
+        return {ok:false,err:msg,via,status:r.status};
+      }
+      return {ok:true,text:j.choices[0].message.content,via};
+    }catch(e){
+      clearTimeout(t);
+      const name=e.name||"";const m=e.message||String(e);
+      let hint="";
+      if(/AbortError/.test(name)) hint="（请求超时，60 秒无响应）";
+      else if(/TypeError|Failed to fetch|NetworkError/.test(m)) hint="（可能是：浏览器扩展拦截 / CORS 被拦 / 网络中断）";
+      return {ok:false,err:m+hint,via};
+    }
+  };
+  // 一次失败自动重试一次（应对偶发网络抖）
+  let res=await tryOnce();
+  if(!res.ok) res=await tryOnce();
+  if(!res.ok){onErr&&onErr("[via "+res.via+"] "+res.err+(res.status?" (HTTP "+res.status+")":""));return;}
+  onOk(res.text);
+}
+async function testQwen(){
+  if(!qwenReady())return;
+  const btn=document.getElementById('testQwenBtn');btn.dataset.label=btn.textContent;setBusy(btn,true,'测试中…');
+  const sys='回复一个字：OK';const r=await new Promise(res=>callQwen(sys,'ping',txt=>res({ok:true,txt}),err=>res({ok:false,err})));
+  setBusy(btn,false);
+  if(r.ok) toast('连接正常 ✅ 模型返回：'+r.txt.slice(0,40));
+  else toast('失败：'+r.err);
+}
+function aiBubble(role,text){
+  const box=document.getElementById('aiChat');
+  const d=document.createElement('div');d.className='ai-msg '+(role==='user'?'me':'bot');
+  d.textContent=text;box.appendChild(d);box.scrollTop=box.scrollHeight;return d;
+}
+function aiSend(){
+  const inp=document.getElementById('aiInput');const t=inp.value.trim();if(!t)return;
+  if(!qwenReady())return;
+  inp.value='';aiBubble('user',t);
+  const sys='你是专业的雅思英语学习助手，用户是中国职场人。用简洁中文回答，必要时给出英文例句与音标。若用户要求讲解单词，请给出：音标、词性、中文释义、2 个英文例句、常见搭配（collocation）。';
+  const b=aiBubble('bot','思考中…');
+  callQwen(sys,t,txt=>{b.textContent=txt;},err=>{b.textContent='⚠️ '+err;});
+}
+function setBusy(btn,on,label){btn.disabled=on;btn.textContent=on?label:btn.dataset.label;}
+function parseJSON(txt){
+  let s=txt.replace(/```json|```/g,'').trim();
+  try{return JSON.parse(s);}catch(e){}
+  try{return JSON.parse(s.slice(s.indexOf('['),s.lastIndexOf(']')+1));}catch(e){}
+  try{return JSON.parse(s.slice(s.indexOf('{'),s.lastIndexOf('}')+1));}catch(e){}
+  return null;
+}
+function nowDate(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+
+function batchGenPassages(topic,n){
+  if(!qwenReady())return;
+  if(!topic){toast('请先填主题');return;}
+  n=Math.max(1,Math.min(10,n||3));
+  const btn=document.getElementById('recBatchBtn');
+  const oldLabel=btn.textContent;setBusy(btn,true,'生成中…');
+  const sys='你是雅思阅读材料专家。只返回一个 JSON 数组，不要任何解释或 Markdown。元素格式：{"cat":"话题分类（2~4字中文）","title":"中文标题","text":"150~220 词的英文短文（学术/科普风格，话题丰富）","quiz":[{"q":"英文问题","a":["A选项","B选项","C选项","D选项"],"correct":0~3}]}。quiz 每篇 2 道，理解题，确保 a 数组里只有 1 个正确选项并标注 correct 索引。';
+  const user='请生成 '+n+' 篇雅思风格的英语阅读短文，主题：「'+topic+'」。文章难度 IELTS 6~6.5，长度 150~220 词。';
+  callQwen(sys,user,txt=>{
+    const arr=parseJSON(txt);
+    if(!Array.isArray(arr)||!arr.length){toast('解析失败：'+txt.slice(0,80));setBusy(btn,false,oldLabel);return;}
+    const today=nowDate();
+    arr.forEach(p=>{p._ai=true;p._date=today;});
+    state.generatedPassages=(state.generatedPassages||[]).concat(arr);
+    save();
+    setBusy(btn,false,oldLabel);
+    toast('✅ 已入库 '+arr.length+' 篇');
+    renderReading();
+  },err=>{setBusy(btn,false,oldLabel);toast('生成失败：'+err);});
+}
+
+function tryDailyRecommend(){
+  if(!state.autoDailyRec)return;
+  if(!state.qwenKey)return;
+  const today=nowDate();
+  if(state.lastRecDate===today)return;
+  if(!state.generatedPassages)state.generatedPassages=[];
+  const todayCount=state.generatedPassages.filter(p=>p._date===today).length;
+  if(todayCount>=2)return;
+  const need=2-todayCount;
+  const topics=['教育与学习','科技与生活','环境与可持续发展','健康与心理','社会与文化','职场与个人成长','城市规划与生活方式'];
+  const seed=topics[Math.floor(Math.random()*topics.length)];
+  setBusy(document.getElementById('recBatchBtn'),true,'⏳ 每日推荐生成中…');
+  const sys='你是雅思阅读材料专家。只返回一个 JSON 数组，不要任何解释或 Markdown。元素格式：{"cat":"话题分类","title":"中文标题","text":"150~220 词的英文短文","quiz":[{"q":"英文问题","a":["A选项","B选项","C选项","D选项"],"correct":0~3}]}。quiz 2 道，确保只有 1 个正确选项并标注 correct 索引。';
+  const user='请生成 '+need+' 篇雅思风格的英语短文，话题围绕「'+seed+'」（每天主题随机）。难度 IELTS 6~6.5。';
+  callQwen(sys,user,txt=>{
+    const arr=parseJSON(txt);
+    if(Array.isArray(arr)&&arr.length){
+      arr.forEach(p=>{p._ai=true;p._date=today;});
+      state.generatedPassages=state.generatedPassages.concat(arr);
+      state.dailyRecCount=todayCount+arr.length;
+    }
+    state.lastRecDate=today;
+    save();
+    setBusy(document.getElementById('recBatchBtn'),false,'🤖 AI 批量生成');
+    renderReading();
+  },err=>{
+    state.lastRecDate=today;save();
+    setBusy(document.getElementById('recBatchBtn'),false,'🤖 AI 批量生成');
+  });
+}
+document.getElementById('genWordsBtn').onclick=()=>{
+  if(!qwenReady())return;
+  const ind=document.getElementById('genIndustry').value.trim();if(!ind){toast('请填写行业，如：厨房家电');return;}
+  const n=+document.getElementById('genCount').value||20;
+  const btn=document.getElementById('genWordsBtn');btn.dataset.label=btn.textContent;setBusy(btn,true,'生成中…');
+  const sys='你是英语词汇专家。只返回一个 JSON 数组，不要任何解释或 Markdown。元素格式：{"w":"英文单词","ipa":"/音标/","pos":"词性如 n./v.","cn":"中文释义","ex":"英文例句","col":"常见搭配"}。';
+  const user='请生成 '+n+' 个「'+ind+'」行业的高频实用英文单词（含专业术语与常用表达），适合中国职场人学习。w 须为纯英文小写单词，ipa 用国际音标。';
+  callQwen(sys,user,txt=>{
+    let arr=parseJSON(txt);
+    if(!Array.isArray(arr)||!arr.length){aiBubble('bot','⚠️ 生成结果解析失败，原内容：\n'+txt.slice(0,300));setBusy(btn,false);return;}
+    state.customWords=state.customWords||[];
+    let added=0;arr.forEach(x=>{if(x&&x.w&&!state.customWords.some(c=>c.w===String(x.w).toLowerCase())){state.customWords.push({w:String(x.w).toLowerCase(),ipa:x.ipa||'',pos:x.pos||'',cn:x.cn||'',ex:x.ex||'',col:x.col||''});added++;}});
+    state.currentBank='custom';save();
+    if(typeof renderBankPick==='function')renderBankPick();
+    setBusy(btn,false);toast('已存入「我的词库」 '+added+' 个新词 ✅');
+  },err=>{aiBubble('bot','⚠️ '+err);setBusy(btn,false);});
+};
+document.getElementById('genPassageBtn').onclick=()=>{
+  if(!qwenReady())return;
+  const tp=document.getElementById('genTopic').value.trim();if(!tp){toast('请填写主题');return;}
+  const btn=document.getElementById('genPassageBtn');btn.dataset.label=btn.textContent;setBusy(btn,true,'生成中…');
+  const sys='你是雅思阅读素材编写者。只返回 JSON：{"cat":"分类","title":"中文标题","text":"150-220词英文短文，难度适配雅思5.5-6.5","quiz":[{"q":"中文问题","a":["选项1","选项2","选项3"],"correct":0}]}。quiz 含2道题，correct 为正确选项下标(0起)。';
+  const user='主题：「'+tp+'」。请写一篇雅思风格短文，并附 2 道理解题。';
+  callQwen(sys,user,txt=>{
+    let p=parseJSON(txt);
+    if(!p||!p.text){aiBubble('bot','⚠️ 短文解析失败：\n'+txt.slice(0,300));setBusy(btn,false);return;}
+    state.generatedPassages=state.generatedPassages||[];state.generatedPassages.unshift(p);save();renderReading();setBusy(btn,false);toast('已加入阅读库 ✅（去「短文阅读」查看）');
+  },err=>{aiBubble('bot','⚠️ '+err);setBusy(btn,false);});
+};
+document.getElementById('genSpeakBtn').onclick=()=>{
+  if(!qwenReady())return;
+  const sc=document.getElementById('genSpeak').value.trim();if(!sc){toast('请填写场景');return;}
+  const btn=document.getElementById('genSpeakBtn');btn.dataset.label=btn.textContent;setBusy(btn,true,'生成中…');
+  const sys='你是雅思口语老师。只返回 JSON 数组：[{"tag":"分类","en":"一句地道英文句子"}]。生成 8 句与场景相关、适合影子跟读的实用句子。';
+  const user='场景：「'+sc+'」。请生成 8 句雅思口语/跟读练习句子。';
+  callQwen(sys,user,txt=>{
+    let arr=parseJSON(txt);
+    if(!Array.isArray(arr)||!arr.length){aiBubble('bot','⚠️ 句子解析失败：\n'+txt.slice(0,300));setBusy(btn,false);return;}
+    arr.forEach(x=>{if(x&&x.en)SENTENCES.push({tag:x.tag||sc,en:x.en});});renderShadow();setBusy(btn,false);toast('已加入跟读库 ✅（去「语句跟读」查看）');
+  },err=>{aiBubble('bot','⚠️ '+err);setBusy(btn,false);});
+};
+document.getElementById('saveQwen').onclick=saveQwen;
+document.getElementById('testQwenBtn').onclick=testQwen;
+document.getElementById('aiSend').onclick=aiSend;
+document.getElementById('aiInput').addEventListener('keydown',e=>{if(e.key==='Enter')aiSend();});
+
+/* ===================== 启动 ===================== */
+document.getElementById('accUk').classList.toggle('on',state.accent!=='us');
+document.getElementById('accUs').classList.toggle('on',state.accent==='us');
+document.getElementById('recBatchBtn').onclick=()=>{const t=document.getElementById('recTopic').value.trim();const n=+document.getElementById('recCount').value||3;batchGenPassages(t,n);};
+document.getElementById('autoDailyRec').onchange=(e)=>{state.autoDailyRec=!!e.target.checked;state.lastRecDate=null;state.dailyRecCount=0;save();if(state.autoDailyRec){toast('已开启每日自动推荐（每天自动生成 2 篇）');tryDailyRecommend();}else toast('已关闭每日自动推荐');};
+initStreak();
+renderHome();
+document.getElementById('streakTop').textContent=state.streak||0;
+document.getElementById('learnedTop').textContent=Object.keys(state.words).length;
+</script>
+</body>
+</html>
