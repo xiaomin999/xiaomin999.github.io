@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>需求挖掘工作台</title>
+<link rel="stylesheet" href="style.css?v=2">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <span class="logo"></span>
+    <h1>需求挖掘工作台</h1>
+    <span class="slogan">把客户原话变成赚钱机会</span>
+  </div>
+  <div class="project-bar">
+    <select id="projectSelect"></select>
+    <button id="btnNewProject" class="btn btn-ghost" title="新建项目">＋ 新项目</button>
+    <button id="btnRenameProject" class="btn btn-ghost" title="重命名">改名</button>
+    <button id="btnDelProject" class="btn btn-ghost danger" title="删除当前项目">删除</button>
+  </div>
+</header>
+
+<main class="layout">
+  <!-- 左栏：收集箱 -->
+  <section class="panel collect-panel">
+    <div class="panel-head">
+      <h2>① 原话收集箱</h2>
+      <span class="hint">粘贴客户原话，每行一条；也可单条录入</span>
+    </div>
+    <div class="field-row">
+      <label>来源</label>
+      <select id="sourceSelect">
+        <option value="搜索下拉词">搜索下拉词</option>
+        <option value="笔记/评论区" selected>笔记/评论区</option>
+        <option value="知乎/问答">知乎/问答</option>
+        <option value="差评">差评</option>
+        <option value="其他">其他</option>
+      </select>
+      <label class="inline"><input type="checkbox" id="withTime" checked> 附时间</label>
+    </div>
+    <textarea id="batchInput" placeholder="批量粘贴：每行一条原话&#10;例如：&#10;ai写文案会被限流吗&#10;小红书作品被判定ai怎么办&#10;怎么合规留微信"></textarea>
+    <div class="btn-row">
+      <button id="btnAddBatch" class="btn btn-primary">批量加入</button>
+      <span class="hint" id="collectStat"></span>
+    </div>
+    <div class="divider">单条录入</div>
+    <div class="field-row">
+      <input type="text" id="singleInput" placeholder="输入一条客户原话，回车添加">
+      <button id="btnAddSingle" class="btn">添加</button>
+    </div>
+  </section>
+
+  <!-- 中栏：数据池 -->
+  <section class="panel pool-panel">
+    <div class="panel-head">
+      <h2>② 数据池 <span id="poolCount" class="count-badge">0</span></h2>
+      <div class="head-actions">
+        <label class="inline"><input type="checkbox" id="autoDedup" checked> 自动去重</label>
+        <button id="btnExport" class="btn btn-primary">③ 一键导出分析包</button>
+      </div>
+    </div>
+    <div class="source-filter" id="sourceFilter"></div>
+    <div class="item-list" id="itemList"></div>
+  </section>
+
+  <!-- 右栏：报告 -->
+  <section class="panel report-panel">
+    <div class="panel-head">
+      <h2>④ 分析报告</h2>
+      <div class="head-actions">
+        <button id="btnCopyPrompt" class="btn btn-ghost">复制分析指令</button>
+        <button id="btnClearReport" class="btn btn-ghost danger">清空</button>
+      </div>
+    </div>
+    <div class="report-empty" id="reportEmpty">
+      <p>流程：</p>
+      <ol>
+        <li>左栏粘贴客户原话（下拉词、评论区、问答、差评）</li>
+        <li>点「一键导出分析包」，粘贴到 WorkBuddy 对话里</li>
+        <li>把 AI 返回的报告粘贴回这里，自动渲染成图文</li>
+      </ol>
+      <p class="hint">报告支持 Markdown（含表格）</p>
+    </div>
+    <textarea id="reportInput" placeholder="把 WorkBuddy 返回的 Markdown 报告粘贴到这里…" style="display:none"></textarea>
+    <div class="report-view markdown-body" id="reportView"></div>
+  </section>
+</main>
+
+<!-- 导出弹层 -->
+<div class="modal-mask" id="exportModal" style="display:none">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>分析包已生成</h3>
+      <button class="btn btn-ghost" id="btnCloseExport">关闭</button>
+    </div>
+    <p class="hint">1. 点「复制全部」→ 2. 粘贴到 WorkBuddy 对话发送 → 3. 报告粘回右栏</p>
+    <textarea id="exportText" readonly></textarea>
+    <div class="btn-row">
+      <button id="btnCopyExport" class="btn btn-primary">复制全部</button>
+      <span class="hint" id="exportStat"></span>
+    </div>
+  </div>
+</div>
+
+<!-- 通用输入/确认对话框（替代原生 prompt/confirm，预览沙箱兼容） -->
+<div class="modal-mask" id="dialogModal" style="display:none">
+  <div class="modal dialog-modal">
+    <h3 id="dialogTitle"></h3>
+    <p id="dialogMsg" class="dialog-msg" style="display:none"></p>
+    <input type="text" id="dialogInput" class="dialog-input">
+    <div class="btn-row dialog-btns">
+      <button class="btn" id="dialogCancel">取消</button>
+      <button class="btn btn-primary" id="dialogOk">确定</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="app.js?v=2"></script>
+</body>
+</html>

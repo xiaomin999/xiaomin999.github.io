@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 工具台 · 需求挖掘 → 工作台生成</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --panel:#ffffff; --ink:#1f2430; --sub:#6b7280;
+    --line:#e6e8ec; --accent:#4f46e5; --accent-soft:#eef0fe;
+    --pos:#16a34a; --neg:#dc2626; --neu:#6b7280;
+    --warn:#d97706; --shadow:0 1px 3px rgba(16,24,40,.06),0 6px 20px rgba(16,24,40,.05);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.55;font-size:14px}
+  header{background:var(--panel);border-bottom:1px solid var(--line);padding:14px 24px;display:flex;
+    align-items:center;gap:14px;position:sticky;top:0;z-index:20}
+  .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#4f46e5,#7c3aed);
+    display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:15px}
+  header h1{font-size:17px;font-weight:700}
+  header .tag{font-size:12px;color:var(--sub);font-weight:400;margin-left:2px}
+  nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+  nav button{background:transparent;border:1px solid transparent;padding:7px 14px;border-radius:8px;
+    font-size:13px;color:var(--sub);cursor:pointer;font-weight:500;transition:.15s}
+  nav button:hover{background:var(--bg);color:var(--ink)}
+  nav button.on{background:var(--accent-soft);color:var(--accent);border-color:#dcdcfb;font-weight:600}
+  main{max-width:1180px;margin:0 auto;padding:24px}
+  .view{display:none}
+  .view.on{display:block;animation:fade .25s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .grid{display:grid;gap:16px}
+  .cards{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;
+    box-shadow:var(--shadow);cursor:pointer;transition:.15s;position:relative}
+  .card:hover{transform:translateY(-2px);border-color:#cdd0f5}
+  .card .ic{width:38px;height:38px;border-radius:10px;background:var(--accent-soft);color:var(--accent);
+    display:flex;align-items:center;justify-content:center;font-weight:700;margin-bottom:10px}
+  .card h3{font-size:15px;margin-bottom:4px}
+  .card p{color:var(--sub);font-size:12.5px}
+  .card .badge{position:absolute;top:14px;right:14px;font-size:11px;background:var(--bg);
+    border:1px solid var(--line);padding:2px 8px;border-radius:20px;color:var(--sub)}
+  section h2{font-size:16px;margin:4px 0 4px}
+  section .desc{color:var(--sub);font-size:13px;margin-bottom:16px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;
+    box-shadow:var(--shadow)}
+  .row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+  label.fld{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--sub);font-weight:600}
+  select,textarea,input[type=text]{font-family:inherit;font-size:13px;border:1px solid var(--line);
+    border-radius:9px;padding:9px 11px;background:#fff;color:var(--ink);outline:none}
+  select:focus,textarea:focus,input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  textarea{width:100%;min-height:150px;resize:vertical;line-height:1.6}
+  .btn{background:var(--accent);color:#fff;border:none;padding:10px 18px;border-radius:9px;font-size:13px;
+    font-weight:600;cursor:pointer;transition:.15s}
+  .btn:hover{background:#4338ca}
+  .btn.ghost{background:#fff;color:var(--accent);border:1px solid #cdd0f5}
+  .btn.ghost:hover{background:var(--accent-soft)}
+  .btn.sm{padding:6px 12px;font-size:12px}
+  .stat-row{display:flex;gap:14px;flex-wrap:wrap;margin:16px 0}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;flex:1;min-width:140px}
+  .stat .n{font-size:26px;font-weight:700;color:var(--accent)}
+  .stat .l{font-size:12px;color:var(--sub)}
+  .res{margin-top:18px}
+  .res-item{border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:10px;background:#fff}
+  .res-item .meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
+  .pill{font-size:11px;padding:2px 9px;border-radius:20px;font-weight:600}
+  .pill.neg{background:#fdeaea;color:var(--neg)}
+  .pill.pos{background:#e8f6ee;color:var(--pos)}
+  .pill.neu{background:#eef0f3;color:var(--neu)}
+  .pill.sc{background:var(--accent-soft);color:var(--accent)}
+  .pill.pn{background:#fff3e3;color:var(--warn)}
+  .res-item .txt{font-size:13.5px;margin-bottom:8px}
+  .res-item .opp{font-size:12.5px;color:var(--sub);background:var(--bg);border-radius:8px;padding:8px 10px}
+  .res-item .opp b{color:var(--accent)}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:820px){.two{grid-template-columns:1fr}}
+  .chart-bar{display:flex;align-items:center;gap:10px;margin-bottom:7px;font-size:12.5px}
+  .chart-bar .name{width:96px;color:var(--sub);text-align:right;flex:none}
+  .chart-bar .track{flex:1;background:var(--bg);border-radius:6px;height:14px;overflow:hidden}
+  .chart-bar .fill{height:100%;background:var(--accent);border-radius:6px}
+  .chart-bar .val{width:28px;text-align:left;color:var(--ink);font-weight:600}
+  .legend{display:flex;gap:14px;font-size:12px;color:var(--sub);margin-top:6px;flex-wrap:wrap}
+  .dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:5px}
+  .lib-item{border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:10px;background:#fff;
+    display:flex;gap:12px;align-items:flex-start}
+  .lib-item .body{flex:1}
+  .lib-item h4{font-size:14px;margin-bottom:3px}
+  .lib-item .sub{font-size:12px;color:var(--sub)}
+  .empty{text-align:center;color:var(--sub);padding:40px;border:1px dashed var(--line);border-radius:12px}
+  .gen-out{margin-top:16px}
+  .spec{border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .spec .head{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;padding:16px 18px}
+  .spec .head h3{font-size:17px}
+  .spec .head .line{font-size:12.5px;opacity:.9;margin-top:3px}
+  .spec .body{padding:18px}
+  .spec .kv{margin-bottom:14px}
+  .spec .kv h5{font-size:12px;color:var(--sub);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+  .spec ul{margin:0;padding-left:18px}
+  .spec ul li{margin-bottom:4px;font-size:13px}
+  .spec .feat{display:flex;gap:8px;flex-wrap:wrap}
+  .spec .feat span{background:var(--accent-soft);color:var(--accent);font-size:12px;padding:4px 10px;border-radius:20px}
+  .hint{font-size:12px;color:var(--sub);background:#fffbe9;border:1px solid #f4e2b8;border-radius:9px;
+    padding:10px 12px;margin-top:12px;line-height:1.6}
+  .tagpick{display:flex;gap:7px;flex-wrap:wrap;margin:6px 0}
+  .tagpick .t{font-size:12px;border:1px solid var(--line);border-radius:20px;padding:4px 11px;cursor:pointer;color:var(--sub)}
+  .tagpick .t.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .small{font-size:11.5px;color:var(--sub)}
+  .footer{text-align:center;color:var(--sub);font-size:12px;padding:24px;margin-top:10px}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">AI</div>
+  <div>
+    <h1>AI 工具台 <span class="tag">挖掘未被满足的需求 → 生成 AI 工具工作台</span></h1>
+  </div>
+  <nav>
+    <button data-v="home" class="on">首页</button>
+    <button data-v="mine">需求挖掘台</button>
+    <button data-v="gen">工作台生成器</button>
+    <button data-v="lib">需求库</button>
+  </nav>
+</header>
+
+<main>
+  <!-- HOME -->
+  <section class="view on" id="home">
+    <div class="stat-row" id="homeStats"></div>
+    <div class="grid cards" id="homeCards"></div>
+    <div class="hint">
+      使用闭环：在 <b>需求挖掘台</b> 粘贴社媒原声（小红书 / 抖音 / B站 / 知乎 / 淘宝百科 / 什么值得买），
+      系统自动按「情绪 · 场景 · 痛点」归类并沉淀未满足需求；在 <b>工作台生成器</b> 选中一个需求，
+      一键生成对应的 AI 工具工作台方案；生成的方案可存入 <b>需求库</b> 形成待建清单。
+    </div>
+  </section>
+
+  <!-- MINING -->
+  <section class="view" id="mine">
+    <h2>需求挖掘台 · 社媒原声监听</h2>
+    <div class="desc">把用户在社媒上关于某品类/功能的真实吐槽与期待贴进来，自动识别情绪、使用场景与未满足痛点。</div>
+    <div class="panel">
+      <div class="row">
+        <label class="fld">来源平台
+          <select id="srcSel">
+            <option>小红书</option><option>抖音</option><option>B站</option>
+            <option>知乎</option><option>淘宝百科</option><option>什么值得买</option><option>今日头条</option>
+          </select>
+        </label>
+        <label class="fld">关联品类
+          <select id="catSel">
+            <option>真空机</option><option>真空袋</option><option>搅拌机/破壁机</option><option>通用</option>
+          </select>
+        </label>
+        <label class="fld" style="flex:1;min-width:240px">原声文本（每行一条，可批量）
+          <textarea id="rawInput" placeholder="例：破壁机噪音像电钻，早上用把全家吵醒；清洗死角藏污纳垢，刀片缝里的渣抠半小时都抠不干净…"></textarea>
+        </label>
+      </div>
+      <div class="row" style="align-items:center">
+        <button class="btn" id="analyzeBtn">分析这批原声</button>
+        <button class="btn ghost" id="loadSeed">载入真实种子数据（真空/搅拌舆情）</button>
+        <button class="btn ghost sm" id="clearMine">清空</button>
+        <span class="small" id="mineCount"></span>
+      </div>
+    </div>
+
+    <div class="two" style="margin-top:18px">
+      <div class="panel">
+        <h2 style="font-size:14px">情绪分布</h2>
+        <div id="sentChart"></div>
+        <div class="legend">
+          <span><i class="dot" style="background:var(--neg)"></i>负面（痛点）</span>
+          <span><i class="dot" style="background:var(--pos)"></i>正面（期待/满意）</span>
+          <span><i class="dot" style="background:var(--neu)"></i>中性</span>
+        </div>
+        <h2 style="font-size:14px;margin-top:18px">高频痛点 TOP</h2>
+        <div id="painChart"></div>
+      </div>
+      <div class="panel">
+        <h2 style="font-size:14px">使用场景分布</h2>
+        <div id="sceneChart"></div>
+        <h2 style="font-size:14px;margin-top:18px">已识别需求（点击可送到生成器）</h2>
+        <div id="needList" style="max-height:240px;overflow:auto"></div>
+      </div>
+    </div>
+
+    <div class="res" id="mineRes"></div>
+  </section>
+
+  <!-- GENERATOR -->
+  <section class="view" id="gen">
+    <h2>工作台生成器</h2>
+    <div class="desc">选择一个痛点/需求（或自定义描述），自动生成对应的 AI 工具工作台方案：命名、定位、功能清单、输入输出、技术路线与优先级。</div>
+    <div class="panel">
+      <label class="fld" style="display:block">从已挖掘需求选择（痛点 + 场景）
+        <div class="tagpick" id="painPick"></div>
+      </label>
+      <label class="fld" style="display:block;margin-top:10px">或自定义需求描述
+        <input type="text" id="customNeed" style="width:100%" placeholder="例：用户在露营时希望真空机轻便、可充电、能防压碎零食">
+      </label>
+      <div class="row" style="margin-top:12px;align-items:center">
+        <button class="btn" id="genBtn">生成工作台方案</button>
+        <button class="btn ghost sm" id="saveNeed">存入需求库</button>
+      </div>
+    </div>
+    <div class="gen-out" id="genOut"></div>
+  </section>
+
+  <!-- LIBRARY -->
+  <section class="view" id="lib">
+    <h2>需求库（待建工作台清单）</h2>
+    <div class="desc">所有挖掘与生成的需求在此沉淀，可一键送入生成器细化方案。数据保存在本地浏览器。</div>
+    <div id="libList"></div>
+  </section>
+</main>
+
+<div class="footer">AI 工具台 · 单文件原型 · 分析引擎为本地启发式（可后续接入 LLM 提升语义理解）</div>
+
+<script>
+/* ---------- 词典 ---------- */
+const DIC = {
+  neg:['吐槽','不好用','差','漏气','失败','难','麻烦','噪音','贵','闲置','吃灰','虚标','糊','刺耳','惊吓','开裂','变形','返潮','发霉','投诉','弃用','失望','鸡肋','质疑','隐患','风险','刺破','藏污','难洗','繁琐','渣','粗糙','分层','氧化','噱头','智商税','用不上','沦为','占位','不足','不够','弱','慢','长','都听不到','听不清','不会','不行','没用','尴尬','落灰'],
+  pos:['真香','方便','实用','好用','满意','惊喜','省心','推荐','喜欢','赞','值','贴心','顺畅','神器','轻松','高效','靠谱','安心','整洁','整洁','清晰','安静','干净'],
+  scene:{
+    '露营/户外':['露营','户外','旅行','出行','背包','野营','徒步','行李','便携'],
+    '母婴/辅食':['母婴','宝宝','辅食','宝妈','婴儿','育儿','分装冷冻','母乳'],
+    '健身/代餐':['健身','代餐','鸡胸肉','高蛋白','备餐','健身餐','减脂'],
+    '收纳/空间':['收纳','空间','台面','占地','橱柜','压缩','体积大','笨重','臃肿','放不下'],
+    '跨境/电商':['跨境','代购','打包','Temu','速卖通','海淘','客户','包裹','外贸'],
+    '独居/小家庭':['独居','二人世界','小家庭','一人食','租房','小户型'],
+    '咖啡/烘焙':['咖啡','咖啡豆','烘焙','面粉','坚果','干货'],
+    '囤货分装':['囤货','囤积','分装','一周食材','集中处理','周末']
+  },
+  pain:{
+    '噪音扰民':['噪音','分贝','电钻','吵','扰民','刺耳','震耳','轰鸣','声音大','噪声'],
+    '封口/密封失效':['封口','漏气','密封不严','虚封','鼓起','回弹','刺破','开裂','漏','封不上','封不紧','封不住','气阀'],
+    '难清洗/藏污':['清洗','难洗','藏污','糊底','死角','残渣','发霉','污','黏附','油渍','粘','刮','抠'],
+    '耗材/成本高':['耗材','专用袋','成本','平替','单次','复购','刺客','价格','花费','贵','涨价'],
+    '操作繁琐':['繁琐','手动','步骤','对准','用力','两人','误触','看不清','指纹','按键','复杂','麻烦','对齐'],
+    '占地/笨重':['占地','体积大','笨重','臃肿','台面','无处安放','占地方'],
+    '功能虚标/闲置':['虚标','闲置','吃灰','使用率低','鸡肋','噱头','智商税','用不上','沦为','落灰','装饰'],
+    '口感/效果差':['渣','粗糙','分层','氧化','难喝','不均匀','有颗粒','糊','结块'],
+    '健康/安全隐患':['微塑料','涂层','脱落','烫伤','隐患','有害物质','增塑剂','健康','风险'],
+    '适用局限':['汤汁','湿性','叶菜','冷冻脆裂','容量有限','热饮','不适用','不适合','限','无法']
+  }
+};
+const OPP = {
+  '噪音扰民':{opp:'静音/低噪运行 + 可预约错峰（避开休息时段）',tool:'静音时段建议器'},
+  '封口/密封失效':{opp:'自动检测封口 + 防液体回流设计 + 通用袋兼容',tool:'封口自检助手'},
+  '难清洗/藏污':{opp:'可拆洗结构 + 高温自清洁 + 防糊底涂层',tool:'一键自清洁方案'},
+  '耗材/成本高':{opp:'通用耗材兼容 + 耗材成本测算 + 平替推荐',tool:'耗材平替比价'},
+  '操作繁琐':{opp:'一键自动流程 + 大字/语音引导 + 防误触',tool:'傻瓜式引导助手'},
+  '占地/笨重':{opp:'小巧/可立收纳 + 多功能合一减少台面占用',tool:'厨房空间规划器'},
+  '功能虚标/闲置':{opp:'真实场景功能清单 + 使用频率提醒 + 防吃灰',tool:'真实使用率看板'},
+  '口感/效果差':{opp:'粒径/口感预测 + 配方自适应调节',tool:'口感优化配方'},
+  '健康/安全隐患':{opp:'食品级/材质合规检测 + 安全使用提醒',tool:'材质安全核查'},
+  '适用局限':{opp:'食材适配建议 + 干湿/容量自适应模式',tool:'食材适配顾问'}
+};
+
+/* ---------- 种子数据（真实舆情提炼） ---------- */
+const SEED = [
+  {src:'什么值得买',cat:'真空机',t:'摩飞真空封口机湿抽时封不上口，干抽时间也长、声音大；除了抽真空封口其他全手动，和近300块的价格不符。'},
+  {src:'百度爱采购',cat:'真空机',t:'80%家庭买回家闲置，单次耗材超2元，非原装袋漏气率35%；热封160℃有烫伤风险，工作噪音70分贝。'},
+  {src:'新浪众测',cat:'真空机',t:'全息投影按键阳光下看不清、易粘指纹、开盖时手指误触突然启动吓一跳；封口要用力压到啪嗒两声，封鸡得两个人，噪音大只能去室外。'},
+  {src:'淘宝百科',cat:'真空袋',t:'便宜真空袋无导气槽抽不干净等于白忙；光面袋配家用泵必漏气；反复折叠密封边易破，冷冻后韧性下降。'},
+  {src:'淘宝百科',cat:'真空袋',t:'经济型真空袋低于5℃会脆化开裂；单层热封款3-4个月封口脱离；非标袋可能含邻苯增塑剂危害健康。'},
+  {src:'今日头条',cat:'搅拌机/破壁机',t:'破壁机工作噪音80-90分贝像电钻，早上把爸妈吵醒、邻居上门投诉；租房一响房东敲门。'},
+  {src:'360娱乐',cat:'搅拌机/破壁机',t:'热饮容量虚标，标1.5L实际热饮最多800ml；加热+破壁全程30分钟以上，比早起做早餐还慢，还容易糊底。'},
+  {src:'今日头条',cat:'搅拌机/破壁机',t:'自动清洗是文字游戏，刀片缝残渣抠半小时；橡胶圈藏污纳垢不拆洗就发霉；口感像糊糊，热饮放一会儿上清下稠。'},
+  {src:'今日头条',cat:'搅拌机/破壁机',t:'超过70%人只用来打豆浆果汁米糊，厂商吹的骨头研磨使用率不足5%；花大价钱买的功能只用了十分之一，沦为厨房装饰。'},
+  {src:'淘宝百科',cat:'真空机',t:'手持真空机露营带干粮零食防压防潮，母婴辅食分装避免反复打开污染，健身党鸡胸肉分装每天一份；但含水高果蔬不适合。'},
+  {src:'百度爱采购',cat:'真空机',t:'宝妈：自制辅食一次做7天量真空冷藏，宝宝吃得安心我也不用天天煮；咖啡豆真空后寄朋友像刚磨的一样。'}
+];
+
+/* ---------- 分析引擎 ---------- */
+function cnt(arr,text){let n=0;for(const w of arr){if(text.includes(w))n++;}return n;}
+function analyze(text,src,cat){
+  const neg=cnt(DIC.neg,text), pos=cnt(DIC.pos,text);
+  let sentiment = neg>pos?'neg':(pos>neg?'pos':'neu');
+  if(neg===0&&pos===0) sentiment='neu';
+  const scenes=[], pains=[];
+  for(const [k,v] of Object.entries(DIC.scene)) if(cnt(v,text)>0) scenes.push(k);
+  for(const [k,v] of Object.entries(DIC.pain)) if(cnt(v,text)>0) pains.push(k);
+  const opps = pains.map(p=>({pain:p,...OPP[p]})).filter(x=>x.tool);
+  return {text,src,cat,sentiment,scenes,pains,opps};
+}
+
+/* ---------- 状态 ---------- */
+let RECORDS=[];   // 分析结果
+let LIB=[];       // 需求库
+try{LIB=JSON.parse(localStorage.getItem('ai_tool_lib')||'[]');}catch(e){LIB=[];}
+
+/* ---------- 渲染 ---------- */
+function esc(s){return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+function renderMine(){
+  const res=document.getElementById('mineRes');
+  res.innerHTML=RECORDS.map((r,i)=>{
+    const sp = r.sentiment==='neg'?'<span class="pill neg">负面</span>':r.sentiment==='pos'?'<span class="pill pos">正面</span>':'<span class="pill neu">中性</span>';
+    const sc = r.scenes.map(s=>`<span class="pill sc">${s}</span>`).join('');
+    const pn = r.pains.map(p=>`<span class="pill pn">${p}</span>`).join('');
+    const opp = r.opps.map(o=>`<div class="opp"><b>未满足需求 →</b> ${esc(o.pain)}：${esc(o.opp)} <em style="color:var(--accent)">[建议工具：${o.tool}]</em></div>`).join('')||'';
+    return `<div class="res-item">
+      <div class="meta">${sp}<span class="pill neu">${esc(r.src)}</span><span class="pill neu">${esc(r.cat)}</span>${sc}${pn}</div>
+      <div class="txt">${esc(r.text)}</div>
+      ${opp}
+      <div style="margin-top:8px"><button class="btn ghost sm" onclick="sendToGen(${i})">送到生成器 →</button></div>
+    </div>`;
+  }).join('');
+  document.getElementById('mineCount').textContent = RECORDS.length?`已分析 ${RECORDS.length} 条`:'';
+  renderCharts();
+  renderNeedList();
+}
+function renderCharts(){
+  const sCount={neg:0,pos:0,neu:0};
+  RECORDS.forEach(r=>sCount[r.sentiment]++);
+  document.getElementById('sentChart').innerHTML=['neg','pos','neu'].map(k=>{
+    const v=sCount[k], tot=RECORDS.length||1, col={neg:'var(--neg)',pos:'var(--pos)',neu:'var(--neu)'}[k];
+    const name={neg:'负面',pos:'正面',neu:'中性'}[k];
+    return `<div class="chart-bar"><div class="name">${name}</div><div class="track"><div class="fill" style="width:${v/tot*100}%;background:${col}"></div></div><div class="val">${v}</div></div>`;
+  }).join('');
+  const pCount={};
+  RECORDS.forEach(r=>r.pains.forEach(p=>pCount[p]=(pCount[p]||0)+1));
+  const pArr=Object.entries(pCount).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  const max=pArr.length?pArr[0][1]:1;
+  document.getElementById('painChart').innerHTML=pArr.map(([k,v])=>
+    `<div class="chart-bar"><div class="name">${k}</div><div class="track"><div class="fill" style="width:${v/max*100}%"></div></div><div class="val">${v}</div></div>`
+  ).join('')||'<div class="small">暂无痛点</div>';
+  const sCount2={};
+  RECORDS.forEach(r=>r.scenes.forEach(s=>sCount2[s]=(sCount2[s]||0)+1));
+  const sArr=Object.entries(sCount2).sort((a,b)=>b[1]-a[1]);
+  const max2=sArr.length?sArr[0][1]:1;
+  document.getElementById('sceneChart').innerHTML=sArr.map(([k,v])=>
+    `<div class="chart-bar"><div class="name">${k}</div><div class="track"><div class="fill" style="width:${v/max2*100}%;background:#7c3aed"></div></div><div class="val">${v}</div></div>`
+  ).join('')||'<div class="small">暂无场景</div>';
+}
+function renderNeedList(){
+  const needs=[];
+  RECORDS.forEach(r=>r.opps.forEach(o=>needs.push({pain:o.pain,scene:r.scenes[0]||'',tool:o.tool,opp:o.opp,src:r.src})));
+  const el=document.getElementById('needList');
+  if(!needs.length){el.innerHTML='<div class="small">分析后此处展示可生成工具的未满足需求</div>';return;}
+  el.innerHTML=needs.map((n,i)=>`<div style="padding:7px 0;border-bottom:1px solid var(--line);font-size:12.5px">
+    <b style="color:var(--accent)">${esc(n.tool)}</b> <span class="small">${esc(n.pain)}</span><br>
+    <span class="small">${esc(n.scene?n.scene+' · ':'')}${esc(n.opp)}</span>
+    <button class="btn ghost sm" style="float:right;margin-top:-18px" onclick="pickNeed('${esc(n.tool)}','${esc(n.pain)}','${esc(n.scene)}')">生成</button>
+  </div>`).join('');
+}
+
+/* ---------- 生成器 ---------- */
+let selPain='', selScene='';
+function renderPainPick(){
+  const el=document.getElementById('painPick');
+  const all=Object.keys(DIC.pain);
+  el.innerHTML=all.map(p=>`<span class="t ${selPain===p?'on':''}" onclick="togglePain('${p}')">${p}</span>`).join('');
+}
+function togglePain(p){selPain=selPain===p?'':p;renderPainPick();}
+function pickNeed(tool,pain,scene){switchView('gen');selPain=pain;selScene=scene;renderPainPick();document.getElementById('customNeed').value='';}
+
+function generate(){
+  const custom=document.getElementById('customNeed').value.trim();
+  let pains = selPain?[selPain]:[];
+  let scene = selScene||'';
+  if(custom && !selPain){
+    // 从自定义描述里猜痛点/场景
+    for(const [k,v] of Object.entries(DIC.pain)) if(cnt(v,custom)>0) pains.push(k);
+    for(const [k,v] of Object.entries(DIC.scene)) if(cnt(v,custom)>0 && !scene) scene=k;
+  }
+  if(!pains.length && !custom){alert('请选择一个痛点，或填写自定义需求描述');return;}
+  const mainPain = pains[0]||'通用效率';
+  const opp = OPP[mainPain]||{opp:'围绕该需求设计自动化/辅助能力',tool:'智能助手'};
+  const toolName = custom? autoName(custom) : (opp.tool||'智能工具');
+  const cat = RECORDS.find(r=>r.pains.includes(mainPain))?.cat||'通用';
+  const feats = buildFeats(pains, scene, custom);
+  const spec = {
+    name:toolName,
+    pos: custom||`${scene?scene+'场景下的':''}${mainPain}问题`,
+    cat, pains, scene,
+    feats,
+    input: specInput(mainPain),
+    output: specOutput(mainPain),
+    tech: specTech(mainPain),
+    priority: priority(pains, scene)
+  };
+  renderSpec(spec);
+  window._lastSpec=spec;
+}
+function autoName(d){const m=d.match(/(露营|母婴|健身|咖啡|收纳|跨境|独居|烘焙|囤货|厨房)/);const pre=m?m[1]:'';return pre+`${mainWord(d)}助手`;}
+function mainWord(d){for(const k of Object.keys(DIC.pain))if(cnt(DIC.pain[k],d)>0)return k.replace(/[/.]/g,'').slice(0,4);return '需求';}
+function buildFeats(pains,scene,custom){
+  const f=new Set();
+  pains.forEach(p=>{ if(OPP[p]) f.add(OPP[p].opp.split('+')[0].trim()); });
+  if(scene==='露营/户外') f.add('便携/可充电/防压设计建议');
+  if(scene==='母婴/辅食') f.add('分装卫生与计量提醒');
+  if(scene==='健身/代餐') f.add('份量规划与营养核算');
+  if(!custom) f.add('原声情绪/痛点实时监测');
+  return [...f].slice(0,5);
+}
+function specInput(p){return {'噪音扰民':'使用时段、环境、分贝阈值','封口/密封失效':'食材类型、袋型、封口参数','难清洗/藏污':'机型结构、污渍类型','耗材/成本高':'机型、使用频率、袋规格','操作繁琐':'用户操作流、卡点步骤','占地/笨重':'厨房尺寸、现有设备','功能虚标/闲置':'已购功能、实际使用记录','口感/效果差':'食材、配方、粒径期望','健康/安全隐患':'材质、使用方式','适用局限':'食材、容量、温区'}[p]||'需求描述 + 约束条件';}
+function specOutput(p){return {'噪音扰民':'静音时段方案 + 降噪建议','封口/密封失效':'封口成功率提升方案','难清洗/藏污':'自清洁流程 + 结构改进点','耗材/成本高':'耗材成本测算 + 平替清单','操作繁琐':'一键流程 + 引导脚本','占地/笨重':'空间优化布局','功能虚标/闲置':'真实价值功能清单','口感/效果差':'配方/参数优化建议','健康/安全隐患':'合规核查报告','适用局限':'食材适配矩阵'}[p]||'可落地方案 + 优先级';}
+function specTech(p){return '前端原型(本台) + 规则引擎；语义升级时接入 LLM（意图识别 + 方案生成），数据层用 Supabase/localStorage 持久化，复用现有 CloudBase 同步能力。';}
+function priority(pains,scene){
+  let s=0; s+=pains.length*15; if(scene)s+=10; if(pains.includes('噪音扰民')||pains.includes('难清洗/藏污'))s+=10;
+  s=Math.min(100,s+30);
+  const lvl = s>=80?'高':s>=55?'中':'低';
+  return {s,lvl};
+}
+function renderSpec(s){
+  const pr=priority(s.pains,s.scene);
+  const el=document.getElementById('genOut');
+  el.innerHTML=`<div class="spec">
+    <div class="head"><h3>${esc(s.name)}</h3><div class="line">定位：${esc(s.pos)} · 关联品类：${esc(s.cat)}</div></div>
+    <div class="body">
+      <div class="kv"><h5>核心功能</h5><div class="feat">${s.feats.map(f=>`<span>${esc(f)}</span>`).join('')}</div></div>
+      <div class="kv"><h5>输入 / 输出</h5>
+        <ul><li><b>输入：</b>${esc(s.input)}</li><li><b>输出：</b>${esc(s.output)}</li></ul></div>
+      <div class="kv"><h5>解决痛点</h5><div class="feat">${s.pains.map(p=>`<span style="background:#fff3e3;color:var(--warn)">${esc(p)}</span>`).join('')}</div></div>
+      <div class="kv"><h5>技术路线</h5><div class="sub" style="font-size:13px;color:var(--ink)">${esc(s.tech)}</div></div>
+      <div class="kv"><h5>建设优先级</h5><div class="feat"><span style="background:${pr.lvl==='高'?'#fdeaea;color:var(--neg)':pr.lvl==='中'?'#fff3e3;color:var(--warn)':'#eef0f3;color:var(--neu)'}">${pr.lvl}优先级 · 评分 ${pr.s}/100</span></div></div>
+    </div></div>`;
+}
+
+/* ---------- 需求库 ---------- */
+function saveNeed(){
+  const s=window._lastSpec; if(!s){alert('请先生成一个工作台方案');return;}
+  LIB.push({...s, ts:Date.now()});
+  localStorage.setItem('ai_tool_lib',JSON.stringify(LIB));
+  renderLib(); renderHome();
+  alert('已存入需求库（共 '+LIB.length+' 条）');
+}
+function renderLib(){
+  const el=document.getElementById('libList');
+  if(!LIB.length){el.innerHTML='<div class="empty">需求库为空。去「需求挖掘台」分析原声，或「工作台生成器」生成方案后存入。</div>';return;}
+  el.innerHTML=LIB.slice().reverse().map((n,i)=>`
+    <div class="lib-item">
+      <div class="body">
+        <h4>${esc(n.name)} <span class="small">· ${esc(n.priority?.lvl||'中')}优先级</span></h4>
+        <div class="sub">${esc(n.pos)} · 品类：${esc(n.cat)} · 痛点：${esc((n.pains||[]).join('/'))} ${n.scene?'· 场景：'+esc(n.scene):''}</div>
+        <div class="small" style="margin-top:4px">功能：${esc((n.feats||[]).join(' / '))}</div>
+      </div>
+      <button class="btn ghost sm" onclick="useLib(${LIB.length-1-i})">生成方案</button>
+      <button class="btn ghost sm" onclick="delLib(${LIB.length-1-i})">删除</button>
+    </div>`).join('');
+}
+function useLib(i){const n=LIB[i];selPain=(n.pains||[])[0]||'';selScene=n.scene||'';renderPainPick();document.getElementById('customNeed').value=n.pos||'';switchView('gen');generate();}
+function delLib(i){LIB.splice(i,1);localStorage.setItem('ai_tool_lib',JSON.stringify(LIB));renderLib();renderHome();}
+
+/* ---------- 首页 ---------- */
+function renderHome(){
+  const stats=[
+    {n:LIB.length,l:'需求库（待建工作台）'},
+    {n:RECORDS.length,l:'已分析社媒原声'},
+    {n:Object.keys(DIC.pain).length,l:'痛点维度词典'},
+    {n:Object.keys(DIC.scene).length,l:'使用场景维度'}
+  ];
+  document.getElementById('homeStats').innerHTML=stats.map(s=>`<div class="stat"><div class="n">${s.n}</div><div class="l">${s.l}</div></div>`).join('');
+  const ICON={
+    mine:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>',
+    gen:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2" stroke-linejoin="round"><path d="M14 7a4 4 0 0 0-5 5l-6 6 2 2 6-6a4 4 0 0 0 5-5l-2.5 2.5L11.5 9 14 7z"/></svg>',
+    lib:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2" stroke-linejoin="round"><path d="M4 5h5v14H4zM10 5h5v14h-5zM16 6l4 1-3 13-4-1z"/></svg>'
+  };
+  const cards=[
+    {ic:ICON.mine,t:'需求挖掘台',d:'粘贴社媒原声，自动归类情绪/场景/痛点',v:'mine'},
+    {ic:ICON.gen,t:'工作台生成器',d:'把未满足需求变成 AI 工具工作台方案',v:'gen'},
+    {ic:ICON.lib,t:'需求库',d:'沉淀待建清单，本地持久化可回看',v:'lib'}
+  ];
+  document.getElementById('homeCards').innerHTML=cards.map(c=>`<div class="card" onclick="switchView('${c.v}')"><div class="ic">${c.ic}</div><h3>${c.t}</h3><p>${c.d}</p></div>`).join('');
+}
+
+/* ---------- 导航 ---------- */
+function switchView(v){
+  document.querySelectorAll('.view').forEach(s=>s.classList.remove('on'));
+  document.getElementById(v).classList.add('on');
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>switchView(b.dataset.v));
+
+/* ---------- 事件 ---------- */
+document.getElementById('analyzeBtn').onclick=()=>{
+  const raw=document.getElementById('rawInput').value.trim(); if(!raw){alert('请先粘贴原声文本');return;}
+  const src=document.getElementById('srcSel').value, cat=document.getElementById('catSel').value;
+  raw.split('\n').map(s=>s.trim()).filter(Boolean).forEach(line=>RECORDS.push(analyze(line,src,cat)));
+  document.getElementById('rawInput').value='';
+  renderMine();renderHome();
+};
+document.getElementById('loadSeed').onclick=()=>{
+  SEED.forEach(s=>RECORDS.push(analyze(s.t,s.src,s.cat)));
+  renderMine();renderHome();
+  alert('已载入 '+SEED.length+' 条真实舆情种子数据');
+};
+document.getElementById('clearMine').onclick=()=>{RECORDS=[];renderMine();renderHome();};
+document.getElementById('genBtn').onclick=generate;
+document.getElementById('saveNeed').onclick=saveNeed;
+function sendToGen(i){const r=RECORDS[i];switchView('gen');selPain=(r.pains||[])[0]||'';selScene=(r.scenes||[])[0]||'';renderPainPick();document.getElementById('customNeed').value='';generate();}
+
+/* ---------- 初始化 ---------- */
+renderPainPick();renderLib();renderHome();renderMine();
+</script>
+</body>
+</html>
