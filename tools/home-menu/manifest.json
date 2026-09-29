@@ -1,0 +1,13 @@
+{
+  "name": "家常点餐 · 在家吃什么",
+  "short_name": "家常点餐",
+  "description": "家常菜单与点餐小工具：每道菜附做法、食用建议与同餐搭配体检。",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#f6f7f9",
+  "theme_color": "#e8552d",
+  "lang": "zh-CN",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

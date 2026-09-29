@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>国内扫地机器人品牌型号深度研究报告</title>
+<style>
+  :root{ --blue:#1F4E79; --blue2:#2E75B6; --bg:#F5F8FB; --card:#fff; --line:#E1E8F0; --good:#2E8B57; --bad:#C0392B; }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;background:var(--bg);color:#1c2b3a;line-height:1.55}
+  header{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;padding:28px 32px}
+  header h1{margin:0 0 6px;font-size:24px}
+  header p{margin:2px 0;opacity:.92;font-size:13px}
+  .wrap{max-width:1180px;margin:0 auto;padding:22px 18px 60px}
+  .stats{display:flex;flex-wrap:wrap;gap:14px;margin:18px 0 8px}
+  .stat{flex:1;min-width:150px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .stat b{display:block;font-size:26px;color:var(--blue)}
+  .stat span{font-size:12px;color:#5b6b7c}
+  h2{margin:30px 0 12px;font-size:19px;color:var(--blue);border-left:5px solid var(--blue2);padding-left:10px}
+  .note{background:#fff8e6;border:1px solid #f1e0a8;border-radius:10px;padding:12px 14px;font-size:13px;color:#7a5b00;margin:6px 0 16px}
+  table{border-collapse:collapse;width:100%;background:var(--card);font-size:12.5px;margin-bottom:10px}
+  thead th{position:sticky;top:0;background:var(--blue);color:#fff;padding:9px 8px;text-align:left;cursor:pointer;user-select:none;font-weight:600;border:1px solid var(--blue)}
+  thead th:hover{background:var(--blue2)}
+  tbody td{padding:8px 8px;border:1px solid var(--line);vertical-align:top}
+  tbody tr:nth-child(even){background:#F2F7FC}
+  .brand{font-weight:700;background:#DDEBF7!important}
+  .bgood{color:var(--good);font-weight:700}
+  .bbad{color:var(--bad);font-weight:700}
+  .bar{height:8px;border-radius:5px;background:#e6eef6;overflow:hidden;min-width:60px}
+  .bar > i{display:block;height:100%}
+  .pill{display:inline-block;padding:1px 7px;border-radius:10px;font-size:11px;margin:1px 2px 1px 0;background:#EAF1F8;color:#2E75B6}
+  .scroll{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+  .chartrow{display:flex;align-items:center;gap:10px;margin:5px 0}
+  .chartrow .nm{width:190px;font-size:12px;flex:none}
+  .chartrow .bar{flex:1}
+  .legend{font-size:12px;color:#5b6b7c;margin:4px 0 18px}
+  .legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin:0 4px 0 12px}
+  footer{text-align:center;color:#8a99a8;font-size:12px;padding:24px}
+  a{color:var(--blue2)}
+  /* 筛选面板 */
+  .filter{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:14px 0 6px;box-shadow:0 2px 10px rgba(31,78,121,.06)}
+  .filter h3{margin:0 0 12px;font-size:15px;color:var(--blue)}
+  .fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px 18px}
+  .fitem{display:flex;flex-direction:column;gap:4px;font-size:12.5px}
+  .fitem > label{font-weight:600;color:#34465c}
+  .fitem .brands{display:flex;flex-wrap:wrap;gap:6px}
+  .fitem .brands label{font-weight:400;color:#1c2b3a;background:#EAF1F8;border:1px solid #cfe0f0;border-radius:14px;padding:3px 10px;cursor:pointer;font-size:12px}
+  .fitem .brands input{display:none}
+  .fitem .brands label.on{background:var(--blue2);color:#fff;border-color:var(--blue2)}
+  .fitem select,.fitem input[type=text]{padding:6px 8px;border:1px solid #cfe0f0;border-radius:8px;font-size:12.5px;font-family:inherit}
+  .fitem input[type=range]{width:100%}
+  .fval{font-size:11.5px;color:#5b6b7c}
+  .fbar{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap}
+  .btn{background:var(--blue);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:13px;cursor:pointer}
+  .btn:hover{background:var(--blue2)}
+  .fcount{margin-left:auto;font-size:13px;color:#34465c}
+  .fcount b{color:var(--blue);font-size:16px}
+  .arrow{font-size:10px;opacity:.7}
+</style>
+</head>
+<body>
+<header>
+  <h1>国内扫地机器人品牌 / 型号深度研究报告</h1>
+  <p>覆盖 8 大品牌、30 款在售主力型号 · 功能 / 适用面积 / 价格 / 技术亮点 / 好评差评点</p>
+  <p>生成日期：2026-09-21 · 数据来源：京东 / 天猫 / 什么值得买 / 中关村在线 / 百度百科 / 各品牌官网 / 海外评测站（公开检索整理，价格随促销国补波动）</p>
+</header>
+<div class="wrap">
+  <div class="stats">
+    <div class="stat"><b>30</b><span>在售主力型号</span></div>
+    <div class="stat"><b>8</b><span>覆盖品牌</span></div>
+    <div class="stat"><b>¥899 – ¥9299</b><span>价格区间（国行）</span></div>
+    <div class="stat"><b>2cm – 8cm</b><span>越障高度区间</span></div>
+  </div>
+
+  <div class="note">⚠️ 说明：①「好评度 / 差评度」为 1–10 综合评分（基于公开评测与电商评价倾向估算，非官方指标，仅供横向参考）；② 部分海外版仅搜到美元价已标注，国行价以「未找到」注明；③ 凡标「未找到」的字段为公开渠道暂未检索到明确数据，并非产品缺失该功能。</div>
+
+  <div class="filter">
+    <h3>🔍 全页筛选（同步影响下方所有排行榜与明细表）</h3>
+    <div class="fgrid">
+      <div class="fitem" style="grid-column:1/-1">
+        <label>品牌（可多选，不选=全部）</label>
+        <div class="brands" id="brandBox"></div>
+      </div>
+      <div class="fitem">
+        <label>关键词搜索</label>
+        <input type="text" id="fKw" placeholder="型号 / 功能 / 技术…">
+      </div>
+      <div class="fitem">
+        <label>好评度 ≥ <span class="fval" id="prosVal">0.0</span></label>
+        <input type="range" id="fPros" min="0" max="10" step="0.1" value="0">
+      </div>
+      <div class="fitem">
+        <label>差评度 ≤ <span class="fval" id="consVal">10.0</span></label>
+        <input type="range" id="fCons" min="1" max="10" step="0.1" value="10">
+      </div>
+      <div class="fitem">
+        <label>国行最低价 ≤ <span class="fval" id="priceVal">不限</span></label>
+        <input type="range" id="fPrice" min="800" max="10000" step="100" value="10000">
+      </div>
+      <div class="fitem">
+        <label>自动洗拖布 / 滚</label>
+        <select id="fAuto"><option value="all">全部</option><option value="yes">基站自动洗</option><option value="no">需手动洗</option></select>
+      </div>
+      <div class="fitem">
+        <label>维护难度</label>
+        <select id="fMaint"><option value="all">全部</option><option value="易">易</option><option value="中">中</option><option value="难">难</option></select>
+      </div>
+      <div class="fitem">
+        <label>越障高度 ≥</label>
+        <select id="fClimb"><option value="0">不限</option><option value="1.5">1.5cm</option><option value="2">2cm</option><option value="4">4cm</option><option value="6">6cm</option><option value="8">8cm</option></select>
+      </div>
+      <div class="fitem">
+        <label>拖地方式</label>
+        <select id="fMop"><option value="all">全部</option><option value="滚筒">滚筒活水</option><option value="双盘">双盘旋转</option><option value="履带">履带热活水</option><option value="声波">声波震动</option><option value="平板">平板拖布</option></select>
+      </div>
+      <div class="fitem">
+        <label>卡障碍情况</label>
+        <select id="fStuck"><option value="all">全部</option><option value="很少">很少卡</option><option value="偶尔">偶尔卡</option><option value="常见">常见卡</option></select>
+      </div>
+    </div>
+    <div class="fbar">
+      <button class="btn" id="fReset">重置筛选</button>
+      <span class="fcount">匹配 <b id="fCount">30</b> / 30 款</span>
+    </div>
+  </div>
+
+  <h2>一、按好评度排序（高 → 低）</h2>
+  <div class="scroll"><table id="tblGood"><thead><tr><th>品牌</th><th>型号</th><th>参考售价</th><th>好评点</th><th>差评点</th><th>好评度</th><th>差评度</th></tr></thead><tbody></tbody></table></div>
+
+  <h2>二、按差评度排序（高 → 低，越靠上骂声越多）</h2>
+  <div class="scroll"><table id="tblBad"><thead><tr><th>品牌</th><th>型号</th><th>参考售价</th><th>好评点</th><th>差评点</th><th>好评度</th><th>差评度</th></tr></thead><tbody></tbody></table></div>
+
+  <h2>三、好评度 Top10 / 差评度 Top10 可视化</h2>
+  <div class="legend"><i style="background:#2E8B57"></i>好评度 &nbsp; <i style="background:#C0392B"></i>差评度</div>
+  <div id="chartGood"></div>
+  <h2 style="margin-top:26px">差评度最高 Top10</h2>
+  <div id="chartBad"></div>
+
+  <h2>四、完整明细（点击表头可排序）</h2>
+  <div class="scroll">
+    <table id="full">
+      <thead><tr>
+        <th data-key="brand">品牌</th><th data-key="model">型号</th><th data-key="year">年份</th><th data-key="price">参考售价</th><th data-key="area">适用面积</th>
+        <th data-key="features">主要功能</th><th data-key="tech">核心技术</th><th data-key="tech_hl">技术亮点</th><th data-key="pros">好评点</th><th data-key="cons">差评点</th>
+        <th data-key="pros_score">好评度</th><th data-key="cons_score">差评度</th><th data-key="mop_type">拖地方式</th><th data-key="wash_method">清洗方式</th><th data-key="auto_wash">自动洗拖布</th>
+        <th data-key="manual_mop">需手动洗抹布</th><th data-key="maintain_diff">维护难度</th><th data-key="climb">翻障碍</th><th data-key="stuck">卡障碍/异物</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <footer>本报告由 WorkBuddy 深度研究生成 · 数据截至 2026-09 · 仅供参考，购买请以官方最新信息为准</footer>
+</div>
+<script>
+const DATA = [{"brand": "科沃斯", "model": "地宝 T30 Pro", "year": 2024, "price": "约¥1909–2999（上下水版）", "area": "中大户型（官方精确值未找到）", "features": ["扫拖一体", "自动集尘", "自动洗拖布", "基站自清洁", "TruEdge灵隙恒贴边", "迷你基站"], "tech": ["TrueDetect 3D 3.0结构光避障", "弹簧式激光雷达导航", "55ml机载水箱自动补水", "单滚刷防缠"], "tech_hl": ["TruEdge灵隙拖布盘常态外扩贴边1mm", "基站缩小17%可嵌入橱柜", "清洁槽可拆卸水洗"], "pros": ["边角清扫干净", "基站小巧不占地", "防缠绕滚刷对猫毛友好", "建图快(最快6分钟)"], "cons": ["11000Pa吸力相对偏弱", "App仅中文语音/YIKO仅懂中文", "热水洗是否标配不明确"], "pros_score": 8.0, "cons_score": 3.5, "mop_type": "双盘旋转加压拖地", "wash_method": "基站热水洗(70℃)", "auto_wash": "有(基站自动洗拖布)", "manual_mop": "否", "maintain_diff": "中", "climb": "约2cm(20mm)门槛，不可爬楼梯", "stuck": "偶尔；长电线/袜子/数据线偶缠绕"}, {"brand": "科沃斯", "model": "地宝 T50 Pro", "year": 2025, "price": "常卖价¥2899，活动到手约¥2587", "area": "基站水箱支持最大拖地约300㎡", "features": ["扫拖一体", "自动集尘", "75℃热水洗拖布", "基站自清洁", "热风烘干", "自动补水/加液", "自动上下水可选"], "tech": ["全嵌入式dToF激光雷达(81mm超薄)", "AIVI 3D 3.0避障(3D结构光+RGB)", "OZMO Turbo 2.0双盘旋转拖地", "TruEdge 2.0贴边", "ZeroTangle 2.0防缠"], "tech_hl": ["81mm超薄机身入低矮家具", "75℃热水净洗+刮洗臂基站自清洁", "Instant Re-Mop边刷/拖布外扩15mm"], "pros": ["超薄能钻低矮家具", "避障与沿边覆盖优秀", "热水洗拖布除菌", "性价比高"], "cons": ["基站体积仍偏大", "耗材(尘袋/清洁液)偏贵", "个别反馈App偶顿"], "pros_score": 8.5, "cons_score": 3.0, "mop_type": "双盘旋转加压拖地", "wash_method": "基站热水洗(75℃)", "auto_wash": "有(基站自动洗拖布)", "manual_mop": "否", "maintain_diff": "中", "climb": "约2cm(20mm)门槛，不可爬楼梯", "stuck": "偶尔；边刷外延偶卡门槛缝"}, {"brand": "科沃斯", "model": "地宝 T80 (OZMO Roller)", "year": 2025, "price": "京东原价¥4699，国补到手约¥2930–3879（上下水版）", "area": "适合120㎡以上（评测称单次约250㎡）", "features": ["扫拖一体", "自动集尘", "75℃热水洗烘拖布", "基站自清洁", "自动上下水", "全链路抗菌"], "tech": ["OZMO Roller恒压滚筒活水洗地(3700Pa/200rpm/16倍压强)", "AIVI 3D避障+视觉模组", "ZeroTangle 3.0防缠", "98mm超薄机身"], "tech_hl": ["滚筒活水即拖即净不以脏拖脏", "3700Pa高下压力去厨房油渍", "V型45°斜植毛+螺旋滚刷全链路防缠"], "pros": ["滚筒拖地顽固污渍去除力强", "养宠家庭毛发不缠", "国补后价格香", "超薄入低矮区"], "cons": ["比多数机器人更易卡困", "无纯拖模式/自动加液(部分版)", "噪音偏大"], "pros_score": 8.2, "cons_score": 3.8, "mop_type": "滚筒活水洗地", "wash_method": "基站热水洗(75℃)+活水循环自洗", "auto_wash": "有(基站自动洗滚筒)", "manual_mop": "否", "maintain_diff": "易", "climb": "约2cm(20mm)门槛，不可爬楼梯", "stuck": "偶尔；滚筒自清洁减少拖布缠绕，异物偶卡"}, {"brand": "科沃斯", "model": "地宝 X8 Pro Omni", "year": 2024, "price": "海外发售价$1299.99(约¥9400)，常促$599–1099(约¥4300–8000)；国行价未找到", "area": "大平层（续航约291分钟）", "features": ["扫拖一体", "自动集尘", "75℃热水洗拖布", "热风烘干", "自动补水/加液", "基站自清洁", "YIKO-GPT语音"], "tech": ["OZMO Roller滚筒(4000Pa/200rpm/16孔活水)", "LiDAR+AIVI 3D 3.0图像识别避障(100+物体)", "嵌入式mini dToF(9.8cm)", "TruEdge灵隙2.0双恒贴边"], "tech_hl": ["行业首款恒压滚筒活水洗地替代双圆盘", "AIVI 3D 3.0图像级开放识别", "YIKO-GPT大模型语音交互"], "pros": ["导航与避障业界顶级", "滚筒洗地拖得干净", "免维护基站", "宠物家庭友好"], "cons": ["地毯宠物毛发拾取仅约70%", "默认语音太话痨", "旗舰定价高"], "pros_score": 8.5, "cons_score": 4.0, "mop_type": "滚筒活水洗地", "wash_method": "基站热水洗(40-75℃智能控温)+活水循环自洗(16喷嘴)", "auto_wash": "有(基站自动洗滚筒)", "manual_mop": "否", "maintain_diff": "易", "climb": "约2cm(20mm)门槛，不可爬楼梯", "stuck": "偶尔；少数用户反映软件避障偶卡"}, {"brand": "科沃斯", "model": "地宝 X9 Pro Omni", "year": 2025, "price": "海外发售价$1499.99(约¥10800)，常促$699–1299(约¥5000–9400)；国行价未找到", "area": "标称续航约200分钟，实测115–158分钟", "features": ["扫拖一体", "自动集尘(150天免维护)", "75℃热水洗/145℉热风烘拖布", "自动补水/加液", "基站自清洁", "YIKO-GPT"], "tech": ["OZMO Roller滚筒(220rpm/3700Pa/即时自洗)", "BLAST大气流增压吸力(16600Pa)", "嵌入式dToF+AIVI 3D 3.0", "ARClean防缠边刷", "TruEdge 2.0 3D沿边"], "tech_hl": ["BLAST大气流技术(实测密闭吸力行业最高2.76kPa)", "OZMO Roller即时自洗(拖地历史最高4.95/5)", "150天超长免维护基站"], "pros": ["拖地能力同代最佳", "地毯/大颗粒吸力强", "3D沿边贴脚线", "Matter智能联动"], "cons": ["实测续航短于标称", "有用户反馈边刷断裂等可靠性问题", "客服体验差", "定价虚高常靠大促"], "pros_score": 8.7, "cons_score": 4.5, "mop_type": "滚筒活水洗地", "wash_method": "基站热水洗(75℃)+活水循环自洗", "auto_wash": "有(基站自动洗滚筒)", "manual_mop": "否", "maintain_diff": "易", "climb": "约2cm(20mm)门槛，不可爬楼梯", "stuck": "偶尔；AIVI 3D 3.0避障精准，长线偶卡"}, {"brand": "石头", "model": "P10S Pro", "year": 2024, "price": "常卖¥2799–3499，国补到手约¥2200–2300（水箱/上下水版）", "area": "官方标注0–500㎡（实际中大户型）", "features": ["扫拖一体", "自动集尘", "60℃高温除菌洗拖布", "热风烘干", "自动补水/加液", "自动上下水mini基站可选"], "tech": ["LDS激光导航", "结构光+RGB摄像头融合避障(20类62种)", "扫拖双机械臂", "拖布/滚刷双升降"], "tech_hl": ["双机械臂极限贴边<1mm", "自维护双螺旋清扫系统内置割刀防缠", "动态高温复洗60℃除菌率99.7%"], "pros": ["性价比高(2024质价比机皇)", "边角覆盖彻底", "不缠毛发", "60℃洗拖布除菌"], "cons": ["热水仅60℃(弱于竞品75℃)", "App功能多学习曲线陡", "海外版无中文语音"], "pros_score": 8.6, "cons_score": 3.0, "mop_type": "双盘旋转加压拖地", "wash_method": "基站热水洗(60℃)", "auto_wash": "有(基站自动洗拖布)", "manual_mop": "否", "maintain_diff": "中", "climb": "约2cm门槛，不可爬楼梯", "stuck": "偶尔；双机械臂边角偶有遗漏，长线偶缠"}, {"brand": "石头", "model": "P20 Pro", "year": 2024, "price": "水箱版¥3999，智能上下水版¥4599", "area": "满电可清洁140㎡以上", "features": ["扫拖一体", "自动集尘", "75℃热水洗拖布", "烘干", "自动补水", "自动上下水", "双机械臂", "基站除臭"], "tech": ["LDS激光导航", "结构光避障", "行业首创底盘升降(越障4cm)", "0缠清洁系统(SGS/TÜV双认证)", "RRmind GPT"], "tech_hl": ["行业首创底盘升降越障脱困4cm", "双悬臂螺旋主刷+0缠边刷(缠绕率认证0%)", "18500Pa同档最高吸力+75℃热水洗"], "pros": ["越障能力可感知强", "养宠/长发家庭几乎不缠毛", "吸力大拖布贴边<1mm", "RRmind GPT自然语言交互"], "cons": ["定价偏高端", "基站体积大", "偶有App学习成本"], "pros_score": 8.8, "cons_score": 3.0, "mop_type": "双盘旋转加压拖地", "wash_method": "基站热水洗(75℃)", "auto_wash": "有(基站自动洗拖布)", "manual_mop": "否", "maintain_diff": "中", "climb": "约4cm(首创底盘升降，可越≤4cm门槛)，不可爬楼梯", "stuck": "偶尔；底盘升降偶卡长线，整体越障与脱困强"}, {"brand": "石头", "model": "Q Revo Curv", "year": 2024, "price": "欧洲发售价€1499.99(约¥11700)；国行未全面上市，价格未找到", "area": "中大平层", "features": ["扫拖一体", "自动集尘", "75℃热水洗拖布", "热风烘干", "自动补水/加液", "基站自清洁"], "tech": ["激光雷达导航", "FlexiArm边刷(离心防缠)", "AdaptiLift底盘(三轮独立升降,越障4cm/中长毛毯10cm)", "双胶刷防缠", "75℃热水洗"], "tech_hl": ["18500Pa大吸力", "AdaptiLift自适应底盘越障/上毯", "75℃热水洗(高于Q Revo MaxV)"], "pros": ["吸力与越障强", "边角FlexiArm覆盖好", "热水洗更去油除菌", "防缠设计"], "cons": ["发售价高", "国行渠道有限价格不透明", "功能与P20 Pro部分重叠"], "pros_score": 8.3, "cons_score": 3.5, "mop_type": "滚筒活水洗地(SpiraFlow)", "wash_method": "基站热水洗(75℃)+活水循环自洗", "auto_wash": "有(基站自动洗滚筒)", "manual_mop": "否", "maintain_diff": "易", "climb": "约3-4cm(AdaptiLift底盘，单层3cm/双层4cm)，不可爬楼梯", "stuck": "偶尔；DuoDivide防缠+底盘升降，长毛/线缆偶卡"}, {"brand": "石头", "model": "S8 MaxV Ultra", "year": 2024, "price": "海外发售价$1799.99(约¥12800)，常促$999–1099(约¥7200–7900)；国行价未找到明确", "area": "大平层（续航约180分钟）", "features": ["扫拖一体", "自动集尘(60天)", "60℃热水洗拖布", "热风烘干", "自动补水/加清洁液", "基站自清洁", "视频管家/双向语音", "Matter"], "tech": ["PreciSense激光雷达+ReactiveAI 3.0(双摄像头+结构光,识别200+物体)", "VibraRise 3.0声波震动拖地(4000次/分)", "FlexiArm机械臂边刷+外延拖布", "DuoRoller双胶刷"], "tech_hl": ["FlexiArm机械臂边刷实现99%角落覆盖", "ReactiveAI 3.0暗线暗色线缆也能避", "RockDock Ultra八合一自清洁+60℃热水洗防异味"], "pros": ["综合体验公认最佳全能", "避障业界最可靠(宠物可无人值守)", "地毯检测自动抬拖布", "热水洗杜绝拖布异味"], "cons": ["发售价高需等大促", "基站体积巨大需挪家具", "拖布不可拆卸边刷偶甩垃圾", "高级软件偶有小bug"], "pros_score": 9.0, "cons_score": 3.5, "mop_type": "声波震动拖地(VibraRise 3.0)", "wash_method": "基站热水洗(60℃/140℉)", "auto_wash": "有(基站自动洗拖布)", "manual_mop": "否", "maintain_diff": "中", "climb": "约2cm(20mm)门槛，不可爬楼梯", "stuck": "偶尔；Reactive AI 2.0识别73类物体，偶撞小件"}, {"brand": "石头", "model": "G20S Ultra", "year": 2025, "price": "京东¥3949–4299，天猫常卖¥4899，唯品会历史低¥3298", "area": "适合80–120㎡复式/中小大户型（机身79.8mm超薄）", "features": ["扫拖一体", "自动集尘", "热水洗拖布", "热风烘干", "自动补水/加液", "基站自清洁"], "tech": ["双激光雷达(LDS)导航", "AI路径规划", "自清洁基站(360°旋转拖布清洗+热风烘干)", "防缠绕螺旋滚刷", "约2cm越障"], "tech_hl": ["79.8mm超薄机身(同代最薄之一)", "双激光定位误差<±2cm建图快40%", "自清洁基站抗菌纳米拖布7天无异味"], "pros": ["超薄能入低矮家具", "双激光建图精准", "养宠不缠毛", "性价比高于S旗舰"], "cons": ["越障约2cm(弱于P20 Pro的4cm)", "定位中高端价格仍不低", "海外版缺中文语音/本地客服"], "pros_score": 8.5, "cons_score": 3.2, "mop_type": "双盘旋转加压拖地", "wash_method": "基站热水洗(80℃)+UVC杀菌", "auto_wash": "有(基站自动洗拖布，支持自动拆拖布)", "manual_mop": "否", "maintain_diff": "中", "climb": "约4cm(首创底盘升降2.0，最高4cm越障)，不可爬楼梯", "stuck": "偶尔；星阵领航2.0识别略慢，偶撞袜子/数据线"}, {"brand": "追觅", "model": "X50 Ultra", "year": 2025, "price": "国行约3999-4599元(天猫在售约4599)；海外首发1699.99美元", "area": "大户型/复式(约105㎡/充)", "features": ["扫拖一体", "自动集尘(3.2L)", "自动洗拖布", "自动上下水(选配)", "80℃热水洗+热风烘干", "ProLeap机械腿越障", "仿生双机械臂", "视频管家/宠物看护"], "tech": ["LDS激光导航+潜望式360°升降雷达(VersaLift,89mm)", "AI双目结构光避障(200+物体)", "双盘旋转加压拖地+拖布自动抬升"], "tech_hl": ["ProLeap机械腿可跨6cm门槛/台阶", "80℃热水洗+热风烘干+自动装卸拖布", "DuoBrush混合双滚刷0缠毛", "升降雷达整机89mm"], "pros": ["跨槛/脱困能力行业最强", "80℃热水洗除菌去污彻底", "升降雷达进低矮家具", "双机械臂贴边无死角", "养宠长发0缠绕", "避障准视频管家实用"], "cons": ["基站体积巨大占空间", "旗舰定价高(海外近1700美元)", "美版无银离子/UV除菌", "电解水耗材偏贵"], "pros_score": 8.6, "cons_score": 3.5, "mop_type": "双盘旋转加压拖布(MopExtend外扩机械臂)", "wash_method": "基站80℃热水洗+热风烘干(AceClean DryBoard)", "auto_wash": "有(基站自动洗拖布)", "manual_mop": "否", "maintain_diff": "中", "climb": "ProLeap机械腿可跨约6cm门槛/台阶(实测单级约4.2cm)；不可爬楼梯", "stuck": "很少；机械腿脱困强，DuoBrush防缠毛，AI+3D结构光识别200种物体"}, {"brand": "追觅", "model": "X40 Master", "year": 2026, "price": "国行价未找到(国内对应X40 Ultra 2024款首发5699元起)；海外约899.99美元", "area": "大户型(约300㎡，续航约198min)", "features": ["扫拖一体", "自动集尘", "自动洗拖布", "8-in-1自动上下水基站", "热水洗(约70℃)+热风烘干", "MopExtend RoboSwing机械臂外扩", "可选TriCut防缠刷", "视频管家"], "tech": ["旋转LiDAR激光导航", "摄像头+3D结构光避障(120种物体)", "双盘旋转拖地+拖布/边刷抬升", "22mm越障"], "tech_hl": ["8合1紧凑基站直连水管(自动补水+排污)", "MopExtend RoboSwing拖布外摆1.57英寸深入边角", "OmniDirt颜色传感脏污识别", "11英寸紧凑基站"], "pros": ["自动上下水真正免维护", "紧凑基站比X50/Matrix更小", "12000Pa吸力够用", "边角外扩覆盖好", "避障导航获好评"], "cons": ["单摄像头+结构光避障略逊X40 Ultra双激光版", "22mm越障属主流非顶级", "命名国行未上市资料少", "定价仍偏高"], "pros_score": 8.2, "cons_score": 3.2, "mop_type": "双盘旋转加压拖布(MopExtend RoboSwing外扩)", "wash_method": "基站70℃热水洗+热风烘干", "auto_wash": "有(基站自动洗拖布)", "manual_mop": "否", "maintain_diff": "中", "climb": "可越障22mm(2.2cm)；不可爬楼梯", "stuck": "很少；AI+3D结构光避障，防缠毛滚刷，边角外扩清扫"}, {"brand": "追觅", "model": "L40 Ultra", "year": 2024, "price": "国行价未找到明确；海外约599.99-1499.99美元(发布1499.99，常促799-1099)", "area": "中大户型(约110-150㎡/充)", "features": ["扫拖一体", "自动集尘(75天)", "自动洗拖布", "自动补水(基站水箱)", "65℃热水洗+热风烘干", "MopExtend RoboSwing机械臂外扩", "拖布自动抬升/拆卸", "语音控制"], "tech": ["LiDAR激光导航+RGB摄像头", "3D结构光避障(约100种物体)", "双盘旋转拖地+拖布自动拆/抬", "22mm越障"], "tech_hl": ["MopExtend RoboSwing边角外摆+拖布自动拆除以保地毯干爽", "自动补水+自动集尘数周免动手", "11000Pa+TriCut防缠滚刷", "65℃热水洗+烘干防异味"], "pros": ["吸力强宠物/长发友好", "自动补水+集尘免维护佳", "边角外摆覆盖优", "热水洗+烘干保持清洁", "性价比高于X旗舰"], "cons": ["基站体积大占地方", "App体验不如石头流畅", "地毯避障一般视频偶有卡顿", "海外定价偏高"], "pros_score": 8.3, "cons_score": 3.4, "mop_type": "双盘旋转加压拖布(2 Spinning Pads+MopExtend)", "wash_method": "基站65℃热水洗+热风烘干", "auto_wash": "有(基站自动洗拖布)", "manual_mop": "否", "maintain_diff": "易", "climb": "可越障22mm(2.2cm)；不可爬楼梯", "stuck": "很少；TriCut防缠绕滚刷，RGB脏污检测，边刷/拖布可抬升"}, {"brand": "追觅", "model": "Matrix10 Ultra", "year": 2025, "price": "国行约6849-9299元(京东上下水版9299、水箱版约8698；天猫低至6849)；海外约1799-1999美元", "area": "大户型(续航约260min，越障高达80mm)", "features": ["扫拖一体", "自动集尘(3.2L,约100天)", "自动洗拖布", "自动上下水(选配)", "100℃沸水洗拖布", "全球首创智能换拖布(3种)", "升降激光雷达", "视频管家"], "tech": ["升降LiDAR雷达(VersaLift)+RGB摄像头+结构光", "AI避障识别240种物体", "双盘旋转拖地+拖布自动换/抬", "80mm超高越障"], "tech_hl": ["全球首创智能换拖布(3种拖布按房间切换)", "100℃沸水洗拖布(行业最高温杀菌)", "30000Pa顶级吸力+HyperStream DuoBrush 0缠毛", "80mm超高越障+升降雷达"], "pros": ["30000Pa顶级吸力清洁力强", "自动换拖布分材质精细拖地", "100℃沸水洗最彻底杀菌", "超高越障80mm", "长续航260min识别最多240种"], "cons": ["基站巨大(像小冰箱重约36.6磅)", "价格极高(国行近万元)", "换拖布机构复杂潜在故障/耗材成本", "吸力对多数家庭过剩"], "pros_score": 8.7, "cons_score": 3.8, "mop_type": "多拖布可切换系统(旋转式)", "wash_method": "ThermoHub基站100℃热水洗+热风烘干", "auto_wash": "有(基站自动洗+自动换拖布)", "manual_mop": "否", "maintain_diff": "中", "climb": "可越障80mm(8cm)；不可爬楼梯", "stuck": "很少；OmniSight AI识别240+物体，HyperStream防缠毛"}, {"brand": "云鲸", "model": "J5", "year": 2024, "price": "国行水箱版约3099元(京东常卖3099、好评率98%、万+评论)；上下水版约3399元", "area": "中大户型(5L大水箱)", "features": ["扫拖一体", "自动洗拖布", "轻集尘(1L尘袋30-90天)", "自动上下水(选配)", "45-75℃动态热水洗+75℃巴氏消毒", "仿生手擦地(拖布外扩8N)", "全链路银离子抑菌", "语音/APP控制"], "tech": ["LDS激光导航", "双光谱脏污识别传感器", "勒洛三角形拖布外扩(边角99.5%)", "气旋导流防缠滚刷"], "tech_hl": ["整机0毛发缠绕(双V动态解缠边刷+气旋导流滚刷)", "45-75℃动态热水洗+75℃巴氏消毒", "仿生手擦地8N外扩加压边角99.5%", "轻集尘1L尘袋30-90天"], "pros": ["拖地效果出色(动态加压+外扩)", "真正0缠毛长发/养宠省心", "静音运行", "热水洗+抑菌免维护好", "国补后性价比高好评率98%"], "cons": ["越障仅约2cm极限/高门槛进不去", "边刷不伸缩边角缝隙偶有漏扫", "无机械臂边刷无视频管家", "吸力15000Pa较新旗舰偏低"], "pros_score": 8.4, "cons_score": 3.0, "mop_type": "双盘旋转加压拖地(勒洛三角拖布+8N外伸下压)", "wash_method": "基站45-75℃动态热水洗+热风烘干", "auto_wash": "有(基站自动洗拖布)", "manual_mop": "否", "maintain_diff": "易", "climb": "标准越障约2cm(20mm)；不可爬楼梯", "stuck": "很少；鲸灵托管2.0，气旋导流防缠绕滚刷(长电线/拖鞋易识别避开)"}, {"brand": "云鲸", "model": "逍遥001", "year": 2024, "price": "国行水箱版约5399元、上下水套装约5999元(京东)；国补后约3400元；官翻约1949元", "area": "大户型(5200mAh，续航约2.5h)", "features": ["扫拖一体", "自动洗拖布", "自动集尘", "自动上下水(选配)", "45-75℃动态热水洗+热风烘干+电解水除菌", "双目仿生视觉避障", "智能语音/家庭陪护", "零缠绕双芯滚刷"], "tech": ["双芯双目AI仿生人眼视觉导航避障(100+物体,LED夜视)", "高旋动态加压拖地", "零缠绕滚刷12000Pa", "3D贴边扭一扭擦角"], "tech_hl": ["双芯双目AI仿生人眼(识别100+物体+线材,LED夜视)", "零缠绕滚刷+12000Pa+四种地毯清洁", "3D贴边扭一扭强力擦除边角", "智能语音家庭陪护"], "pros": ["避障效果好双目识别线材等", "拖地效果出色", "防缠绕稳定", "支持语音控制噪音不大", "热水洗+电解水除菌到位"], "cons": ["软件偶有误识别(算法待优化)", "边刷/拖布不伸缩边角缝隙漏扫", "机身偏厚10.9cm低矮区域进不去", "首发价高(国补后实惠)"], "pros_score": 8.0, "cons_score": 3.5, "mop_type": "双盘旋转加压拖地(勒洛三角+最高12N高旋加压)", "wash_method": "基站45-75℃动态热水洗+75℃巴氏抑菌+热风烘干", "auto_wash": "有(基站自动洗拖布)", "manual_mop": "否", "maintain_diff": "易", "climb": "越障约20mm(2cm)；不可爬楼梯", "stuck": "很少；双芯双目5mm线材识别遇线不卷，气旋导流防缠绕滚刷"}, {"brand": "云鲸", "model": "逍遥002", "year": 2025, "price": "国行水箱版首发4599元、超薄上下水版5199元(天猫补贴约4469、官翻约3149)", "area": "10-150㎡(天猫标称；可覆盖大户型)", "features": ["AI活水履带洗地(履带式230mm)", "自动集尘(120天免维护)", "自动洗拖布", "自动上下水(选配)", "45℃履带热活水循环洗地", "AI双目视觉(200+物体,10TOPS)", "大模型语音(DeepSeek-R1/NarGPT)", "实时视频互动"], "tech": ["嵌入式激光雷达(超薄95mm)", "AI双目仿生视觉(200+物体,10TOPS)", "履带热活水循环洗地+清污双水箱", "地毯深度模式(拖布抬升滚刷下沉7mm)"], "tech_hl": ["全球首创履带热活水循环洗地(45℃即拖即净实时回收污水)", "AI双目+10TOPS识别200+物体接入DeepSeek-R1", "履带无极外扩3mm/12N恒压贴边", "95mm超薄+4cm越障+120天免维护尘袋"], "pros": ["履带洗地即拖即净边角覆盖好", "AI智能强(大模型语音/自主决策)", "避障识别最多200+", "超薄机身进低矮家具4cm越障", "整机0缠毛120天免维护"], "cons": ["价格较高(首发4599起)", "履带结构耗材/维护成本与复杂度高", "新平台算法稳定性待验证", "基站功能多体积不低"], "pros_score": 8.3, "cons_score": 3.6, "mop_type": "履带式热活水(活水履带洗地,12N恒压+16孔45℃热水喷淋)", "wash_method": "履带45℃活水循环自洗+基站深度清洁60/80℃+热风烘干", "auto_wash": "有(基站自动洗履带)", "manual_mop": "否", "maintain_diff": "中", "climb": "双轮抬升越障4cm(40mm)；不可爬楼梯", "stuck": "很少；AI双目识别200+物体，4cm越障，履带动态外扩贴边"}, {"brand": "云鲸", "model": "J4", "year": 2023, "price": "基础版首发4299元(到手3999)、上下水版4499元；现促约2000-3000元(98新约1489)", "area": "10-300㎡(5200mAh)", "features": ["扫拖一体", "自动洗拖布+烘干", "轻集尘(机身自集尘首创)", "自动上下水(选配)", "无热水洗(常温洗+烘干)", "三角形拖布动态加压", "结构光避障(IPS4.0)"], "tech": ["LDS激光导航", "结构光避障IPS4.0(毫米级)", "三角形拖布180转/分动态加压7-12N", "气旋导流式防缠绕滚刷"], "tech_hl": ["首创轻集尘系统(机身自集尘体积小成本低)", "首创气旋导流式防缠绕滚刷(SGS/莱茵认证0%缠留)", "7800Pa吸力(较J3翻倍颗粒物去除99%)", "鲸灵托管2.0智能复洗复扫"], "pros": ["拖地干净(动态加压去顽渍)", "真正0缠毛长发/养宠友好", "轻集尘免倒尘维护省心", "结构光避障补齐短板", "性价比高(现促价格香)"], "cons": ["吸力7800Pa相对新款偏低", "无热水洗(仅常温洗+烘干)", "无边刷/拖布机械臂无视频管家", "上市较早(2023)智能化弱于逍遥/J5"], "pros_score": 7.8, "cons_score": 3.2, "mop_type": "双盘旋转加压拖地(勒洛三角拖布+180转/分,7-12N智能调压)", "wash_method": "基站常温洗拖布+40℃热风烘干(无热水洗)", "auto_wash": "有(基站自动洗拖布)", "manual_mop": "否", "maintain_diff": "易", "climb": "标准越障约2cm(20mm)；不可爬楼梯", "stuck": "很少；双向3D结构光避障，气旋导流防缠绕滚刷"}, {"brand": "小米/米家", "model": "米家全能扫拖机器人 M30 Pro", "year": 2023, "price": "约2199-2999元", "area": "未找到", "features": ["扫拖一体", "自动集尘", "热水洗拖布", "热风烘干", "切割毛发防缠绕"], "tech": ["LDS激光导航", "旋转加压拖地", "LDS激光避障"], "tech_hl": ["一体式智能基站集洗/集/烘", "接入米家生态", "性价比高"], "pros": ["性价比高、米家App好用", "清扫干净毛发防缠绕", "热水洗拖布+烘干不发臭"], "cons": ["避障一般(老款LDS)", "拖地偶有水痕", "基站集尘容量偏小"], "pros_score": 8.0, "cons_score": 4.0, "mop_type": "双盘旋转加压拖地(扭扭擦动态沿边)", "wash_method": "基站60℃热水洗+2h热风烘干", "auto_wash": "有(基站自动洗+烘干)", "manual_mop": "否", "maintain_diff": "中", "climb": "约2cm门槛，不可爬楼梯", "stuck": "很少；透明玻璃/反光面识别较差"}, {"brand": "小米/米家", "model": "米家扫拖机器人 M40", "year": 2024, "price": "水箱版2999/上下水版3398元(国补约2392/2912)", "area": "约50-210㎡", "features": ["扫拖一体", "双机械臂", "自动集尘75天", "70℃高温洗烘", "热风烘干", "防缠绕"], "tech": ["LDS全景激光导航", "S-Cross广域结构光避障(110°)", "双旋转拖布", "20mm越障"], "tech_hl": ["双机械臂毫米级贴边", "12000Pa+主刷边刷双重防缠", "70℃洗烘+抗菌自集尘"], "pros": ["养宠家庭毛发零缠绕", "双机械臂贴边覆盖高", "高温洗烘不发臭75天免倒", "米家App远程省心", "噪音可控"], "cons": ["基站集尘容量偏小(大户型2天清)", "爬坡一般过高门石停顿", "远程偶发延迟", "超强档噪音大顽固油污需补洗"], "pros_score": 8.2, "cons_score": 4.2, "mop_type": "双盘旋转拖布(机械臂边拖延伸)", "wash_method": "基站70℃高温洗+2h热风烘干", "auto_wash": "有(基站自动洗+烘干)", "manual_mop": "否", "maintain_diff": "中", "climb": "约2cm(20mm)门槛，不可爬楼梯", "stuck": "很少；门槛过高偶发停顿"}, {"brand": "小米/米家", "model": "米家扫拖机器人 5 Pro", "year": 2025, "price": "水箱版3999/上下水版4699元(国补约3399/3994)", "area": "未找到", "features": ["扫拖一体", "AI三摄全景识别", "双机械臂", "智能升降雷达", "80℃烫洗", "2h烘干", "底盘刮洗", "自动集尘75天", "自动上下水+加清洁液", "视频管家"], "tech": ["AI三摄全景识别(200物体/47脏污)", "可升降激光雷达", "双旋转拖布可升降"], "tech_hl": ["米家最强AI清洁主机23000Pa", "智能升降雷达钻低矮家具", "80℃烫洗+底盘刮洗+视频管家"], "pros": ["旗舰级清洁力与避障", "全场景托管视频管家好用", "接入澎湃智联/小爱"], "cons": ["价格偏高(上下水版近4700)", "高端功能溢价明显"], "pros_score": 8.5, "cons_score": 3.5, "mop_type": "双盘旋转加压拖布(机械臂边拖延伸)", "wash_method": "基站80℃热水洗+2h热风烘干", "auto_wash": "有(基站自动洗+烘干)", "manual_mop": "否", "maintain_diff": "中", "climb": "约2cm(20mm)门槛，不可爬楼梯", "stuck": "很少；细小物体(如乐高)偶误判"}, {"brand": "美的", "model": "灵眸 V15 MaxS", "year": 2024, "price": "水箱版2999/上下水版3598元", "area": "未找到", "features": ["扫拖一体", "柔性机械臂", "三刃切割防缠", "75℃高温动态洗", "55℃热风双烘干", "自动集尘75天", "可拆卸清洗盘"], "tech": ["LDS导航", "柔性机械臂+三刃切割(400次/分)", "AI避障150种", "AI地图2D/3D"], "tech_hl": ["19000Pa+柔性机械臂贴边", "75℃动态洗+55℃双烘干+99.99%除菌", "全空间AI管家自定义策略"], "pros": ["机械臂边角清洁强", "毛发切割彻底", "高温洗烘防霉(南方友好)"], "cons": ["基站体积偏大", "高噪音档较吵", "高端功能学习成本略高"], "pros_score": 8.0, "cons_score": 4.0, "mop_type": "双盘旋转加压拖地(柔性机械臂贴边)", "wash_method": "基站75℃高温热水动态洗+55℃热风烘干", "auto_wash": "有(基站自动洗拖布)", "manual_mop": "否", "maintain_diff": "中", "climb": "未找到明确越障高度(高端款可越常见门槛)", "stuck": "很少；可识别约150种家具"}, {"brand": "美的", "model": "灵眸 V15 Pro", "year": 2024, "price": "约2874-3989元(国补后约2874起)", "area": "未找到官方值(评测约80-120㎡)", "features": ["扫拖一体", "AI柔性机械臂抬升", "恒压拖地", "三刃切割防缠", "60℃热水洗拖布", "55℃烘干", "自动上下水", "母婴级除菌", "AI视觉避障"], "tech": ["AI视觉避障(摄像头+传感器)", "LDS", "7N对地压力恒压拖地"], "tech_hl": ["300mm超薄基站(约30cm)", "边角拖洗率98.95%贴边99.99%", "母婴级99.99%除菌认证"], "pros": ["超薄基站省空间", "机械臂探缝毛发切割干净", "自动上下水解放双手", "母婴除菌安心"], "cons": ["价格较高", "工作噪音偏高(约78dB)", "复杂语音指令偶尔失灵", "基站需定期维护"], "pros_score": 8.2, "cons_score": 4.0, "mop_type": "双盘旋转加压拖地(柔性机械臂/仿人手伸缩拖布)", "wash_method": "基站75℃热水洗+55℃烘干+6臂刮洗自清洁", "auto_wash": "有(基站自动洗拖布)", "manual_mop": "否", "maintain_diff": "中", "climb": "约2.2cm(22mm)门槛，不可爬楼梯", "stuck": "很少；干湿分类避障"}, {"brand": "美的", "model": "灵眸 V16 珍珠版", "year": 2024, "price": "珍珠版水箱约2200-2900元(上下水版更高)", "area": "未找到", "features": ["扫拖一体", "柔性机械臂", "三爪边刷防缠", "活水洗", "0缠绕", "自动清洗", "超薄上下水基站"], "tech": ["LDS导航", "22000Pa飓风吸力", "污水箱除臭+3in1除菌净味", "29.8cm超薄基站"], "tech_hl": ["22000Pa+柔性拖布机械臂", "毛发防缠系统", "超薄上下水基站+污水箱除臭"], "pros": ["性价比高吸力强", "防缠绕好", "超薄基站好摆放"], "cons": ["珍珠版导航避障较基础", "水箱版需手动换水", "活水洗维护需留意"], "pros_score": 7.8, "cons_score": 4.5, "mop_type": "双盘旋转拖布(仿生柔性机械臂贴边)", "wash_method": "基站活水洗拖布(自动洗+烘干，具体水温未找到)", "auto_wash": "有(基站活水自动洗)", "manual_mop": "否", "maintain_diff": "中", "climb": "约2.2cm(22mm)门槛，不可爬楼梯", "stuck": "很少；线激光避障"}, {"brand": "360", "model": "扫地机器人 S10", "year": 2021, "price": "国内发布价约3999元(现清仓/海外约$679)", "area": "约100㎡(520ml水箱;5000mAh/180min)", "features": ["扫拖一体", "隐藏式三目LiDAR导航", "3D立体避障", "自动回充", "多楼层地图"], "tech": ["隐藏式三目LiDAR(1LDS+2OLS)", "航天级dToF", "8.5cm超薄", "3300Pa", "2cm越障"], "tech_hl": ["隐藏式LiDAR机身仅8.5cm超薄", "三目LiDAR+3D避障识别100+物体", "无摄像头隐私友好"], "pros": ["超薄钻床底", "避障灵敏不吸玩具", "3300Pa大吸力宠物毛强", "富功能App+2D/3D地图"], "cons": ["无自动集尘基站需手动倒尘", "拖地仅固定擦拭无洗擦", "语音提示吵", "高吸力档续航下降"], "pros_score": 7.5, "cons_score": 5.0, "mop_type": "平板拖布(单块固定拖布)", "wash_method": "需手动洗(无自清洁基站)", "auto_wash": "无(需手动)", "manual_mop": "是", "maintain_diff": "中", "climb": "约2cm门槛(海外称20mm存疑)，不可爬楼梯", "stuck": "偶尔；3D避障但无摄像头，暗处一般"}, {"brand": "360", "model": "扫地机器人 X90", "year": 2024, "price": "约989-1060元", "area": "未找到官方值(推广文称约80㎡存疑)", "features": ["扫拖一体", "LDS激光导航", "双避障模式", "智能拖地", "APP控制"], "tech": ["LDS激光导航", "双避障模式", "约55dB低噪"], "tech_hl": ["千元级LDS激光导航规划", "价格亲民", "低噪"], "pros": ["千元有激光导航性价比高", "建图准不瞎转", "轻巧噪音低"], "cons": ["避障/拖地入门级", "无自清洁基站(自动洗拖布官方未确认)", "低矮障碍识别待优化"], "pros_score": 7.5, "cons_score": 4.5, "mop_type": "平板拖布(可拆拖布支架)", "wash_method": "需手动洗(仅充电座)", "auto_wash": "无(需手动)", "manual_mop": "是", "maintain_diff": "中", "climb": "约2cm门槛，不可爬楼梯", "stuck": "偶尔；超声波+激光，较老款"}, {"brand": "360", "model": "扫地机器人 C50", "year": 2025, "price": "899元", "area": "约120㎡", "features": ["扫拖一体", "干湿两用", "APP控制", "6大音箱适配", "自动回充"], "tech": ["2600Pa四挡吸力", "79mm超薄", "2600mAh/120min", "0.51L尘盒+0.3L水箱"], "tech_hl": ["79mm超薄入床底沙发底", "实体遥控+APP双操控", "千元内入门"], "pros": ["便宜超薄", "吸力够用APP+遥控方便", "适合小户型租房"], "cons": ["吸力偏小(2600Pa)", "无自清洁基站功能基础", "低矮障碍识别待优化"], "pros_score": 7.2, "cons_score": 5.0, "mop_type": "平板拖布(固定拖布)", "wash_method": "需手动洗(仅充电座)", "auto_wash": "无(需手动)", "manual_mop": "是", "maintain_diff": "易", "climb": "约1.5–2cm门槛，不可爬楼梯", "stuck": "常见；无AI避障仅红外+碰撞"}, {"brand": "由利(Uoni)", "model": "A1 Pro", "year": 2023, "price": "约3999-5299元(首发5299,活动约4179)", "area": "未找到", "features": ["扫拖一体", "实时水洗自清洁", "UStation360基站", "45℃烘干", "电解水除菌", "自动倒垃圾", "自动补水"], "tech": ["ULineLaser3D(隐藏式dToF+3D线激光)", "非摄像头隐私方案", "ASAR V13算法", "滚刷拖布实时水洗+水循环"], "tech_hl": ["全球首款实时水洗自清洁", "水循环过滤节水免维护", "UStation360六合一免打理基站"], "pros": ["实时水洗拖地真干净无水渍", "免维护基站解放双手", "非摄像头隐私安心", "除菌到位"], "cons": ["上市较早旗舰价高", "品牌活跃度/售后声量下降", "水循环需定期维护", "机身偏重"], "pros_score": 7.8, "cons_score": 4.5, "mop_type": "滚筒活水洗地(实时水洗自清洁滚刷)", "wash_method": "活水循环自洗+基站45℃热风烘干", "auto_wash": "有(实时自清洁+基站洗滚刷)", "manual_mop": "否", "maintain_diff": "中", "climb": "未找到明确越障高度", "stuck": "很少；ULineLaser 3D线激光"}, {"brand": "由利(Uoni)", "model": "V980 Pro", "year": 2021, "price": "约3099元", "area": "未找到(同系V980 Max标250㎡)", "features": ["扫拖一体", "自动集尘", "UV紫光除菌", "扫吸拖倒除菌五合一"], "tech": ["第九代激光导航ULDS9.0", "1000W 10秒集尘", "3000Pa", "25项传感器", "2cm越障"], "tech_hl": ["1000W自动集尘4.3L尘袋月抛", "UV紫光除菌99.99%", "第九代激光精准建图多地图"], "pros": ["自动集尘不扬尘", "建图精准越障强", "UV除菌+抑菌拖布", "续航长(5200mAh/200min)"], "cons": ["吸力相对新旗舰偏低", "无热水洗/自动洗拖布", "基站功能较老", "拖地非自清洁"], "pros_score": 7.5, "cons_score": 5.0, "mop_type": "平板拖布(电控水箱+抑菌/一次性拖布)", "wash_method": "需手动洗(基站仅自动集尘)", "auto_wash": "无(需手动/换一次性)", "manual_mop": "是(抑菌拖布需手洗)", "maintain_diff": "中", "climb": "约2cm门槛，不可爬楼梯", "stuck": "很少；30组传感器+激光，脱困好"}, {"brand": "由利(Uoni)", "model": "V980 Plus", "year": 2021, "price": "约2899元", "area": "未找到(参考同系约250㎡)", "features": ["扫拖一体", "自动集尘", "APP远程智控"], "tech": ["2700Pa吸力", "集尘宝10秒集尘4.3L尘袋", "LDS激光规划"], "tech_hl": ["一键10秒集尘回收率99%", "4.3L大尘袋月抛", "性价比自动集尘"], "pros": ["自动集尘省心", "价格低于Pro", "扫拖干净App好用"], "cons": ["2700Pa吸力偏弱", "无热水洗拖布/无自清洁基站", "功能较基础避障传统"], "pros_score": 7.3, "cons_score": 5.0, "mop_type": "平板拖布(震动拖地)", "wash_method": "需手动洗(基站仅自动集尘)", "auto_wash": "无(需手动)", "manual_mop": "是", "maintain_diff": "中", "climb": "约2cm门槛，不可爬楼梯", "stuck": "偶尔；LIDAR+25红外"}];
+const BRANDS = [...new Set(DATA.map(d => d.brand))];
+
+// 解析国行最低价（元）：优先¥，其次$×7.2，其次“数字元”，否则取首个数字
+function priceNum(p){
+  const ys = [...p.matchAll(/¥\s*(\d+(?:\.\d+)?)/g)].map(m=>+m[1]);
+  if(ys.length) return Math.min(...ys);
+  const ds = [...p.matchAll(/\$\s*(\d+(?:\.\d+)?)/g)].map(m=>+m[1]);
+  if(ds.length) return Math.min(...ds)*7.2;
+  const ns = [...p.matchAll(/(\d+(?:\.\d+)?)\s*元/g)].map(m=>+m[1]);
+  if(ns.length) return Math.min(...ns);
+  const any = [...p.matchAll(/(\d+(?:\.\d+)?)/g)].map(m=>+m[1]);
+  return any.length ? Math.min(...any) : Infinity;
+}
+// 解析越障最高 cm（兼容 cm / mm）
+function climbCm(c){
+  const ms = [...c.matchAll(/(\d+(?:\.\d+)?)\s*(cm|mm)/gi)].map(m=>{let v=+m[1];return m[2].toLowerCase()==='mm'?v/10:v;});
+  return ms.length ? Math.max(...ms) : null;
+}
+
+// 筛选状态
+const F = { brands:new Set(), kw:'', prosMin:0, consMax:10, priceMax:10000,
+            auto:'all', maint:'all', climbMin:0, mop:'all', stuck:'all' };
+
+function pass(d){
+  if(F.brands.size && !F.brands.has(d.brand)) return false;
+  if(F.kw){
+    const k = F.kw.toLowerCase();
+    const hay = (d.brand + d.model + d.features.join('') + d.tech.join('') + d.tech_hl.join('') + d.pros.join('') + d.cons.join('')).toLowerCase();
+    if(!hay.includes(k)) return false;
+  }
+  if(d.pros_score < F.prosMin) return false;
+  if(d.cons_score > F.consMax) return false;
+  if(priceNum(d.price) > F.priceMax) return false;
+  if(F.auto !== 'all'){
+    const auto = d.auto_wash.startsWith('有');
+    if(F.auto === 'yes' && !auto) return false;
+    if(F.auto === 'no' && auto) return false;
+  }
+  if(F.maint !== 'all' && d.maintain_diff !== F.maint) return false;
+  const cc = climbCm(d.climb);
+  if(F.climbMin > 0 && (cc === null || cc < F.climbMin)) return false;
+  if(F.mop !== 'all' && !d.mop_type.includes(F.mop)) return false;
+  if(F.stuck !== 'all' && !d.stuck.includes(F.stuck)) return false;
+  return true;
+}
+function filtered(){ return DATA.filter(pass); }
+
+// 渲染辅助
+function bar(v, good){ const col = good ? '#2E8B57' : '#C0392B';
+  return '<div class="bar"><i style="width:'+(v*10)+'%;background:'+col+'"></i></div>'; }
+function rowHTML(r){
+  return '<tr><td class="brand">'+r.brand+'</td><td>'+r.model+'</td><td>'+r.year+'</td><td>'+r.price+'</td><td>'+r.area+'</td>'
+    +'<td>'+r.features.join('、')+'</td><td>'+r.tech.join('、')+'</td><td>'+r.tech_hl.join('、')+'</td>'
+    +'<td>'+r.pros.join('、')+'</td><td>'+r.cons.join('、')+'</td>'
+    +'<td>'+bar(r.pros_score,true)+' '+r.pros_score.toFixed(1)+'</td>'
+    +'<td>'+bar(r.cons_score,false)+' '+r.cons_score.toFixed(1)+'</td>'
+    +'<td>'+r.mop_type+'</td><td>'+r.wash_method+'</td><td>'+r.auto_wash+'</td><td>'+r.manual_mop+'</td>'
+    +'<td>'+r.maintain_diff+'</td><td>'+r.climb+'</td><td>'+r.stuck+'</td></tr>';
+}
+function miniRow(r){
+  return '<tr><td class="brand">'+r.brand+'</td><td>'+r.model+'</td><td>'+r.price+'</td>'
+    +'<td>'+r.pros.join('；')+'</td><td>'+r.cons.join('；')+'</td>'
+    +'<td>'+bar(r.pros_score,true)+' '+r.pros_score.toFixed(1)+'</td>'
+    +'<td>'+bar(r.cons_score,false)+' '+r.cons_score.toFixed(1)+'</td></tr>';
+}
+function chartRow(r, key, good){
+  const col = good ? '#2E8B57' : '#C0392B';
+  return '<div class="chartrow"><div class="nm">'+r.brand+' '+r.model+'</div>'
+    +'<div class="bar"><i style="width:'+(r[key]*10)+'%;background:'+col+'"></i></div>'
+    +'<div style="width:34px;text-align:right">'+r[key].toFixed(1)+'</div></div>';
+}
+
+// 完整明细排序状态
+let sortKey = 'pros_score', sortAsc = false;
+function cmp(a, b){
+  let x = a[sortKey], y = b[sortKey];
+  if(sortKey === 'price'){ x = priceNum(a.price); y = priceNum(b.price); }
+  if(sortKey === 'climb'){ x = climbCm(a.climb) || -1; y = climbCm(b.climb) || -1; }
+  if(typeof x === 'number' && typeof y === 'number') return sortAsc ? x-y : y-x;
+  x = ''+x; y = ''+y;
+  return sortAsc ? x.localeCompare(y,'zh') : y.localeCompare(x,'zh');
+}
+
+function renderAll(){
+  const arr = filtered();
+  document.getElementById('fCount').textContent = arr.length;
+  // 区块一：好评度降序
+  document.querySelector('#tblGood tbody').innerHTML =
+    arr.slice().sort((a,b)=>b.pros_score-a.pros_score).map(miniRow).join('');
+  // 区块二：差评度降序
+  document.querySelector('#tblBad tbody').innerHTML =
+    arr.slice().sort((a,b)=>b.cons_score-a.cons_score).map(miniRow).join('');
+  // 图表 Top10
+  document.getElementById('chartGood').innerHTML =
+    arr.slice().sort((a,b)=>b.pros_score-a.pros_score).slice(0,10).map(r=>chartRow(r,'pros_score',true)).join('');
+  document.getElementById('chartBad').innerHTML =
+    arr.slice().sort((a,b)=>b.cons_score-a.cons_score).slice(0,10).map(r=>chartRow(r,'cons_score',false)).join('');
+  // 明细（按当前排序）
+  document.querySelector('#full tbody').innerHTML = arr.slice().sort(cmp).map(rowHTML).join('');
+  // 表头箭头
+  document.querySelectorAll('#full thead th').forEach(th=>{
+    const k = th.getAttribute('data-key');
+    th.innerHTML = th.innerHTML.replace(/\s*<span class="arrow">[^<]*<\/span>$/,'');
+    if(k === sortKey){ th.innerHTML += ' <span class="arrow">'+(sortAsc?'▲':'▼')+'</span>'; }
+  });
+  // 空结果提示
+  if(arr.length === 0){
+    document.querySelector('#full tbody').innerHTML = '<tr><td colspan="19" style="text-align:center;padding:24px;color:#8a99a8">未匹配到任何型号，试试放宽筛选条件</td></tr>';
+  }
+}
+
+// 绑定品牌复选
+const brandBox = document.getElementById('brandBox');
+BRANDS.forEach(b=>{
+  const lab = document.createElement('label');
+  lab.textContent = b;
+  const inp = document.createElement('input');
+  inp.type = 'checkbox'; inp.value = b;
+  inp.onchange = ()=>{ if(inp.checked){ F.brands.add(b); lab.classList.add('on'); }
+    else { F.brands.delete(b); lab.classList.remove('on'); } renderAll(); };
+  lab.prepend(inp);
+  brandBox.appendChild(lab);
+});
+
+// 绑定其它控件
+document.getElementById('fKw').oninput = e=>{ F.kw = e.target.value.trim(); renderAll(); };
+document.getElementById('fPros').oninput = e=>{ F.prosMin = +e.target.value; document.getElementById('prosVal').textContent = F.prosMin.toFixed(1); renderAll(); };
+document.getElementById('fCons').oninput = e=>{ F.consMax = +e.target.value; document.getElementById('consVal').textContent = F.consMax.toFixed(1); renderAll(); };
+document.getElementById('fPrice').oninput = e=>{ F.priceMax = +e.target.value; document.getElementById('priceVal').textContent = F.priceMax>=10000?'不限':'¥'+F.priceMax; renderAll(); };
+document.getElementById('fAuto').onchange = e=>{ F.auto = e.target.value; renderAll(); };
+document.getElementById('fMaint').onchange = e=>{ F.maint = e.target.value; renderAll(); };
+document.getElementById('fClimb').onchange = e=>{ F.climbMin = +e.target.value; renderAll(); };
+document.getElementById('fMop').onchange = e=>{ F.mop = e.target.value; renderAll(); };
+document.getElementById('fStuck').onchange = e=>{ F.stuck = e.target.value; renderAll(); };
+document.getElementById('fReset').onclick = ()=>{
+  F.brands.clear(); F.kw=''; F.prosMin=0; F.consMax=10; F.priceMax=10000;
+  F.auto='all'; F.maint='all'; F.climbMin=0; F.mop='all'; F.stuck='all';
+  document.querySelectorAll('#brandBox input').forEach(i=>{i.checked=false; i.parentElement.classList.remove('on');});
+  document.getElementById('fKw').value='';
+  document.getElementById('fPros').value=0; document.getElementById('prosVal').textContent='0.0';
+  document.getElementById('fCons').value=10; document.getElementById('consVal').textContent='10.0';
+  document.getElementById('fPrice').value=10000; document.getElementById('priceVal').textContent='不限';
+  ['fAuto','fMaint','fClimb','fMop','fStuck'].forEach(id=>document.getElementById(id).value='all');
+  renderAll();
+};
+
+// 明细表头排序
+document.querySelectorAll('#full thead th').forEach(th=>{
+  th.onclick = ()=>{ const k = th.getAttribute('data-key');
+    if(k === sortKey){ sortAsc = !sortAsc; } else { sortKey = k; sortAsc = false; }
+    renderAll(); };
+});
+
+renderAll();
+</script>
+</body></html>

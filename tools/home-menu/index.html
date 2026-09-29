@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#e8552d">
+<title>家常点餐 · 在家吃什么</title>
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="phone">
+
+  <header class="app-header">
+    <div class="brand">🍲 家常点餐</div>
+    <div class="sub">今天在家，吃这几道</div>
+  </header>
+
+  <!-- 我的点餐 · 主页概览板块 -->
+  <section id="cart-overview" class="cart-overview"></section>
+
+  <div class="search-bar">
+    <span class="ico">🔍</span>
+    <input id="search" type="search" placeholder="搜菜名 / 食材 / 口味（如 减脂、川味、羊肉）" autocomplete="off">
+    <button id="clear-search" class="clear" hidden>×</button>
+  </div>
+
+  <nav class="cats" id="cats"></nav>
+
+  <main id="list" class="list"></main>
+
+  <!-- 底部导航 -->
+  <nav class="bottom-nav">
+    <button data-view="menu" class="active"><span>🍽️</span>菜单</button>
+    <button data-view="cart"><span>🛒</span>我的点餐<span id="cart-badge" class="badge" hidden>0</span></button>
+    <button data-view="myths"><span>📖</span>相克百科</button>
+  </nav>
+
+  <!-- 详情页 -->
+  <section class="overlay" id="detail" hidden>
+    <div class="sheet" id="detail-body"></div>
+  </section>
+
+  <!-- 我的点餐（独立全屏视图） -->
+  <section class="overlay view" id="cart" hidden>
+    <div class="sheet" id="cart-body"></div>
+  </section>
+
+  <!-- 相克百科 -->
+  <section class="overlay" id="myths" hidden>
+    <div class="sheet" id="myths-body"></div>
+  </section>
+
+  <div class="toast" id="toast" hidden></div>
+</div>
+
+<script src="js/rules.js"></script>
+<script src="js/dish-01-pork.js"></script>
+<script src="js/dish-02-beef-lamb.js"></script>
+<script src="js/dish-03-poultry-egg.js"></script>
+<script src="js/dish-04-tofu.js"></script>
+<script src="js/dish-05-seafood.js"></script>
+<script src="js/dish-06-veg.js"></script>
+<script src="js/dish-07-cold-soup.js"></script>
+<script src="js/dish-08-staple.js"></script>
+<script src="js/photos.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

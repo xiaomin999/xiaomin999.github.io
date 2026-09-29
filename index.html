@@ -387,6 +387,34 @@
       <rect x="8.9" y="12" width="6.2" height="9" rx="1.6" opacity=".65"/>
       <rect x="14.8" y="3.2" width="6.2" height="17.8" rx="1.6"/>
     </g>
+    <!-- 碗/家常菜 -->
+    <g id="i-bowl">
+      <path d="M3 11h18a9 9 0 0 1-18 0z" fill="currentColor" opacity=".5"/>
+      <rect x="2.4" y="9.4" width="19.2" height="2.3" rx="1.15" fill="currentColor"/>
+      <path d="M8.4 6.4c0-1.3 1.3-1.7 1.3-3.1M12 5.2c0-1.5 1.4-2 1.4-3.6M15.6 6.4c0-1.3 1.3-1.7 1.3-3.1"
+            fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" opacity=".55"/>
+    </g>
+    <!-- 书 -->
+    <g id="i-book" fill="currentColor">
+      <path d="M12 5.6C10.2 4.3 8 3.7 3.6 3.7v13.6c4.4 0 6.6.7 8.4 2.1 1.8-1.4 4-2.1 8.4-2.1V3.7c-4.4 0-6.6.6-8.4 1.9z" opacity=".5"/>
+      <rect x="11.1" y="5.3" width="1.8" height="14.2" rx=".9"/>
+      <g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" opacity=".5">
+        <path d="M5.6 8.4h4M5.6 11.8h4M14.4 8.4h4M14.4 11.8h4"/>
+      </g>
+    </g>
+    <!-- 数据报告 -->
+    <g id="i-report" fill="currentColor">
+      <path d="M13.2 2.6H6.6A2.4 2.4 0 0 0 4.2 5v14a2.4 2.4 0 0 0 2.4 2.4h10.8a2.4 2.4 0 0 0 2.4-2.4V8.6z" opacity=".45"/>
+      <path d="M13.2 2.6V6a2.6 2.6 0 0 0 2.6 2.6h3.4z" opacity=".75"/>
+      <rect x="7.5" y="14.4" width="2.4" height="4.6" rx="1.1" opacity=".7"/>
+      <rect x="11.3" y="11.8" width="2.4" height="7.2" rx="1.1" opacity=".7"/>
+      <rect x="15.1" y="10" width="2.4" height="9" rx="1.1"/>
+    </g>
+    <!-- 定位/攻略 -->
+    <g id="i-map" fill="currentColor">
+      <path d="M12 2.4c4.2 0 7.6 3.4 7.6 7.6 0 5.4-7.6 11.6-7.6 11.6S4.4 15.4 4.4 10C4.4 5.8 7.8 2.4 12 2.4z" opacity=".5"/>
+      <circle cx="12" cy="10" r="2.9"/>
+    </g>
   </defs>
 </svg>
 
@@ -426,7 +454,7 @@
   </div>
   <footer>
     <span>共 <b id="cnt2">0</b> 个工具 · 最近使用记录在本机</span>
-    <span>更新于 2026-09-16</span>
+    <span>更新于 2026-09-29</span>
   </footer>
 </main>
 
@@ -436,6 +464,7 @@ const TOOLS = [
   { cat:"健康生活", name:"配料表风险扫描", desc:"拍照识别配料表与成分，标注风险等级", url:"https://xiaomin999.github.io/ingredient-risk-scanner/", host:"github.io", icon:"i-scan", g:"linear-gradient(135deg,#4dd0a7,#0d9488)", live:1 },
   { cat:"健康生活", name:"低GI控糖 · 胰岛素友好餐", desc:"食物库 · 拍照识别升糖指数 · 定制备餐计划", url:"https://xiaomin999.github.io/lowgi-insulin/", host:"github.io", icon:"i-drop", g:"linear-gradient(135deg,#5fd6c0,#0f9d8f)", live:1, tag:"PWA" },
   { cat:"健康生活", name:"今天吃什么 · 减脂版", desc:"按热量与口味给出当天三餐搭配建议", url:"tools/diet-picker/", host:"本站", icon:"i-utensils", g:"linear-gradient(135deg,#7ed957,#3f9c35)", live:1 },
+  { cat:"健康生活", name:"家常点餐 · 在家吃什么", desc:"8 大类家常菜谱 · 相克百科 · 一键生成采购清单", url:"tools/home-menu/", host:"本站", icon:"i-bowl", g:"linear-gradient(135deg,#ff9f6b,#ef6c1a)", live:1 },
   { cat:"健康生活", name:"情侣减脂打卡助手（初代）", desc:"已由「肥肉减速带」取代，仅作历史留档", url:"tools/couple-fatloss-legacy/", host:"归档", icon:"i-archive", g:"linear-gradient(135deg,#cbd5e1,#94a3b8)", live:0, tag:"归档" },
 
   { cat:"搞钱与财务", name:"电商作战室", desc:"选品流水线 · 素材库 · 内容生成 · 市场情报", url:"https://xiaomin999.github.io/ecom-warroom/", host:"github.io", icon:"i-cart", g:"linear-gradient(135deg,#5b9dff,#2563eb)", live:1, tag:"PWA" },
@@ -451,13 +480,17 @@ const TOOLS = [
   { cat:"学习成长", name:"学习工作台 · 四合一", desc:"SQL / Excel / Python / Java 刷题练习", url:"tools/study-workbench/", host:"本站", icon:"i-code", g:"linear-gradient(135deg,#3ec9d6,#0891b2)", live:1 },
   { cat:"学习成长", name:"小陈自用学习计划", desc:"岗位能力拆解 · 分阶段路线图 · 每日计划", url:"tools/career-study-plan/", host:"本站", icon:"i-route", g:"linear-gradient(135deg,#b39dfb,#7c3aed)", live:1 },
   { cat:"学习成长", name:"学习目标管理台", desc:"今日 / 看板 / 周视图 / 我的，目标与打卡", url:"tools/goal-tracker/", host:"本站", icon:"i-target", g:"linear-gradient(135deg,#5fd18c,#16a34a)", live:1 },
+  { cat:"学习成长", name:"吉大统计学 · 教材通读复习", desc:"8 门专业课逐章通读计划 · 每日进度 · 自测题库", url:"tools/jlu-stats-review/", host:"本站", icon:"i-book", g:"linear-gradient(135deg,#74a8fd,#3b5bdb)", live:1 },
 
   { cat:"效率工具", name:"小助理自律工作台", desc:"待办 · 习惯 · 打卡 · 复盘 · 理财", url:"tools/self-discipline-hub/", host:"本站", icon:"i-check", g:"linear-gradient(135deg,#ff8fb1,#e5367e)", live:1 },
   { cat:"效率工具", name:"个人办公台", desc:"今日待办 · 灵感速记 · 项目跟进 · 周复盘", url:"tools/office-workbench/", host:"本站", icon:"i-case", g:"linear-gradient(135deg,#94a3b8,#475569)", live:1 },
   { cat:"效率工具", name:"数据分析工作台", desc:"任务看板 · SQL/Python 片段库 · 指标字典", url:"tools/data-analysis-workbench/", host:"本站", icon:"i-bar", g:"linear-gradient(135deg,#4fb0e8,#0284c7)", live:1 },
   { cat:"效率工具", name:"Boardly 协作白板", desc:"Canvas 绘图白板，支持网格开关", url:"tools/whiteboard/", host:"本站", icon:"i-pen", g:"linear-gradient(135deg,#ffab6b,#ea580c)", live:1 },
   { cat:"效率工具", name:"个人计划表", desc:"日程与计划编排，Supabase 云同步", url:"https://xiaomin999.github.io/personal-plan/", host:"github.io", icon:"i-calendar", g:"linear-gradient(135deg,#74c0fc,#1c7ed6)", live:1 },
-  { cat:"效率工具", name:"微步 MicroStep", desc:"把大目标拆成每天可执行的一小步", url:"tools/microstep/", host:"本站", icon:"i-steps", g:"linear-gradient(135deg,#b197fc,#7048e8)", live:1 }
+  { cat:"效率工具", name:"微步 MicroStep", desc:"把大目标拆成每天可执行的一小步", url:"tools/microstep/", host:"本站", icon:"i-steps", g:"linear-gradient(135deg,#b197fc,#7048e8)", live:1 },
+
+  { cat:"研究报告", name:"国内扫地机器人型号研究", desc:"8 大品牌 30 款主力型号 · 参数 / 价格 / 好评差评点", url:"tools/robot-vacuum-report/", host:"本站", icon:"i-report", g:"linear-gradient(135deg,#8fd3f4,#1876d2)", live:1, tag:"报告" },
+  { cat:"研究报告", name:"清远国庆三天旅游攻略", desc:"2026 国庆 3 天 2 晚 · 行程 / 美食 / 住宿 / 花费", url:"tools/qingyuan-trip/", host:"本站", icon:"i-map", g:"linear-gradient(135deg,#5ee7c4,#0ca678)", live:1, tag:"攻略" }
 ];
 
 const CAT_COLOR = {
@@ -465,7 +498,8 @@ const CAT_COLOR = {
   "搞钱与财务":"#2563eb",
   "内容运营":"#e11d48",
   "学习成长":"#7c3aed",
-  "效率工具":"#0d9488"
+  "效率工具":"#0d9488",
+  "研究报告":"#d97706"
 };
 const CATS = [...new Set(TOOLS.map(t => t.cat))];
 const KEY = "hub_recent_v1";
