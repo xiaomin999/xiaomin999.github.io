@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>创业方向合集 · 最快验证能不能成</title>
+  <link rel="stylesheet" href="style.css?v=1" />
+</head>
+<body>
+  <!-- 左侧可折叠导航 -->
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-logo">🚀</div>
+    <nav class="sidebar-nav">
+      <button class="nav-btn active" data-view="hub" title="方向合集">
+        <span class="nav-ico">📚</span><span class="nav-txt">方向合集</span>
+      </button>
+      <button class="nav-btn" data-view="validate" title="快速验证">
+        <span class="nav-ico">⚡</span><span class="nav-txt">快速验证</span>
+      </button>
+      <button class="nav-btn" data-view="assess" title="自我评估">
+        <span class="nav-ico">🎯</span><span class="nav-txt">自我评估</span>
+      </button>
+      <button class="nav-btn" data-view="prep" title="筹备清单">
+        <span class="nav-ico">🧰</span><span class="nav-txt">筹备清单</span>
+      </button>
+      <button class="nav-btn" data-view="breakeven" title="盈亏测算">
+        <span class="nav-ico">📊</span><span class="nav-txt">盈亏测算</span>
+      </button>
+    </nav>
+    <button id="collapseBtn" class="collapse-btn" title="收起/展开">⟨</button>
+  </aside>
+
+  <main class="main">
+    <!-- 顶栏 -->
+    <header class="topbar">
+      <div>
+        <h1>创业方向合集</h1>
+        <p class="subtitle">14 个能落地方向 · 怎么最快验证能不能成 · 要投多少钱 · 要准备什么</p>
+      </div>
+      <div class="topbar-tip">先验证，再投入 —— 用最小的钱，最快知道行不行</div>
+    </header>
+
+    <!-- 视图：方向合集 -->
+    <section id="view-hub" class="view active">
+      <div class="filter-bar" id="filterBar"></div>
+      <div class="stats-row" id="statsRow"></div>
+      <div id="cardsGrid" class="cards-grid"></div>
+    </section>
+
+    <!-- 视图：快速验证 -->
+    <section id="view-validate" class="view">
+      <div class="block">
+        <h2>三段式 MVP 验证画布</h2>
+        <p class="lead">核心原则：<b id="vpCore"></b></p>
+        <div id="phaseList" class="phase-list"></div>
+      </div>
+      <div class="block">
+        <h2>一键生成「7 天验证清单」</h2>
+        <p class="lead">选一个你心动的方向，自动套用它的验证步骤，打印出来照做。</p>
+        <div class="week-gen">
+          <select id="weekDirSelect" class="sel"></select>
+          <button id="genWeekBtn" class="btn-primary">生成我的清单</button>
+        </div>
+        <ol id="weekPlanList" class="week-plan"></ol>
+      </div>
+    </section>
+
+    <!-- 视图：自我评估 -->
+    <section id="view-assess" class="view">
+      <div class="block">
+        <h2>5 题找到最适合你的方向</h2>
+        <p class="lead">凭直觉选，我们会按你的能力、资金、资源给 14 个方向打分。</p>
+        <div id="quizBox" class="quiz-box"></div>
+        <div class="quiz-actions">
+          <span id="quizProgress" class="quiz-progress"></span>
+          <button id="quizResultBtn" class="btn-primary" disabled>看结果</button>
+        </div>
+        <div id="quizResult" class="quiz-result"></div>
+      </div>
+    </section>
+
+    <!-- 视图：筹备清单 -->
+    <section id="view-prep" class="view">
+      <div class="block">
+        <h2>通用筹备清单（按阶段勾选）</h2>
+        <p class="lead">不管做哪个方向，这四步都要走完。勾掉已完成项，灰色即已备。</p>
+        <div id="prepList" class="prep-list"></div>
+      </div>
+    </section>
+
+    <!-- 视图：盈亏测算 -->
+    <section id="view-breakeven" class="view">
+      <div class="block">
+        <h2>实体店盈亏平衡测算器</h2>
+        <p class="lead">选一个店型，数字已按同类店常规水平预填，你可按实际改。算出「每天至少卖多少单才不亏」。</p>
+        <div class="be-gen">
+          <select id="beDirSelect" class="sel"></select>
+        </div>
+        <div class="be-grid">
+          <label class="be-field">月租金 (¥)<input id="beRent" type="number" min="0" /></label>
+          <label class="be-field">月人工 (¥)<input id="beLabor" type="number" min="0" /></label>
+          <label class="be-field">月其他固定 (¥)<input id="beOther" type="number" min="0" /></label>
+          <label class="be-field">客单价 (¥)<input id="bePrice" type="number" min="0" /></label>
+          <label class="be-field">毛利率 (%)<input id="beMargin" type="number" min="0" max="100" /></label>
+        </div>
+        <div id="beResult" class="be-result"></div>
+        <p class="be-note">注：会员制/大单制店型（如健身房、婚庆摄影），客单价填「单次或单月均摊值」即可；结果为示意，请按真实账单调整。</p>
+      </div>
+    </section>
+
+    <footer class="foot">
+      本合集为方法论参考，不构成投资/创业建议 · 验证失败也是省钱的胜利
+    </footer>
+  </main>
+
+  <script src="data.js?v=1"></script>
+  <script src="app.js?v=1"></script>
+</body>
+</html>

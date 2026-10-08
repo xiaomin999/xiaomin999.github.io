@@ -425,6 +425,12 @@
       <path d="M11.4 2.2l1.85 5.15 5.15 1.85-5.15 1.85L11.4 16.2 9.55 11.05 4.4 9.2l5.15-1.85z"/>
       <path d="M18.2 14.6l.85 2.35 2.35.85-2.35.85-.85 2.35-.85-2.35-2.35-.85 2.35-.85z" opacity=".55"/>
     </g>
+    <!-- 罗盘/创业方向 -->
+    <g id="i-compass" fill="currentColor">
+      <circle cx="12" cy="12" r="9.2" opacity=".4"/>
+      <path d="M15.6 8.4 13.16 12.96 8.6 15.4 11.04 10.84z"/>
+      <circle cx="12" cy="12" r="1.45" opacity=".85"/>
+    </g>
   </defs>
 </svg>
 
@@ -464,7 +470,7 @@
   </div>
   <footer>
     <span>共 <b id="cnt2">0</b> 个工具 · 最近使用记录在本机</span>
-    <span>更新于 2026-09-29</span>
+    <span>更新于 2026-10-08</span>
   </footer>
 </main>
 
@@ -483,6 +489,7 @@ const TOOLS = [
   { cat:"搞钱与财务", name:"简记 · 记账", desc:"收支记账 · 分类占比 · Supabase 云同步", url:"https://xiaomin999.github.io/jianji/", host:"github.io", icon:"i-wallet", g:"linear-gradient(135deg,#f5c451,#d99e0b)", live:1 },
   { cat:"搞钱与财务", name:"需求挖掘工作台", desc:"收集客户原话 → 去重成数据池 → 导出 AI 分析包", url:"tools/demand-miner/", host:"本站", icon:"i-funnel", g:"linear-gradient(135deg,#ffa8a8,#e03131)", live:1 },
   { cat:"搞钱与财务", name:"AI 工具台", desc:"社媒原声监听 → 未满足需求 → 一键生成工作台方案", url:"tools/ai-tool-station/", host:"本站", icon:"i-sparkle", g:"linear-gradient(135deg,#a5a3ff,#5c5cf0)", live:1 },
+  { cat:"搞钱与财务", name:"创业方向合集", desc:"14 个能落地方向 · 7 天验证清单 · 盈亏平衡测算", url:"tools/startup-kit/", host:"本站", icon:"i-compass", g:"linear-gradient(135deg,#ffb86b,#e8590c)", live:1, tag:"新" },
 
   { cat:"内容运营", name:"红算子 · 小红书运营", desc:"采集雷达 · 内容工坊 · 转化路径 · 成长路线图", url:"https://xiaomin999.github.io/xhs-workbench/", host:"github.io", icon:"i-megaphone", g:"linear-gradient(135deg,#ff6b8b,#e11d48)", live:1 },
   { cat:"内容运营", name:"公众号全栈助推助手", desc:"定位排期 · 选题 · 写稿 · 配图 · 复盘全流程", url:"https://xiaomin999.github.io/gzh-booster/", host:"github.io", icon:"i-rocket", g:"linear-gradient(135deg,#ffa94d,#f76707)", live:1, tag:"PWA" },
