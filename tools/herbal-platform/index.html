@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>本草养生管理平台 · 中药材与养生茶饮</title>
+<style>
+  :root{
+    --bg:#f5f7f4; --card:#ffffff; --ink:#233029; --ink2:#5b6b61;
+    --line:#e3e9e3; --brand:#2e7d52; --brand-d:#1f5c3a;
+    --amber:#b8860b; --amber-bg:#fff6e0; --red:#c0392b; --red-bg:#fdecea;
+    --green:#2e7d52; --green-bg:#e7f4ec; --gray:#8a978f; --gray-bg:#eef1ee;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+  header{background:linear-gradient(135deg,#2e7d52,#1f5c3a);color:#fff;padding:22px 24px 18px}
+  header h1{margin:0;font-size:22px;letter-spacing:1px}
+  header p{margin:6px 0 0;font-size:13px;opacity:.9}
+  .disclaimer{background:var(--red-bg);color:#7a2018;border-bottom:1px solid #f3c9c4;
+    padding:10px 24px;font-size:13px;line-height:1.5}
+  .disclaimer b{color:var(--red)}
+  nav{display:flex;gap:6px;background:#fff;border-bottom:1px solid var(--line);padding:0 16px;flex-wrap:wrap}
+  nav button{background:none;border:none;border-bottom:3px solid transparent;padding:12px 14px;
+    font-size:15px;color:var(--ink2);cursor:pointer;font-family:inherit}
+  nav button.active{color:var(--brand);border-bottom-color:var(--brand);font-weight:600}
+  .toolbar{display:flex;gap:10px;padding:16px 24px;flex-wrap:wrap;align-items:center;background:#fff;border-bottom:1px solid var(--line)}
+  .toolbar input,.toolbar select{padding:8px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;font-family:inherit;background:#fff}
+  .toolbar input{flex:1;min-width:200px}
+  .toolbar .btn{background:var(--brand);color:#fff;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:14px;font-family:inherit}
+  .toolbar .btn:hover{background:var(--brand-d)}
+  .wrap{padding:20px 24px 60px;max-width:1280px;margin:0 auto}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 16px 14px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+  .card h3{margin:0 0 4px;font-size:17px;display:flex;align-items:center;gap:8px}
+  .card .sub{color:var(--ink2);font-size:12px;margin-bottom:10px}
+  .kv{font-size:13.5px;margin:7px 0}
+  .kv .k{color:var(--ink2);font-weight:600;display:inline-block;min-width:64px}
+  .tag{display:inline-block;font-size:11.5px;padding:2px 8px;border-radius:999px;margin:2px 3px 2px 0;line-height:1.5}
+  .t-high{background:var(--green-bg);color:var(--green)}
+  .t-mid{background:var(--amber-bg);color:var(--amber)}
+  .t-uncertain{background:var(--red-bg);color:var(--red)}
+  .t-gray{background:var(--gray-bg);color:var(--gray)}
+  .src{font-size:12px;color:var(--ink2);background:#f7f9f7;border:1px dashed var(--line);border-radius:8px;padding:8px 10px;margin-top:10px}
+  .src a{color:var(--brand);text-decoration:none;word-break:break-all}
+  .note{font-size:12.5px;color:#7a2018;background:var(--red-bg);border-radius:8px;padding:8px 10px;margin-top:10px;line-height:1.5}
+  .own{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:13px;color:var(--ink2)}
+  .own input{width:16px;height:16px;accent-color:var(--brand)}
+  .actions{margin-top:10px;display:flex;gap:8px}
+  .actions button{font-size:12px;padding:5px 10px;border-radius:7px;border:1px solid var(--line);background:#fff;cursor:pointer;font-family:inherit}
+  .actions .del{color:var(--red);border-color:#f3c9c4}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;font-size:13px;margin:8px 0 18px;color:var(--ink2)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .dot{width:11px;height:11px;border-radius:50%}
+  .section-title{font-size:18px;margin:6px 0 14px;color:var(--brand-d);font-weight:700}
+  .modal-mask{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:flex-start;justify-content:center;padding:40px 16px;z-index:50;overflow:auto}
+  .modal{background:#fff;border-radius:14px;padding:22px;width:min(560px,100%);max-height:90vh;overflow:auto}
+  .modal h3{margin:0 0 14px;color:var(--brand-d)}
+  .modal label{display:block;font-size:13px;color:var(--ink2);margin:10px 0 4px;font-weight:600}
+  .modal input,.modal textarea,.modal select{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:14px;font-family:inherit}
+  .modal textarea{min-height:64px;resize:vertical}
+  .modal .row{display:flex;gap:10px}
+  .modal .row>div{flex:1}
+  .modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:16px}
+  .modal-actions button{padding:9px 18px;border-radius:8px;border:none;cursor:pointer;font-family:inherit;font-size:14px}
+  .modal-actions .save{background:var(--brand);color:#fff}
+  .modal-actions .cancel{background:#eef1ee;color:var(--ink2)}
+  .empty{color:var(--ink2);text-align:center;padding:40px;font-size:14px}
+  .pages{display:none}
+  .pages.active{display:block}
+  .meta{font-size:12px;color:var(--gray);margin-top:8px}
+  .pill{font-size:11px;padding:1px 7px;border-radius:999px;background:var(--gray-bg);color:var(--gray)}
+  footer{text-align:center;color:var(--gray);font-size:12px;padding:24px;border-top:1px solid var(--line)}
+  .recipe-hero{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 4px}
+  a.anchor{color:var(--brand);text-decoration:none}
+  @media(max-width:520px){.grid{grid-template-columns:1fr}.toolbar input{min-width:100%}}
+</style>
+</head>
+<body>
+<header>
+  <h1>🌿 本草养生管理平台</h1>
+  <p>中药材库存 · 养生茶饮配方 · 官方来源标注 · 用法与禁忌核验</p>
+</header>
+<div class="disclaimer">
+  <b>⚠️ 健康免责声明：</b>本平台内容为养生科普与药材资料整理，依据《中国药典》2020年版及央视网、央广网、人民网等国家级官方媒体公开资料，<b>不构成医疗建议，也不能替代执业医师/中药师的辨证诊治</b>。本文提及的"每日饮用量""搭配功效"中凡标注<b>"待核实"</b>者，均为依据单味药功能主治的推导、未见单一官方文献直接佐证，使用前请务必咨询执业中医师。孕妇、哺乳期、儿童、慢性病患者及正在服药者尤需谨慎。
+</div>
+
+<nav id="nav">
+  <button data-page="herbs" class="active">💊 药材库</button>
+  <button data-page="recipes">🍵 养生茶饮</button>
+  <button data-page="sources">📚 来源说明</button>
+</nav>
+
+<div class="toolbar" id="herbTools">
+  <input id="herbSearch" placeholder="搜索药材名 / 功效 / 性味（如：补气、凉、陈皮）" />
+  <select id="herbFilter">
+    <option value="all">全部可信度</option>
+    <option value="high">高（药典/国家级媒体）</option>
+    <option value="mid">中（平台/地方机构）</option>
+    <option value="uncertain">待核实（推导）</option>
+  </select>
+  <select id="herbOwn">
+    <option value="all">全部药材</option>
+    <option value="owned">仅看我的库存</option>
+  </select>
+  <button class="btn" id="addHerbBtn">+ 添加药材</button>
+</div>
+
+<div class="toolbar" id="recipeTools" style="display:none">
+  <input id="recipeSearch" placeholder="搜索茶饮名 / 功效 / 配方（如：安神、黄芪）" />
+  <select id="recipeFilter">
+    <option value="all">全部可信度</option>
+    <option value="high">高（官方媒体配方）</option>
+    <option value="mid">中（平台/推导）</option>
+    <option value="uncertain">待核实（推导）</option>
+  </select>
+  <button class="btn" id="addRecipeBtn">+ 添加茶饮</button>
+</div>
+
+<div class="wrap">
+  <!-- HERBS -->
+  <div class="pages active" id="page-herbs">
+    <div class="legend">
+      <span><i class="dot" style="background:var(--green)"></i>高：药典/国家级媒体</span>
+      <span><i class="dot" style="background:var(--amber)"></i>中：医药平台/地方机构</span>
+      <span><i class="dot" style="background:var(--red)"></i>待核实：仅推导/无专文</span>
+    </div>
+    <div class="grid" id="herbGrid"></div>
+  </div>
+
+  <!-- RECIPES -->
+  <div class="pages" id="page-recipes">
+    <div class="legend">
+      <span><i class="dot" style="background:var(--green)"></i>高：有官方媒体直接配方</span>
+      <span><i class="dot" style="background:var(--amber)"></i>中：单味有据/部分平台</span>
+      <span><i class="dot" style="background:var(--red)"></i>待核实：功效为推导</span>
+    </div>
+    <div class="grid" id="recipeGrid"></div>
+  </div>
+
+  <!-- SOURCES -->
+  <div class="pages" id="page-sources">
+    <div class="section-title">资料来源与可信度分级</div>
+    <div class="card">
+      <div class="kv"><span class="k">一级·官方标准</span>
+        <span class="tag t-high">最高可信</span></div>
+      <div class="kv">《中华人民共和国药典》（2020年版 一部）— 国家药典委员会 编，中国医药科技出版社。本平台全部单味药材的性味归经、功能主治、用法用量、注意，均以此为准。</div>
+      <hr style="border:none;border-top:1px solid var(--line);margin:12px 0"/>
+      <div class="kv"><span class="k">二级·国家级媒体/机关</span>
+        <span class="tag t-high">高可信</span></div>
+      <div class="kv">央视网健康频道（jiankang.cctv.com）、央广网健康（health.cnr.cn）、人民网（people.com.cn）及地方药监局（如河北省药监局、海南省药监局）。用于养生茶通用原则、安全用量与禁忌警示。</div>
+      <hr style="border:none;border-top:1px solid var(--line);margin:12px 0"/>
+      <div class="kv"><span class="k">三级·医药信息平台</span>
+        <span class="tag t-mid">中可信</span></div>
+      <div class="kv">中国医药信息查询平台（dayi.org.cn，国家中医药管理局名词术语成果转化与规范推广项目审核认证）。提供药材词条与常见代茶饮问答，作为功效与用量的补充依据。</div>
+      <hr style="border:none;border-top:1px solid var(--line);margin:12px 0"/>
+      <div class="kv"><span class="k">四级·地方中医机构科普</span>
+        <span class="tag t-mid">中可信</span></div>
+      <div class="kv">广东省中医药局、内蒙古自治区中医医院、西安市中医医院、上海市健促中心、科普中国等发布的科普文章，用于日常保健用量与食疗参考。</div>
+      <hr style="border:none;border-top:1px solid var(--line);margin:12px 0"/>
+      <div class="kv"><span class="k">五级·推导/待核实</span>
+        <span class="tag t-uncertain">需谨慎</span></div>
+      <div class="kv">由单味药《中国药典》功能主治综合推导出的组合功效，<b>未见单一官方文献直接佐证</b>，标注为"待核实"。此类配方仅供了解，实际应用前请执业中医师辨证。</div>
+      <div class="note" style="margin-top:14px">本平台所有"待核实"条目均已在卡片中明确标注，<b>不代表官方定论</b>。如与您所获取的其他资料冲突，一律以《中国药典》及执业医师意见为准。</div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  本草养生管理平台 · 数据依据《中国药典》2020版及国家级官方媒体公开资料整理 · 仅供养生科普参考，非医疗建议<br/>
+  最后更新：2026-10-09 · 使用者可自行"添加药材/茶饮"并标记个人库存（数据仅保存在本机浏览器）
+</footer>
+
+<!-- MODAL -->
+<div class="modal-mask" id="modalMask">
+  <div class="modal" id="modalBox"></div>
+</div>
+
+<script>
+/* ============ 内置药材数据（依据《中国药典》2020版 + 官方媒体） ============ */
+const BUILTIN_HERBS = [
+  {
+    id:"chenpi", name:"陈皮", alias:"橘皮、广陈皮、红皮", nature:"苦、辛，温；归脾、肺经",
+    effect:"理气健脾，燥湿化痰", indic:"脘腹胀满，食少吐泻，咳嗽痰多",
+    dose:"煎服 3~10g；日常泡水 1~3g（《中国药典》2020版；中国医药信息查询平台）",
+    caution:"阴虚燥咳、舌红少津、内有实热、咳血吐血者慎用；胃酸过多/胃溃疡者慎用（温燥刺激胃液）；不宜长期大量（耗伤津液）；忌生冷黏腻食物。",
+    tier:"high",
+    sources:[{n:"《中国药典》2020年版一部（陈皮）",u:""},{n:"中国医药信息查询平台（国家中医药管理局项目审核）",u:"https://www.dayi.org.cn/cmedical/300175"},{n:"央视网健康·可泡茶名单",u:"https://jiankang.cctv.com/2016/05/06/ARTIaC2850Sh4vuvSdHCPaDG160506.shtml"}],
+    note:"药食同源。新鲜橘皮≠陈皮，须陈化后入药；霉变（黄曲霉素）不可食用。"
+  },
+  {
+    id:"meiguihua", name:"玫瑰花", alias:"玫瑰、徘徊花", nature:"甘、微苦，温；归肝、脾经",
+    effect:"行气解郁，和血，止痛", indic:"肝胃气痛，食少呕恶，月经不调，跌扑伤痛",
+    dose:"煎汤 3~6g；泡茶 5~10朵（约3-6g）。日常保健 3~5朵/日（人民网上海：常用量3-6g）",
+    caution:"孕妇、月经过多者禁用（活血）；阴虚火旺者不宜；便秘严重者避免（含鞣酸）；不宜与茶叶同泡（影响铁吸收）；不可长期大量（耗伤津液）。",
+    tier:"high",
+    sources:[{n:"《中国药典》2020年版一部（玫瑰）",u:""},{n:"人民网上海频道·上海市健促中心专家科普（2026-05）",u:"https://sh.people.com.cn/n2/2026/0528/c134768-41594383.html"},{n:"中国医药信息查询平台",u:"https://www.dayi.org.cn/cmedical/302249"}],
+    note:"药食同源；药典规定挥发油不得少于0.4%。"
+  },
+  {
+    id:"ningmeng", name:"柠檬片", alias:"柠檬（Citrus limon）", nature:"酸、凉（民间食疗属性；非药典收载药材）",
+    effect:"补充维生素C、开胃、缓解口渴、促进消化、辅助抗氧化", indic:"食欲不振、口渴、维生素C缺乏、餐后饱胀",
+    dose:"1~2片/次温水或凉水冲泡（高温破坏维C）；可加蜂蜜；按个人口味适量",
+    caution:"胃溃疡、糖尿病患者不宜大量；空腹不宜大量（刺激胃酸）；胃酸过多者控量；饮后漱口护牙（柠檬酸侵蚀牙釉质）。",
+    tier:"mid",
+    sources:[{n:"中国医药信息查询平台（卫健委药食同源属性）",u:"https://www.dayi.org.cn/qa/141045.html"},{n:"博禾医生科普",u:"https://m.bohe.cn/article/view/a5rt27sykkrsm6y.html"}],
+    note:"非传统中药，属食疗/食品原料，以下属性为营养学描述，'药性归经'无药典依据，标注为待核实。"
+  },
+  {
+    id:"juemingzi", name:"决明子", alias:"草决明、马蹄决明", nature:"甘、苦、咸，微寒；归肝、大肠经",
+    effect:"清热明目，润肠通便", indic:"目赤肿痛，羞明多泪，目暗不明，头痛眩晕，肠燥便秘",
+    dose:"煎汤 6~15g，大量可用至30g；或泡茶（《中国药典》）。⚠️ 养生代茶饮建议每日≤10g（央广网健康）",
+    caution:"脾胃虚寒、便溏者慎服；气虚便溏、慢性肠炎/腹泻者不宜；低血压、胃溃疡不宜长期大量；孕妇、先兆流产者慎服（兴奋子宫）；含蒽醌类，长期大量可能致结肠黑变病、增加肝肾代谢负担；不宜与大麻子、碱性药同用；与降压药同用需控量。",
+    tier:"high",
+    sources:[{n:"《中国药典》2020年版一部（决明子）",u:""},{n:"央广网健康·中药代茶饮的正确打开方式（2026-08）",u:"https://health.cnr.cn/jkgdxw/20260802/t20260802_527742233.shtml"},{n:"中国医药信息查询平台",u:"https://m.dayi.org.cn/qa/367399"}],
+    note:"药食同源。⚠️ 重点安全项：长期/过量风险明确，每日≤10g，不可久服；孕妇慎用。"
+  },
+  {
+    id:"huangqi", name:"黄芪", alias:"黄耆、北芪", nature:"甘，微温；归脾、肺经",
+    effect:"补气升阳，固表止汗，利水消肿，生津养血，行滞通痹，托毒排脓，敛疮生肌",
+    indic:"气虚乏力，食少便溏，中气下陷，久泻脱肛，表虚自汗，气虚水肿，内热消渴，血虚萎黄",
+    dose:"煎汤 10~15g（大剂30~60g）；日常泡水代茶 5~10g；泡水＜15g/次（中国医药信息查询平台）",
+    caution:"表实邪盛、疮疡初起或溃后热毒尚盛者不宜；实证及阴虚阳盛者忌服；感冒发热等外感期间不宜（'闭门留寇'）；不宜与降血压药、强心苷、抗凝药（肝素/华法林/阿司匹林）同用；忌萝卜、绿豆、浓茶；过敏者禁用。",
+    tier:"high",
+    sources:[{n:"《中国药典》2020年版一部（黄芪）",u:""},{n:"中国医药信息查询平台（国家中医药管理局审核）",u:"https://m.dayi.org.cn/cmedical/1114361"},{n:"广东省中医药局科普",u:"https://szyyj.gd.gov.cn/zyyfw/ysbj/content/post_4836804.html"}],
+    note:"补气之长。感冒时勿进补（河北省药监局科普）。"
+  },
+  {
+    id:"lingzhi", name:"灵芝", alias:"灵芝草、菌灵芝、木灵芝", nature:"甘，平；归心、肺、肝、肾经",
+    effect:"补气安神，止咳平喘", indic:"心神不宁，失眠心悸，肺虚咳喘，虚劳短气，不思饮食",
+    dose:"煎服 6~12g；研末吞服 1.5~3g（药典）；灵芝粉口服1~3g；可撕碎开水浸泡当茶",
+    caution:"实证及外感初起者忌用；出血性疾病及有出血倾向者慎用（强血小板聚集抑制）；过敏体质慎用；中枢神经抑制/昏迷患者不宜。",
+    tier:"high",
+    sources:[{n:"《中国药典》2020年版一部（灵芝）",u:""},{n:"中国医药信息查询平台（国家中医药管理局审核）",u:"https://www.dayi.org.cn/cmedical/1114646"},{n:"央视网健康·可泡茶名单（含灵芝）",u:"https://jiankang.cctv.com/2016/05/06/ARTIaC2850Sh4vuvSdHCPaDG160506.shtml"}],
+    note:"药性平和，可长期保健，但出血倾向者需谨慎。"
+  },
+  {
+    id:"luohanguo", name:"罗汉果", alias:"拉汗果、假苦瓜", nature:"甘，凉；归肺、大肠经",
+    effect:"清热润肺，利咽开音，滑肠通便", indic:"肺热燥咳，咽痛失音，肠燥便秘",
+    dose:"煎服 9~15g；或开水泡服；半个果/次（药典；内蒙古自治区中医医院）",
+    caution:"脾胃虚寒者忌服/慎服；风寒咳嗽者不宜（凉性遏制阳气）；对本品过敏者禁用。",
+    tier:"high",
+    sources:[{n:"《中国药典》2020年版一部（罗汉果）",u:""},{n:"中国医药信息查询平台",u:"https://www.dayi.org.cn/cmedical/301971"},{n:"内蒙古自治区中医医院·药食同源科普",u:"http://nmgzyyy.cn/zyts/info_17598.html"}],
+    note:"药食同源；味甘甜，老少可接受，但性凉，虚寒者忌。"
+  },
+  {
+    id:"xiyangshen", name:"西洋参粉", alias:"西洋参、花旗参、西参", nature:"甘、微苦，凉；归肺、心、肾、脾经",
+    effect:"补气养阴，清热生津", indic:"气阴两伤，肺气虚及肺阴虚，热病气虚津伤口渴及消渴",
+    dose:"煎汤（另煎）3~6g；泡水＜3g/次（中国医药信息查询平台）；可研粉",
+    caution:"中阳虚衰、寒湿中阻及湿热郁火者慎服；反藜芦（'诸参辛芍叛藜芦'），忌铁刀火炒；感冒发热忌用（补益滞留邪气）；不宜与莱菔子同用。",
+    tier:"high",
+    sources:[{n:"《中国药典》2020年版一部（西洋参）",u:""},{n:"中国医药信息查询平台",u:"https://www.dayi.org.cn/cmedical/1115952"},{n:"河北省药监局·感冒勿乱吃补药",u:"https://yjj.hebei.gov.cn/hbpda/gzfw/aqyy/20101209737651644.html"}],
+    note:"性凉，与黄芪温补不同；感冒期间停用。"
+  },
+  {
+    id:"hongzao", name:"红枣", alias:"大枣、干枣", nature:"甘，温；归脾、胃、心经",
+    effect:"补中益气，养血安神", indic:"脾虚证，脏躁，失眠",
+    dose:"煎服 6~15g；日常保健生吃≤8枚/日，泡水5~6枚掰开（西安市中医医院科普；药典）",
+    caution:"湿盛脘腹胀满、食积、虫积、龋齿作痛、痰热咳嗽者慎用；感冒发热/咽痛咳嗽期间不宜（'闭门留寇'）；糖尿病注意量（含糖）；龋齿者注意。",
+    tier:"high",
+    sources:[{n:"《中国药典》2020年版一部（大枣）",u:""},{n:"中国医药信息查询平台（国家中医药管理局审核）",u:"https://www.dayi.org.cn/cmedical/1113944"},{n:"西安市中医医院科普（2026-08）",u:"https://www.toutiao.com/article/7678960992998474276/"}],
+    note:"药食同源首批；含糖，糖尿病人群控量。"
+  },
+  {
+    id:"dangshen", name:"党参", alias:"上党人参、防党参、狮头参", nature:"平，甘；归脾、肺经",
+    effect:"健脾益肺，养血生津", indic:"脾肺气虚，食少倦怠，咳嗽虚喘，气血不足，面色萎黄，心悸气短，津伤口渴，内热消渴",
+    dose:"煎汤 6~15g；日常泡水适量（药典）",
+    caution:"实证、热证而正气不虚者不宜；不宜与藜芦同用（'反藜芦'）；感冒发热慎用（补益类）。",
+    tier:"high",
+    sources:[{n:"《中国药典》2020年版一部（党参）",u:""},{n:"中国医药信息查询平台（国家中医药管理局审核）",u:"https://www.dayi.org.cn/cmedical/1129180"}],
+    note:"常作为人参的代用品用于轻证；反藜芦。"
+  },
+  {
+    id:"huangjing", name:"黄精", alias:"鸡头黄精、姜形黄精、萎蕤", nature:"甘，平；归脾、肺、肾经",
+    effect:"补气养阴，健脾，润肺，益肾", indic:"脾胃气虚，体倦乏力，胃阴不足，口干食少，肺虚燥咳，劳嗽咳血，精血不足，腰膝酸软，须发早白，内热消渴",
+    dose:"煎汤 9~15g（鲜品30~60g）；日常保健 10~15g/日（药典；科普）",
+    caution:"中寒泄泻、痰湿痞满气滞者禁服；气滞腹胀者不宜（滋腻加重腹胀）；感冒发热期间暂停；脾虚便溏者不宜。",
+    tier:"high",
+    sources:[{n:"《中国药典》2020年版一部（黄精）",u:""},{n:"中国医药信息查询平台",u:"https://m.dayi.org.cn/cmedical/301383"},{n:"卫法监发〔2002〕51号·药食同源目录",u:""}],
+    note:"药食同源；九蒸九晒后药性更温和，滋腻者宜制用。"
+  }
+];
+
+/* ============ 内置养生茶饮配方（依据官方媒体/药典 + 推导标注） ============ */
+const BUILTIN_RECIPES = [
+  {
+    id:"r_cx", name:"陈皮玫瑰花茶", herbs:"陈皮、玫瑰花",
+    effect:"疏肝解郁、理气健脾、调和肝脾、改善气色",
+    who:"压力大、情绪不畅、胸胁胀闷、饭后腹胀、气色差者",
+    dose:"每日1~2杯；陈皮≤6g + 玫瑰花3~5朵（约3g）；80~90℃冲泡5分钟；不宜长期连续＞3个月",
+    caution:"孕妇、经期量多、阴虚火旺者禁用/慎饮；胃酸过多者餐后饮；不可长期大量",
+    brew:"陈皮、玫瑰花温水冲洗后，80~90℃水加盖闷5分钟，可反复冲泡",
+    tier:"high",
+    sources:[{n:"人民网上海·玫瑰3g+陈皮6g 疏肝和胃配方（2026-05）",u:"https://sh.people.com.cn/n2/2026/0528/c134768-41594383.html"},{n:"中国医药信息查询平台·陈皮玫瑰花功效",u:"https://m.dayi.org.cn/qa/372752.html"}],
+    note:""
+  },
+  {
+    id:"r_hdc", name:"黄芪党参红枣茶", herbs:"黄芪、党参、红枣",
+    effect:"补气升阳、健脾益肺、养血安神（由三药功效综合）",
+    who:"气虚乏力、食少便溏、面色萎黄、易疲劳、气血不足者",
+    dose:"每日1剂代茶，总药材＜30g；可反复冲泡至无味",
+    caution:"感冒发热、实热、阴虚阳亢者忌；服降压药者注意（黄芪不宜与降压药同用）；党参反藜芦；糖尿病人群红枣控量；孕妇遵医嘱",
+    brew:"三味洗净，红枣去核掰开，沸水冲泡或短时煎煮，焖10分钟",
+    tier:"mid",
+    sources:[{n:"各药《中国药典》2020版单味功能主治综合",u:""},{n:"腾讯医典·黄芪红枣鳝鱼汤（补气养血佐证）",u:"https://h5.baike.qq.com/mobile/overview_detail.html?name=黄芪"}],
+    note:"⚠️ 待核实：此组合具体配方未见单一官方文献，功效为单味药推导，使用前请咨询执业中医师。"
+  },
+  {
+    id:"r_xyhj", name:"西洋参黄精茶", herbs:"西洋参、黄精",
+    effect:"补气养阴、清热生津、健脾润肺（综合）",
+    who:"气阴两虚、口干咽燥、疲劳、久病体虚者",
+    dose:"西洋参＜3g + 黄精10~15g/日，泡水",
+    caution:"中阳虚衰/寒湿中阻/湿热郁火者慎（西洋参）；中寒泄泻/痰湿气滞者禁（黄精）；感冒发热忌（西洋参）；反藜芦",
+    brew:"西洋参切片/粉 + 黄精片，沸水冲泡或煎煮，焖10分钟",
+    tier:"mid",
+    sources:[{n:"《中国药典》西洋参、黄精单味推导",u:""}],
+    note:"⚠️ 待核实：组合未见官方专文，功效为单味药推导。"
+  },
+  {
+    id:"r_hxyx", name:"黄芪西洋参茶", herbs:"黄芪、西洋参",
+    effect:"补气血、益气养阴（改善干咳、咽干、疲劳）",
+    who:"体质虚弱、气阴不足者",
+    dose:"黄芪＜15g + 西洋参＜3g/次（中国医药信息查询平台）",
+    caution:"感冒患者不宜（滞留邪气）；中阳虚衰、湿热郁火者慎（西洋参）；不宜与藜芦、莱菔子同用；实热忌（黄芪）",
+    brew:"两味开水烫去浮尘，沸水冲泡，焖约10分钟",
+    tier:"high",
+    sources:[{n:"中国医药信息查询平台·西洋参黄芪泡水喝的功效",u:"https://m.dayi.org.cn/qa/254495"}],
+    note:""
+  },
+  {
+    id:"r_jmlh", name:"决明子罗汉果茶", herbs:"决明子、罗汉果",
+    effect:"清热明目、润肠通便、利咽开音（综合）",
+    who:"目赤涩痛、肠燥便秘、咽痛干咳（热证）者",
+    dose:"决明子≤10g/日（央广网）+ 罗汉果半个/次",
+    caution:"脾胃虚寒、便溏、低血压、孕妇慎（决明子）；脾胃虚寒忌（罗汉果）；不可长期大量（结肠黑变病/肝损风险）；风寒咳嗽不宜",
+    brew:"决明子捣碎 + 罗汉果掰碎，沸水冲泡或煎煮，焖10分钟",
+    tier:"mid",
+    sources:[{n:"决明子《药典》+ 央广网安全用量（≤10g/日）",u:"https://health.cnr.cn/jkgdxw/20260802/t20260802_527742233.shtml"},{n:"罗汉果《中国药典》",u:""}],
+    note:"⚠️ 安全警示：决明子每日≤10g，不可久服；组合功效为推导。"
+  },
+  {
+    id:"r_lzhz", name:"灵芝红枣茶", herbs:"灵芝、红枣",
+    effect:"补气安神、养血安神（改善失眠心悸）",
+    who:"失眠多梦、心悸、神疲乏力、体虚者",
+    dose:"灵芝6~12g/日（水煎或泡水）+ 红枣≤8枚",
+    caution:"出血性疾病/出血倾向慎用（灵芝抑制血小板聚集）；外感初起忌（灵芝）；湿盛腹胀/痰热（红枣）；过敏慎用",
+    brew:"灵芝切片 + 红枣去核，煎煮30分钟或沸水反复冲泡",
+    tier:"mid",
+    sources:[{n:"《中国药典》灵芝安神、红枣养血",u:""},{n:"腾讯医典·灵芝泡水法（配大枣）",u:"https://h5.baike.qq.com/mobile/overview_detail.html?name=灵芝"}],
+    note:"⚠️ 待核实：组合为推导，未见官方专文。"
+  },
+  {
+    id:"r_cn", name:"陈皮柠檬茶", herbs:"陈皮、柠檬片",
+    effect:"理气健脾、开胃生津、补充维生素C（综合）",
+    who:"食欲不振、饭后胀闷、需补充维C者",
+    dose:"陈皮≤10g + 柠檬1~2片/次，温水冲泡",
+    caution:"阴虚燥咳/实热（陈皮）；胃溃疡/糖尿病/空腹（柠檬）；饮后漱口护牙",
+    brew:"陈皮温水冲洗 + 柠檬片，温水（非沸水，护维C）冲泡",
+    tier:"mid",
+    sources:[{n:"陈皮《中国药典》",u:""},{n:"柠檬食疗属性·中国医药信息查询平台",u:"https://www.dayi.org.cn/qa/141045.html"}],
+    note:"⚠️ 柠檬为食品属性，组合功效为推导，标注待核实。"
+  },
+  {
+    id:"r_mghz", name:"玫瑰花红枣茶", herbs:"玫瑰花、红枣",
+    effect:"养血安神，改善面色萎黄、失眠多梦（疏肝+补血）",
+    who:"气血不足、情绪不畅、面色萎黄、失眠者",
+    dose:"玫瑰3g + 红枣2枚，每日1~2杯",
+    caution:"孕妇/经期量多禁用（玫瑰活血）；阴虚火旺不宜（玫瑰）；湿盛痰热（红枣）；不可长期大量",
+    brew:"玫瑰花 + 红枣去核掰开，沸水冲泡焖5分钟",
+    tier:"high",
+    sources:[{n:"人民网上海·玫瑰3g+红枣2枚 养血安神配方（2026-05）",u:"https://sh.people.com.cn/n2/2026/0528/c134768-41594383.html"}],
+    note:""
+  },
+  {
+    id:"r_hjdc", name:"黄精党参红枣茶", herbs:"黄精、党参、红枣",
+    effect:"健脾益气、养血、补阴（综合）",
+    who:"脾胃虚弱、体倦乏力、气血不足者",
+    dose:"黄精10~15g + 党参6~15g + 红枣≤8枚/日",
+    caution:"中寒泄泻/痰湿气滞（黄精）；实热/反藜芦（党参）；湿盛痰热/感冒发热（红枣）；感冒发热暂停",
+    brew:"三味洗净，红枣去核，沸水冲泡或煎煮，焖10分钟",
+    tier:"mid",
+    sources:[{n:"《中国药典》单味推导",u:""},{n:"中国医药信息查询平台·黄精炖瘦肉汤配党参红枣（佐证）",u:"https://www.dayi.org.cn/qa/221379"}],
+    note:"⚠️ 待核实：组合为推导，未见官方专文。"
+  },
+  {
+    id:"r_xyll", name:"西洋参罗汉果茶", herbs:"西洋参、罗汉果",
+    effect:"补气养阴生津、清热润肺利咽",
+    who:"咽干口干、用嗓过度、气阴不足者",
+    dose:"西洋参＜3g + 罗汉果半个/次",
+    caution:"中阳虚衰/寒湿（西洋参）；脾胃虚寒（罗汉果）；感冒发热忌（西洋参）；反藜芦",
+    brew:"西洋参 + 罗汉果掰碎，沸水冲泡或煎煮，焖10分钟",
+    tier:"mid",
+    sources:[{n:"《中国药典》西洋参、罗汉果单味推导",u:""}],
+    note:"⚠️ 待核实：组合为推导，未见官方专文。"
+  }
+];
+
+/* ============ 状态与存储 ============ */
+const LS_HERBS="byc_herbs_v1", LS_RECIPES="byc_recipes_v1", LS_OWN="byc_own_v1";
+function load(k,def){try{const v=localStorage.getItem(k);return v?JSON.parse(v):def;}catch(e){return def;}}
+function save(k,v){localStorage.setItem(k,JSON.stringify(v));}
+
+let userHerbs=load(LS_HERBS,[]);
+let userRecipes=load(LS_RECIPES,[]);
+let ownMap=load(LS_OWN,{}); // {herbId:true}
+
+/* 预置：用户列出的11味默认在库存 */
+const PRESET_OWNED=["chenpi","meiguihua","ningmeng","juemingzi","huangqi","lingzhi","luohanguo","xiyangshen","hongzao","dangshen","huangjing"];
+PRESET_OWNED.forEach(id=>{if(!(id in ownMap))ownMap[id]=true;});
+save(LS_OWN,ownMap);
+
+const TIER_LABEL={high:"高",mid:"中",uncertain:"待核实"};
+const TIER_CLASS={high:"t-high",mid:"t-mid",uncertain:"t-uncertain"};
+
+function allHerbs(){return BUILTIN_HERBS.concat(userHerbs);}
+function allRecipes(){return BUILTIN_RECIPES.concat(userRecipes);}
+
+/* ============ 渲染 ============ */
+function herbCard(h){
+  const owned = !!ownMap[h.id];
+  const builtin = BUILTIN_HERBS.some(b=>b.id===h.id);
+  const srcHtml = (h.sources||[]).map(s=>`• ${s.u?`<a href="${s.u}" target="_blank" rel="noopener">${s.n}</a>`:s.n}`).join("<br/>");
+  return `<div class="card">
+    <h3>${h.name} ${h.tier?`<span class="tag ${TIER_CLASS[h.tier]}">${TIER_LABEL[h.tier]}</span>`:""}</h3>
+    <div class="sub">${h.alias||""}</div>
+    <div class="kv"><span class="k">性味归经</span>${h.nature}</div>
+    <div class="kv"><span class="k">功效</span>${h.effect}</div>
+    <div class="kv"><span class="k">主治</span>${h.indic}</div>
+    <div class="kv"><span class="k">用法用量</span>${h.dose}</div>
+    <div class="kv"><span class="k">禁忌注意</span>${h.caution}</div>
+    ${h.note?`<div class="note">⚠️ ${h.note}</div>`:""}
+    <div class="src"><b>来源标注：</b><br/>${srcHtml}</div>
+    <label class="own"><input type="checkbox" data-own="${h.id}" ${owned?"checked":""}/> 我的库存（${owned?"✔ 已入库":"未标记"}）</label>
+    ${!builtin?`<div class="actions"><button class="del" data-delherb="${h.id}">删除</button></div>`:""}
+  </div>`;
+}
+
+function recipeCard(r){
+  const builtin = BUILTIN_RECIPES.some(b=>b.id===r.id);
+  const srcHtml = (r.sources||[]).map(s=>`• ${s.u?`<a href="${s.u}" target="_blank" rel="noopener">${s.n}</a>`:s.n}`).join("<br/>");
+  return `<div class="card">
+    <h3>${r.name} ${r.tier?`<span class="tag ${TIER_CLASS[r.tier]}">${TIER_LABEL[r.tier]}</span>`:""}</h3>
+    <div class="recipe-hero"><span class="pill">配方：${r.herbs}</span></div>
+    <div class="kv"><span class="k">功效</span>${r.effect}</div>
+    <div class="kv"><span class="k">适宜</span>${r.who}</div>
+    <div class="kv"><span class="k">每日饮量</span>${r.dose}</div>
+    <div class="kv"><span class="k">冲泡</span>${r.brew}</div>
+    <div class="kv"><span class="k">禁忌注意</span>${r.caution}</div>
+    ${r.note?`<div class="note">⚠️ ${r.note}</div>`:""}
+    <div class="src"><b>来源标注：</b><br/>${srcHtml}</div>
+    ${!builtin?`<div class="actions"><button class="del" data-delrecipe="${r.id}">删除</button></div>`:""}
+  </div>`;
+}
+
+function renderHerbs(){
+  const q=document.getElementById("herbSearch").value.trim().toLowerCase();
+  const f=document.getElementById("herbFilter").value;
+  const o=document.getElementById("herbOwn").value;
+  let list=allHerbs().filter(h=>{
+    if(f!=="all" && h.tier!==f) return false;
+    if(o==="owned" && !ownMap[h.id]) return false;
+    if(q){
+      const hay=(h.name+h.alias+h.effect+h.indic+h.nature+h.caution).toLowerCase();
+      if(!hay.includes(q)) return false;
+    }
+    return true;
+  });
+  const grid=document.getElementById("herbGrid");
+  grid.innerHTML = list.length? list.map(herbCard).join("") : `<div class="empty">没有匹配的药材，试试调整筛选或添加新药材。</div>`;
+}
+
+function renderRecipes(){
+  const q=document.getElementById("recipeSearch").value.trim().toLowerCase();
+  const f=document.getElementById("recipeFilter").value;
+  let list=allRecipes().filter(r=>{
+    if(f!=="all" && r.tier!==f) return false;
+    if(q){
+      const hay=(r.name+r.herbs+r.effect+r.who+r.caution).toLowerCase();
+      if(!hay.includes(q)) return false;
+    }
+    return true;
+  });
+  const grid=document.getElementById("recipeGrid");
+  grid.innerHTML = list.length? list.map(recipeCard).join("") : `<div class="empty">没有匹配的茶饮，试试调整筛选或添加新茶饮。</div>`;
+}
+
+/* ============ 事件 ============ */
+document.getElementById("nav").addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b)return;
+  const page=b.dataset.page;
+  document.querySelectorAll("#nav button").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");
+  document.querySelectorAll(".pages").forEach(p=>p.classList.remove("active"));
+  document.getElementById("page-"+page).classList.add("active");
+  document.getElementById("herbTools").style.display = page==="herbs"?"flex":"none";
+  document.getElementById("recipeTools").style.display = page==="recipes"?"flex":"none";
+});
+
+["herbSearch","herbFilter","herbOwn"].forEach(id=>document.getElementById(id).addEventListener("input",renderHerbs));
+["recipeSearch","recipeFilter"].forEach(id=>document.getElementById(id).addEventListener("input",renderRecipes));
+
+document.getElementById("herbGrid").addEventListener("click",e=>{
+  const cb=e.target.closest("input[data-own]");
+  if(cb){ownMap[cb.dataset.own]=cb.checked;save(LS_OWN,ownMap);cb.parentElement.childNodes[1].nodeValue=` 我的库存（${cb.checked?"✔ 已入库":"未标记"}）`;return;}
+  const del=e.target.closest("[data-delherb]");
+  if(del){userHerbs=userHerbs.filter(x=>x.id!==del.dataset.delherb);save(LS_HERBS,userHerbs);renderHerbs();}
+});
+document.getElementById("recipeGrid").addEventListener("click",e=>{
+  const del=e.target.closest("[data-delrecipe]");
+  if(del){userRecipes=userRecipes.filter(x=>x.id!==del.dataset.delrecipe);save(LS_RECIPES,userRecipes);renderRecipes();}
+});
+
+/* ============ 弹窗：添加 ============ */
+const mask=document.getElementById("modalMask"), box=document.getElementById("modalBox");
+function openModal(html){box.innerHTML=html;mask.style.display="flex";}
+function closeModal(){mask.style.display="none";}
+mask.addEventListener("click",e=>{if(e.target===mask)closeModal();});
+
+document.getElementById("addHerbBtn").addEventListener("click",()=>{
+  openModal(`<h3>添加新药材</h3>
+    <label>名称*</label><input id="f_name"/>
+    <label>别名</label><input id="f_alias"/>
+    <label>性味归经</label><input id="f_nature"/>
+    <label>功效</label><input id="f_effect"/>
+    <label>主治</label><input id="f_indic"/>
+    <label>用法用量</label><input id="f_dose"/>
+    <label>禁忌注意</label><textarea id="f_caution"></textarea>
+    <label>来源标注（每行一条）</label><textarea id="f_sources" placeholder="如：某中医药大学科普（2026）"></textarea>
+    <label>可信度</label>
+    <select id="f_tier"><option value="mid">中（平台/地方机构）</option><option value="high">高（药典/国家级媒体）</option><option value="uncertain">待核实（推导）</option></select>
+    <label>备注/不确定说明</label><textarea id="f_note"></textarea>
+    <div class="modal-actions"><button class="cancel" onclick="closeModal()">取消</button><button class="save" id="saveHerb">保存</button></div>`);
+  document.getElementById("saveHerb").addEventListener("click",()=>{
+    const name=document.getElementById("f_name").value.trim();
+    if(!name){alert("请填写药材名称");return;}
+    const srcs=document.getElementById("f_sources").value.split("\n").map(s=>s.trim()).filter(Boolean).map(s=>({n:s,u:""}));
+    userHerbs.push({id:"u_h_"+Date.now(),name,alias:document.getElementById("f_alias").value.trim(),
+      nature:document.getElementById("f_nature").value.trim(),effect:document.getElementById("f_effect").value.trim(),
+      indic:document.getElementById("f_indic").value.trim(),dose:document.getElementById("f_dose").value.trim(),
+      caution:document.getElementById("f_caution").value.trim(),tier:document.getElementById("f_tier").value,
+      sources:srcs,note:document.getElementById("f_note").value.trim()});
+    save(LS_HERBS,userHerbs);closeModal();renderHerbs();
+  });
+});
+
+document.getElementById("addRecipeBtn").addEventListener("click",()=>{
+  openModal(`<h3>添加养生茶饮配方</h3>
+    <label>名称*</label><input id="f_name"/>
+    <label>配方（如：黄芪、红枣）</label><input id="f_herbs"/>
+    <label>功效</label><input id="f_effect"/>
+    <label>适宜人群</label><input id="f_who"/>
+    <label>每日饮用量</label><input id="f_dose"/>
+    <label>冲泡方法</label><textarea id="f_brew"></textarea>
+    <label>禁忌注意</label><textarea id="f_caution"></textarea>
+    <label>来源标注（每行一条）</label><textarea id="f_sources"></textarea>
+    <label>可信度</label>
+    <select id="f_tier"><option value="mid">中（单味有据/推导）</option><option value="high">高（官方媒体配方）</option><option value="uncertain">待核实（推导）</option></select>
+    <label>备注/不确定说明</label><textarea id="f_note"></textarea>
+    <div class="modal-actions"><button class="cancel" onclick="closeModal()">取消</button><button class="save" id="saveRecipe">保存</button></div>`);
+  document.getElementById("saveRecipe").addEventListener("click",()=>{
+    const name=document.getElementById("f_name").value.trim();
+    if(!name){alert("请填写茶饮名称");return;}
+    const srcs=document.getElementById("f_sources").value.split("\n").map(s=>s.trim()).filter(Boolean).map(s=>({n:s,u:""}));
+    userRecipes.push({id:"u_r_"+Date.now(),name,herbs:document.getElementById("f_herbs").value.trim(),
+      effect:document.getElementById("f_effect").value.trim(),who:document.getElementById("f_who").value.trim(),
+      dose:document.getElementById("f_dose").value.trim(),brew:document.getElementById("f_brew").value.trim(),
+      caution:document.getElementById("f_caution").value.trim(),tier:document.getElementById("f_tier").value,
+      sources:srcs,note:document.getElementById("f_note").value.trim()});
+    save(LS_RECIPES,userRecipes);closeModal();renderRecipes();
+  });
+});
+
+renderHerbs();
+renderRecipes();
+</script>
+</body>
+</html>
