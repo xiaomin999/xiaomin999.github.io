@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      width: 320px; margin: 0; padding: 14px;
+      font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: #1f2329; font-size: 13px;
+    }
+    h3 { font-size: 13px; margin: 0 0 8px; color: #3b5bdb; }
+    label { display: block; margin-bottom: 10px; color: #6b7280; font-size: 12px; }
+    input, textarea, select {
+      width: 100%; margin-top: 4px; padding: 8px; font-size: 13px;
+      border: 1px solid #e6eaf2; border-radius: 8px; font-family: inherit;
+    }
+    textarea { resize: vertical; }
+    .row { display: flex; gap: 8px; }
+    .row > label { flex: 1; }
+    button {
+      width: 100%; padding: 10px; border: none; border-radius: 9px; cursor: pointer;
+      background: #3b5bdb; color: #fff; font-size: 14px; font-weight: 600;
+    }
+    button:hover { background: #304fc4; }
+    .hint { color: #6b7280; font-size: 11px; margin: 6px 0 12px; line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <h3>剪藏到灵感匣</h3>
+  <div class="hint">首次使用请填写灵感匣地址（即你部署后的网页地址，例如 https://你的名.github.io/lingganxia/）。</div>
+  <label>灵感匣地址
+    <input id="app-url" type="text" placeholder="https://xxx.github.io/lingganxia/" />
+  </label>
+  <label>标题
+    <input id="pg-title" type="text" />
+  </label>
+  <label>选中文字 / 笔记
+    <textarea id="pg-text" rows="4"></textarea>
+  </label>
+  <div class="row">
+    <label>分类
+      <input id="pg-cat" type="text" placeholder="创业/副业/写作" />
+    </label>
+    <label>来源
+      <select id="pg-source">
+        <option value="web">网页</option>
+        <option value="wechat">微信</option>
+        <option value="xiaohongshu">小红书</option>
+        <option value="manual">手动</option>
+        <option value="other">其他</option>
+      </select>
+    </label>
+  </div>
+  <label>来源链接
+    <input id="pg-url" type="text" />
+  </label>
+  <button id="save">保存到灵感匣 →</button>
+
+  <script src="popup.js"></script>
+</body>
+</html>

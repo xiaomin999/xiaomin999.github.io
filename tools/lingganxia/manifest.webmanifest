@@ -1,0 +1,19 @@
+{
+  "name": "灵感匣",
+  "short_name": "灵感匣",
+  "description": "把创业、副业、写作的好想法归集到一处，跨设备云同步。",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

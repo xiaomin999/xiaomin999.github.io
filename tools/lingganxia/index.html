@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#ffffff" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="./icon.svg" />
+  <title>灵感匣 · 好想法归集</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+
+  <!-- ============ 登录 / 注册 ============ -->
+  <section id="auth-screen" class="auth-screen">
+    <div class="auth-card">
+      <div class="auth-logo"><img src="./icon.svg" alt="icon" width="56" height="56" /></div>
+      <h1>灵感匣</h1>
+      <p class="auth-sub">把创业、副业、写作的好想法，归集到一处</p>
+      <div id="auth-error" class="form-error" hidden></div>
+      <form id="auth-form">
+        <input id="auth-email" type="email" placeholder="邮箱" autocomplete="email" required />
+        <input id="auth-password" type="password" placeholder="密码（至少 6 位）" autocomplete="current-password" required minlength="6" />
+        <button type="submit" id="auth-submit" class="btn btn-primary btn-block">登录</button>
+        <div class="auth-switch">
+          <span id="auth-mode-text">还没有账号？</span>
+          <a href="#" id="auth-toggle">注册一个</a>
+        </div>
+      </form>
+      <p class="auth-hint">这是你个人的私密空间，数据只对你自己可见。</p>
+    </div>
+  </section>
+
+  <!-- ============ 主应用 ============ -->
+  <section id="app-screen" class="app-shell" hidden>
+    <!-- 侧边栏（桌面） -->
+    <aside class="sidebar">
+      <div class="brand"><img src="./icon.svg" width="28" height="28" alt="" /><span>灵感匣</span></div>
+      <nav class="nav" id="nav-static">
+        <button class="nav-item active" data-view="all">📥 全部</button>
+        <button class="nav-item" data-view="starred">⭐ 星标</button>
+      </nav>
+      <div class="nav-label">分类</div>
+      <nav class="nav" id="nav-categories"></nav>
+      <div class="nav-label">状态</div>
+      <nav class="nav" id="nav-status"></nav>
+      <div class="nav-spacer"></div>
+      <nav class="nav">
+        <button class="nav-item nav-action" data-view="stats">📊 统计</button>
+        <button class="nav-item nav-action" data-view="help">🔖 剪藏工具</button>
+        <button class="nav-item nav-action" data-view="settings">⚙️ 设置</button>
+      </nav>
+    </aside>
+
+    <!-- 主区 -->
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar-title" id="topbar-title">全部想法</div>
+        <div class="search-wrap">
+          <input id="search" type="search" placeholder="搜索标题 / 内容 / 标签…" />
+        </div>
+        <button class="btn btn-primary" id="btn-new">＋ 新建想法</button>
+        <button class="avatar" id="btn-user" title="退出登录">我</button>
+      </header>
+
+      <div class="content">
+        <div class="list-meta" id="list-meta"></div>
+        <div id="list" class="list"></div>
+        <div id="empty" class="empty" hidden>
+          <div class="empty-emoji">🗂️</div>
+          <p>这里还空空如也。</p>
+          <button class="btn btn-primary" id="btn-empty-new">记录第一个想法</button>
+        </div>
+      </div>
+    </main>
+
+    <!-- 底部导航（手机） -->
+    <nav class="bottom-nav">
+      <button class="bn-item active" data-view="all">📥<span>全部</span></button>
+      <button class="bn-item" data-view="starred">⭐<span>星标</span></button>
+      <button class="bn-item" data-view="stats">📊<span>统计</span></button>
+      <button class="bn-item" data-view="help">🔖<span>剪藏</span></button>
+      <button class="bn-item" data-view="settings">⚙️<span>设置</span></button>
+    </nav>
+  </section>
+
+  <!-- ============ 新建 / 编辑 想法 ============ -->
+  <div id="modal-idea" class="modal" hidden>
+    <div class="modal-box">
+      <div class="modal-head">
+        <h2 id="idea-modal-title">新建想法</h2>
+        <button class="icon-btn" data-close="modal-idea">✕</button>
+      </div>
+      <form id="idea-form">
+        <input type="hidden" id="idea-id" />
+        <label>标题
+          <input id="f-title" type="text" placeholder="一句话点子，比如：用 AI 做小红书选题库" maxlength="200" />
+        </label>
+        <label>内容 / 笔记
+          <textarea id="f-content" rows="6" placeholder="把看到的、想到的细节记下来。可以粘贴微信/小红书里的内容…"></textarea>
+        </label>
+        <div class="form-row">
+          <label class="grow">来源链接
+            <input id="f-url" type="url" placeholder="https://…（可选）" />
+          </label>
+          <label>来源
+            <select id="f-source">
+              <option value="manual">手动</option>
+              <option value="wechat">微信</option>
+              <option value="xiaohongshu">小红书</option>
+              <option value="web">网页</option>
+              <option value="other">其他</option>
+            </select>
+          </label>
+        </div>
+        <div class="form-row">
+          <label class="grow">分类
+            <input id="f-category" list="cat-list" placeholder="创业 / 副业 / 写作 …" />
+            <datalist id="cat-list"></datalist>
+          </label>
+          <label>状态
+            <select id="f-status">
+              <option value="idea">想法</option>
+              <option value="doing">进行中</option>
+              <option value="done">已落地</option>
+              <option value="archived">归档</option>
+            </select>
+          </label>
+        </div>
+        <label>标签（逗号分隔）
+          <input id="f-tags" type="text" placeholder="例如：AI, 内容创业, 低成本" />
+        </label>
+        <div class="modal-foot">
+          <button type="button" class="btn" id="idea-delete" hidden>删除</button>
+          <span class="spacer"></span>
+          <button type="button" class="btn" data-close="modal-idea">取消</button>
+          <button type="submit" class="btn btn-primary">保存</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============ 设置 ============ -->
+  <div id="modal-settings" class="modal" hidden>
+    <div class="modal-box">
+      <div class="modal-head">
+        <h2>设置</h2>
+        <button class="icon-btn" data-close="modal-settings">✕</button>
+      </div>
+      <div id="settings-body"></div>
+    </div>
+  </div>
+
+  <!-- ============ 剪藏工具 / 帮助 ============ -->
+  <div id="modal-help" class="modal" hidden>
+    <div class="modal-box">
+      <div class="modal-head">
+        <h2>剪藏工具</h2>
+        <button class="icon-btn" data-close="modal-help">✕</button>
+      </div>
+      <div id="help-body"></div>
+    </div>
+  </div>
+
+  <!-- ============ 统计 ============ -->
+  <div id="modal-stats" class="modal" hidden>
+    <div class="modal-box">
+      <div class="modal-head">
+        <h2>统计</h2>
+        <button class="icon-btn" data-close="modal-stats">✕</button>
+      </div>
+      <div id="stats-body"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="./vendor/supabase.js"></script>
+  <script src="./config.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
