@@ -35,7 +35,7 @@ http://127.0.0.1:8080
 ### 第 1 步：建表 —— 在网页控制台执行
 
 1. 浏览器打开 [supabase.com](https://supabase.com)，用你自己账号登录
-2. 进你 couple-fatloss 用的那个项目
+2. 进你**填 URL 的那个项目**（左侧 Project Settings 里能看到 Project URL，确认和 `config.js` 里的 `url` 一致）
 3. 左侧菜单点 **SQL Editor** → **New query**
 4. 打开项目里的 `supabase-memo-schema.sql`，**整段复制**粘进去
 5. 点右下角 **Run**，看到 `Success. No rows returned` 就成了

@@ -6,6 +6,9 @@
 (function () {
   'use strict';
 
+  /* 构建版本：改动前端后要手动 +1，并同步更新 index.html 里 app.js 的 ?v=（设置页会显示，用来确认浏览器跑的是新代码） */
+  var APP_VER = 'v2.1';
+
   /* ---------------- 小工具 ---------------- */
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
@@ -76,12 +79,14 @@
   function renderSyncDot() {
     const info = Sync.info();
     const dot = $('#syncDot');
+    const _cfg = window.MEMO_SUPABASE || {};
+    const hasCfg = !!(String(_cfg.url || '').trim() && String(_cfg.anonKey || '').trim());
     dot.className = 'sync-dot ' + (
       !info.enabled ? 'off' :
       info.status === 'syncing' ? 'syncing' :
       info.status === 'err' ? 'err' : 'on'
     );
-    dot.title = !info.enabled ? '纯本地模式（未配置云端）'
+    dot.title = !info.enabled ? (hasCfg ? '云端配置已填，但 SDK 未加载（检查 js/vendor/supabase.js）' : '纯本地模式（未配置云端）')
       : info.status === 'syncing' ? '正在同步…'
       : info.status === 'err' ? ('同步出错：' + info.error)
       : ('已连接云端 · 待推送 ' + info.pending + ' 条');
@@ -441,18 +446,22 @@
   function renderSettings() {
     const st = Store.settings();
     const info = Sync.info();
+    const _cfg = window.MEMO_SUPABASE || {};
+    const hasCfg = !!(String(_cfg.url || '').trim() && String(_cfg.anonKey || '').trim());
 
     let html = '';
 
     // 同步
-    html += '<div class="set-block"><h3 class="block-title">云端同步</h3>';
+    html += '<div class="set-block"><h3 class="block-title">云端同步 <span style="font-weight:400;font-size:11px;color:var(--hint);margin-left:6px">构建 ' + APP_VER + '</span></h3>';
     html += '<div class="status-line">' +
       '<span class="pill ' + (!info.enabled ? 'off' : info.status === 'err' ? 'err' : info.status === 'syncing' ? 'warn' : 'ok') + '">' +
-        (!info.enabled ? '未配置' : info.status === 'err' ? '出错' : info.status === 'syncing' ? '同步中' : '已连接') +
+        (!info.enabled ? (hasCfg ? 'SDK 未加载' : '未配置') : info.status === 'err' ? '出错' : info.status === 'syncing' ? '同步中' : '已连接') +
       '</span>' +
       (info.enabled ? '<span style="color:var(--hint);font-size:12.5px">' + esc(info.url) + ' · 待推送 ' + info.pending + ' 条' +
         (info.lastSyncAt ? ' · 上次 ' + fmtTime(info.lastSyncAt) : '') + '</span>'
-        : '<span style="color:var(--hint);font-size:12.5px">当前是纯本地模式，数据只在这台设备的浏览器里</span>') +
+        : hasCfg
+          ? '<span style="color:var(--hint);font-size:12.5px">config.js 已填，但 Supabase SDK 没加载成功 —— 检查 js/vendor/supabase.js 是否存在，或换网络刷新</span>'
+          : '<span style="color:var(--hint);font-size:12.5px">当前是纯本地模式，数据只在这台设备的浏览器里</span>') +
     '</div>';
     if (info.error) html += '<div class="hint" style="color:var(--danger)">' + esc(info.error) + '</div>';
     if (info.enabled) {

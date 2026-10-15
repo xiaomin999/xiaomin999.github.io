@@ -2,7 +2,7 @@
  * 日迹 · 备忘录工作台  ——  云端配置
  * ============================================================
  * 【怎么填】
- *   1) 打开 https://supabase.com 登录 → 进你 couple-fatloss 那个项目
+ *   1) 打开 https://supabase.com 登录 → 进【下面 url 对应的那个项目】
  *   2) 左侧 Project Settings（齿轮）→ API Keys / API
  *   3) 复制 Project URL  → 填到下面 url
  *   4) 复制 anon public key（一定是 anon，不是 service_role）→ 填到下面 anonKey
