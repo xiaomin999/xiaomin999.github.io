@@ -7,7 +7,7 @@
   'use strict';
 
   /* 构建版本：改动前端后要手动 +1，并同步更新 index.html 里 app.js 的 ?v=（设置页会显示，用来确认浏览器跑的是新代码） */
-  var APP_VER = 'v2.1';
+  var APP_VER = 'v2.2';
 
   /* ---------------- 小工具 ---------------- */
   function esc(s) {
@@ -79,14 +79,14 @@
   function renderSyncDot() {
     const info = Sync.info();
     const dot = $('#syncDot');
-    const _cfg = window.MEMO_SUPABASE || {};
-    const hasCfg = !!(String(_cfg.url || '').trim() && String(_cfg.anonKey || '').trim());
+    const cc = Sync.cloudConfig ? Sync.cloudConfig() : {};
+    const hasCfg = !!(cc.url && cc.anonKey);
     dot.className = 'sync-dot ' + (
       !info.enabled ? 'off' :
       info.status === 'syncing' ? 'syncing' :
       info.status === 'err' ? 'err' : 'on'
     );
-    dot.title = !info.enabled ? (hasCfg ? '云端配置已填，但 SDK 未加载（检查 js/vendor/supabase.js）' : '纯本地模式（未配置云端）')
+    dot.title = !info.enabled ? (hasCfg ? '已填连接信息，但 SDK 未加载（检查 js/vendor/supabase.js）' : '纯本地模式（未连接云端）')
       : info.status === 'syncing' ? '正在同步…'
       : info.status === 'err' ? ('同步出错：' + info.error)
       : ('已连接云端 · 待推送 ' + info.pending + ' 条');
@@ -446,8 +446,8 @@
   function renderSettings() {
     const st = Store.settings();
     const info = Sync.info();
-    const _cfg = window.MEMO_SUPABASE || {};
-    const hasCfg = !!(String(_cfg.url || '').trim() && String(_cfg.anonKey || '').trim());
+    const cc = Sync.cloudConfig ? Sync.cloudConfig() : { url: '', anonKey: '', fromLocal: false };
+    const hasCfg = !!(cc.url && cc.anonKey);
 
     let html = '';
 
@@ -455,13 +455,13 @@
     html += '<div class="set-block"><h3 class="block-title">云端同步 <span style="font-weight:400;font-size:11px;color:var(--hint);margin-left:6px">构建 ' + APP_VER + '</span></h3>';
     html += '<div class="status-line">' +
       '<span class="pill ' + (!info.enabled ? 'off' : info.status === 'err' ? 'err' : info.status === 'syncing' ? 'warn' : 'ok') + '">' +
-        (!info.enabled ? (hasCfg ? 'SDK 未加载' : '未配置') : info.status === 'err' ? '出错' : info.status === 'syncing' ? '同步中' : '已连接') +
+        (!info.enabled ? (hasCfg ? 'SDK 未加载' : '未连接') : info.status === 'err' ? '出错' : info.status === 'syncing' ? '同步中' : '已连接') +
       '</span>' +
       (info.enabled ? '<span style="color:var(--hint);font-size:12.5px">' + esc(info.url) + ' · 待推送 ' + info.pending + ' 条' +
         (info.lastSyncAt ? ' · 上次 ' + fmtTime(info.lastSyncAt) : '') + '</span>'
         : hasCfg
-          ? '<span style="color:var(--hint);font-size:12.5px">config.js 已填，但 Supabase SDK 没加载成功 —— 检查 js/vendor/supabase.js 是否存在，或换网络刷新</span>'
-          : '<span style="color:var(--hint);font-size:12.5px">当前是纯本地模式，数据只在这台设备的浏览器里</span>') +
+          ? '<span style="color:var(--hint);font-size:12.5px">连接信息已填，但 Supabase SDK 没加载成功 —— 检查 js/vendor/supabase.js 是否存在，或换网络刷新</span>'
+          : '<span style="color:var(--hint);font-size:12.5px">还没连接云端，数据只在这台设备的浏览器里（下面填上连接信息即可开启）</span>') +
     '</div>';
     if (info.error) html += '<div class="hint" style="color:var(--danger)">' + esc(info.error) + '</div>';
     if (info.enabled) {
@@ -470,9 +470,19 @@
         '<button class="btn" data-act="sync-push">本机数据推到云端</button>' +
       '</div>';
     }
-    html += '<div class="hint">' +
-      '怎么开：打开 <code>js/config.js</code>，把 Supabase 的 <code>url</code> 和 <code>anonKey</code> 填进去，刷新页面。<br>' +
-      '建表脚本在项目根目录 <code>supabase-memo-schema.sql</code>，整段粘到 Supabase 控制台的 SQL Editor 执行一次即可。' +
+    html += '<div class="set-row" style="margin-top:14px"><label>连接信息</label><div class="grow">' +
+      '<input type="text" id="cloudUrl" placeholder="https://xxxx.supabase.co" value="' + esc(cc.url) + '">' +
+      '<div style="display:flex;gap:6px;margin-top:6px">' +
+        '<input type="password" id="cloudKey" placeholder="anon public key" value="' + esc(cc.anonKey) + '" style="flex:1">' +
+        '<button class="btn sm" data-act="cloud-key-toggle">显示</button>' +
+      '</div>' +
+      '<div style="display:flex;gap:8px;margin-top:8px">' +
+        '<button class="btn primary" data-act="cloud-save">保存并连接</button>' +
+        '<button class="btn" data-act="cloud-clear">清除本机连接</button>' +
+      '</div>' +
+      '<div class="hint">把 Supabase 的 <b>Project URL</b> 和 <b>anon public key</b> 粘进来即可，只保存在<b>这台设备</b>的浏览器里，不会进任何仓库/文件。' +
+        (cc.fromLocal ? '（当前用的就是本机保存的）' : '') + '</div>' +
+      '<div class="hint">你和他的设备各粘一次（内容一样）。建表脚本在项目根目录 <code>supabase-memo-schema.sql</code>，到对应项目的 SQL Editor 执行一次。</div>' +
     '</div></div>';
 
     // 共享
@@ -767,6 +777,28 @@
         if (!confirm('把本机全部数据推到云端？\n同 ID 的云端记录会被本机覆盖。')) break;
         Sync.pushAll().then(function (r) { toast(r.ok ? '已推送到云端' : ('推送失败：' + r.reason)); });
         break;
+
+      case 'cloud-save': {
+        const u = ($('#cloudUrl') || {}).value || '';
+        const k = ($('#cloudKey') || {}).value || '';
+        if (!u.trim() || !k.trim()) { toast('url 和 anonKey 都要填'); break; }
+        toast('正在连接…');
+        Sync.setCloud(u, k).then(function (r) {
+          if (!r.enabled) toast('Supabase SDK 未加载，检查 js/vendor/supabase.js');
+          else toast(r.ok ? '已连接云端 ✅' : ('连接失败：' + (r.reason || '请检查 url / key')));
+          renderAll();
+        });
+        break;
+      }
+      case 'cloud-clear':
+        if (!confirm('清除本机保存的云端连接信息？云端数据不受影响。')) break;
+        Sync.setCloud('', '').then(function () { toast('已清除本机连接'); renderAll(); });
+        break;
+      case 'cloud-key-toggle': {
+        const kk = $('#cloudKey');
+        if (kk) kk.type = kk.type === 'password' ? 'text' : 'password';
+        break;
+      }
 
       case 'export': {
         const blob = new Blob([Store.exportJSON()], { type: 'application/json' });
