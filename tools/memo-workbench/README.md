@@ -12,7 +12,7 @@
 
 ```powershell
 # 第 1 步：切到项目目录（路径含中文，务必用引号包住）
-cd "<项目目录>"
+cd "C:\Users\bonsen\WorkBuddy\2026-10-15-13-34-49\memo-workbench"
 
 # 第 2 步：起本地服务（任选一条，装了哪个用哪个）
 python -m http.server 8080 --bind 127.0.0.1
@@ -43,22 +43,18 @@ http://127.0.0.1:8080
 > 这个脚本只新增 3 张 `memo_` 开头的表。
 > **不会改、不会删你 couple-fatloss 用的 `sync_state` 表，也不动你库里任何现有数据。**
 
-### 第 2 步：填 key —— 在本地编辑文件
+### 第 2 步：填连接信息 —— 在工作台里粘贴（**不用改任何文件**）
 
-1. 还在 Supabase 网页里，左侧 **Project Settings（齿轮）** → **API Keys**
-2. 复制 **Project URL** 和 **anon public** 那串 key
-3. 回到电脑，用记事本或 VS Code 打开 `js/config.js`，填进去：
+1. 还在 Supabase 网页里，左侧 **Project Settings（齿轮）** → **API**
+2. 复制 **anon public** 那串 key（Project URL 已经帮你预填好了）
+3. 打开工作台 → 左下 **设置** → **云端同步 → 连接信息**
+4. 把 key 粘进下面的输入框 → 点 **保存并连接**
 
-```js
-window.MEMO_SUPABASE = {
-  url: "https://你的项目ID.supabase.co",
-  anonKey: "eyJhbGciOi...(一长串)"
-};
-```
+> key 只保存在**这台设备的浏览器**里（localStorage），**不会写进任何文件**。
+> 所以把这份代码传到 GitHub 公开仓库时，仓库里永远没有密钥。
+> 你和他的设备**各粘一次**（内容一样）即可。
 
-4. 保存 → 浏览器刷新 `http://127.0.0.1:8080`
-
-刷新后右上角小圆点变**绿色**，就说明连上了。
+连上后设置页状态变「**已连接**」、右上角小圆点变**绿色**。
 
 ### 第 3 步：让两个人的设备对上 —— 在网页里点
 
@@ -96,22 +92,25 @@ window.MEMO_SUPABASE = {
 memo-workbench/
 ├── index.html                    页面骨架（唯一入口）
 ├── css/style.css                 全部样式
-├── js/config.js                  ← 只有这个文件你需要改（填 Supabase key）
+├── js/config.js                  云端配置（默认只有 url、anonKey 留空；连接信息填在设置页）
+├── js/vendor/supabase.js         Supabase SDK 本地拷贝（不依赖外网 CDN，必须一起部署）
 ├── js/store.js                   数据层：本地存储 + 数据模型 + 日期工具
 ├── js/sync.js                    云端同步层（本地优先 + 断网队列 + 实时订阅）
 ├── js/app.js                     界面逻辑：日历 / 当日面板 / 流水 / 统计 / 设置
 ├── supabase-memo-schema.sql      ← 粘到 Supabase SQL Editor 执行的建表脚本
 ├── README.md                     本文件
 └── test/
-    └── smoke.cjs                 无头冒烟测试（69 项断言，跑完生成 smoke-report.txt）
+    ├── smoke.cjs                 无头冒烟测试（72 项断言，生成 smoke-report.txt）
+    └── sync-sm                   云端同步路径测试（模拟后端，17 项断言）
 ```
 
 跑测试（在本地终端执行）：
 
 ```powershell
-cd "<项目目录>"
-$env:NODE_PATH="C:\Users\<你的用户名>\.workbuddy\binaries\node\workspace\node_modules"
+cd "C:\Users\bonsen\WorkBuddy\2026-10-15-13-34-49\memo-workbench"
+$env:NODE_PATH="C:\Users\bonsen\.workbuddy\binaries\node\workspace\node_modules"
 node test/smoke.cjs
+node test/sync-sm
 ```
 
 ---
@@ -120,15 +119,38 @@ node test/smoke.cjs
 
 | 想撤销什么 | 怎么做 | 影响 |
 |---|---|---|
-| 关掉云同步 | 把 `js/config.js` 里的 url/key 清空，刷新 | 回到纯本地，云端数据还在 |
+| 关掉云同步 | 设置页「**清除本机连接**」 | 回到本地模式，云端数据还在，随时可再粘回来 |
 | 删掉云端那 3 张表 | Supabase SQL Editor 执行：`drop table if exists public.memo_logs, public.memo_entries, public.memo_habits;` | 只删这 3 张新表，减脂数据零影响 |
 | 清空本机 | 设置页「清空本机数据」 | 只清这台设备，云端不动，重新拉取即可恢复 |
 
 ---
 
-## 六、已知取舍（先说清楚）
+## 六、部署到 GitHub Pages（可选，想手机也能用再看）
 
-1. **不用登录**。你和另一半共用一把 anon key，所以拿到这把 key 的人理论上能读到这 3 张表的内容——和你现有 `sync_state` 是同一个安全模型。别把 key 贴到公开仓库或群里。想更严实，告诉我，我改成邮箱登录 + 按用户隔离。
+站点目录 `tools/memo-workbench/`（仓库 `xiaomin999/xiaomin999.github.io`）。
+
+**每次更新要传的文件**（改动过就得传，否则线上还是旧的）：
+
+```
+index.html
+js/config.js          ← 保持 anonKey 为空！
+js/sync.js
+js/app.js
+js/vendor/supabase.js ← 新增的文件夹 js/vendor/，必须一起传
+css/style.css （没改就不用传）
+```
+
+**⚠️ 部署前必须确认**：`js/config.js` 里 `anonKey` 是**空的**。
+这个仓库是公开的，一旦 key 传上去，任何人都能读写你的记录。
+（key 填在工作台的设置页里，只存浏览器，永远不进仓库。）
+
+传完后线上打开站点 → 设置 → 把 key 粘进去 → 保存并连接即可。
+
+---
+
+## 七、已知取舍（先说清楚）
+
+1. **不用登录**。你和另一半共用一把 anon key，所以**拿到这把 key 的人**理论上能读到这 3 张表的内容。因此：key **只填在设置页、存各自浏览器**，不进公开仓库；也别把 key 贴群里。想更严实，告诉我，我改成邮箱登录 + 按用户隔离。
 2. **冲突策略是「后改的赢」**。两台设备同时改同一条记录时，`updated_at` 更新的那条覆盖另一条。日常记录场景基本碰不到。
 3. **删除是硬的**，删了就是删了（云端的也会同步删）。所以设置页留了导出备份。
 4. 日历上现在最多显示 6 个点，超出的用 `+n` 表示。
