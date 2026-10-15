@@ -443,6 +443,16 @@
       <rect x="3.4" y="5.4" width="17.2" height="3.7" rx="1.85"/>
       <path d="M12 11.4 12.71 13.33 14.76 13.4 13.14 14.67 13.71 16.65 12 15.5 10.29 16.65 10.86 14.67 9.24 13.4 11.29 13.33z"/>
     </g>
+    <!-- 记事本/备忘录 -->
+    <g id="i-notebook" fill="currentColor">
+      <path d="M5.4 3.4h13.2a1.6 1.6 0 0 1 1.6 1.6v14.4a1.6 1.6 0 0 1-1.6 1.6H5.4A1.6 1.6 0 0 1 3.8 19.4V5a1.6 1.6 0 0 1 1.6-1.6z" opacity=".45"/>
+      <rect x="3.8" y="3.4" width="2.7" height="17.2" rx="1.35"/>
+      <g opacity=".8">
+        <rect x="8.4" y="7.6" width="8.2" height="1.7" rx=".85"/>
+        <rect x="8.4" y="11.4" width="8.2" height="1.7" rx=".85"/>
+        <rect x="8.4" y="15.2" width="5.4" height="1.7" rx=".85"/>
+      </g>
+    </g>
   </defs>
 </svg>
 
@@ -482,7 +492,7 @@
   </div>
   <footer>
     <span>共 <b id="cnt2">0</b> 个工具 · 最近使用记录在本机</span>
-    <span>更新于 2026-10-12</span>
+    <span>更新于 2026-10-15</span>
   </footer>
 </main>
 
@@ -521,6 +531,7 @@ const TOOLS = [
   { cat:"效率工具", name:"Boardly 协作白板", desc:"Canvas 绘图白板，支持网格开关", url:"tools/whiteboard/", host:"本站", icon:"i-pen", g:"linear-gradient(135deg,#ffab6b,#ea580c)", live:1 },
   { cat:"效率工具", name:"个人计划表", desc:"日程与计划编排，Supabase 云同步", url:"https://xiaomin999.github.io/personal-plan/", host:"github.io", icon:"i-calendar", g:"linear-gradient(135deg,#74c0fc,#1c7ed6)", live:1 },
   { cat:"效率工具", name:"微步 MicroStep", desc:"把大目标拆成每天可执行的一小步", url:"tools/microstep/", host:"本站", icon:"i-steps", g:"linear-gradient(135deg,#b197fc,#7048e8)", live:1 },
+  { cat:"效率工具", name:"日迹 · 备忘录工作台", desc:"按天记吃了什么/做了什么/心情/花费 · 日历回看 · 流水与统计", url:"tools/memo-workbench/", host:"本站", icon:"i-notebook", g:"linear-gradient(135deg,#ffd8a8,#a15c07)", live:1, tag:"新" },
 
   { cat:"研究报告", name:"国内扫地机器人型号研究", desc:"8 大品牌 30 款主力型号 · 参数 / 价格 / 好评差评点", url:"tools/robot-vacuum-report/", host:"本站", icon:"i-report", g:"linear-gradient(135deg,#8fd3f4,#1876d2)", live:1, tag:"报告" },
   { cat:"研究报告", name:"清远国庆三天旅游攻略", desc:"2026 国庆 3 天 2 晚 · 行程 / 美食 / 住宿 / 花费", url:"tools/qingyuan-trip/", host:"本站", icon:"i-map", g:"linear-gradient(135deg,#5ee7c4,#0ca678)", live:1, tag:"攻略" }
