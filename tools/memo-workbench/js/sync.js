@@ -11,21 +11,50 @@
  * ============================================================ */
 
 window.Sync = (function () {
-  const CFG = window.MEMO_SUPABASE || {};
-  const URL = String(CFG.url || '').trim();
-  const KEY = String(CFG.anonKey || '').trim();
-  const ENABLED = !!(URL && KEY && window.supabase && window.supabase.createClient);
   const TABLES = ['memo_habits', 'memo_logs', 'memo_entries'];
   const QKEY = 'memo_v1_pending';
+  const CKEY = 'memo_v1_cloud';   // 本机保存的云端连接信息（优先于 config.js）
+
+  let URL = '';
+  let KEY = '';
+  let ENABLED = false;
 
   let sb = null;
   let channel = null;
   let queue = [];
   let flushing = false;
-  let status = ENABLED ? 'idle' : 'off';
+  let status = 'off';
   let lastError = '';
   let lastSyncAt = null;
   const statusSubs = [];
+
+  /* 云端连接信息读取顺序：本机保存（设置页粘贴） > config.js 内置。
+     这样部署到公开站点时 config.js 可以留空，密钥只留在各自设备的浏览器里。 */
+  function readCloud() {
+    try {
+      const s = JSON.parse(localStorage.getItem(CKEY) || 'null');
+      if (s && String(s.url || '').trim() && String(s.anonKey || '').trim()) {
+        return { url: String(s.url).trim(), anonKey: String(s.anonKey).trim(), fromLocal: true };
+      }
+    } catch (e) { /* ignore */ }
+    const c = window.MEMO_SUPABASE || {};
+    return { url: String(c.url || '').trim(), anonKey: String(c.anonKey || '').trim(), fromLocal: false };
+  }
+
+  function hasLocalCloud() {
+    try { return !!localStorage.getItem(CKEY); } catch (e) { return false; }
+  }
+
+  function applyConfig() {
+    const c = readCloud();
+    URL = c.url;
+    KEY = c.anonKey;
+    ENABLED = !!(URL && KEY && window.supabase && window.supabase.createClient);
+    status = ENABLED ? 'idle' : 'off';
+    lastError = '';
+    return c;
+  }
+  applyConfig();
 
   function ws() { return (Store.settings().workspace) || 'memo-shared'; }
   function nowISO() { return new Date().toISOString(); }
@@ -40,6 +69,30 @@ window.Sync = (function () {
   function client() {
     if (!sb) sb = window.supabase.createClient(URL, KEY);
     return sb;
+  }
+
+  /* ---------------- 连接信息（设置页粘贴） ---------------- */
+  function saveCloud(url, key) {
+    url = String(url || '').trim();
+    key = String(key || '').trim();
+    try {
+      if (!url || !key) localStorage.removeItem(CKEY);
+      else localStorage.setItem(CKEY, JSON.stringify({ url: url, anonKey: key }));
+    } catch (e) { /* ignore */ }
+  }
+  function cloudConfig() { return readCloud(); }
+
+  /* 保存后立即重连（不用刷新页面） */
+  async function setCloud(url, key) {
+    saveCloud(url, key);
+    if (channel) { try { client().removeChannel(channel); } catch (e) { /* ignore */ } channel = null; }
+    sb = null;
+    const c = applyConfig();
+    setStatus(status, '');
+    if (!ENABLED) return { ok: false, enabled: false, reason: 'sdk-missing' };
+    const r = await pull(true);
+    if (r.ok) { subscribe(); flush(); }
+    return { ok: r.ok, enabled: true, reason: r.reason, fromLocal: c.fromLocal };
   }
 
   /* ---------------- 字段映射 ---------------- */
@@ -220,9 +273,10 @@ window.Sync = (function () {
   function resubscribe() { subscribe(); }
 
   /* ---------------- 启动 ---------------- */
+  let inited = false;
   function init() {
     loadQueue();
-    Store.onSync(enqueue);
+    if (!inited) { Store.onSync(enqueue); inited = true; }
     if (!ENABLED) {
       setStatus('off');
       console.info('[日迹] 未配置云端，运行在纯本地模式。');
@@ -240,9 +294,14 @@ window.Sync = (function () {
     return {
       enabled: ENABLED, status: status, error: lastError,
       pending: queue.length, lastSyncAt: lastSyncAt,
-      url: URL ? URL.replace(/^https?:\/\//, '') : '', workspace: ws()
+      url: URL ? URL.replace(/^https?:\/\//, '') : '', workspace: ws(),
+      fromLocal: hasLocalCloud()
     };
   }
 
-  return { init, pull, pushAll, flush, onStatus, info, resubscribe, pendingCount, ENABLED };
+  return {
+    init, pull, pushAll, flush, onStatus, info, resubscribe, pendingCount,
+    setCloud, cloudConfig,
+    get ENABLED() { return ENABLED; }
+  };
 })();
