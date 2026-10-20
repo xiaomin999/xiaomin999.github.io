@@ -240,7 +240,16 @@ document.getElementById("addRow").onclick=()=>{currentSheet.rows.push(new Array(
 document.getElementById("addCol").onclick=()=>{currentSheet.headers.push("列"+(currentSheet.headers.length+1));currentSheet.rows.forEach(r=>r.push(""));renderSheet();};
 
 function openEditor(id){
+  /* 新建模式：没有 node，不能走下面的 findNode */
+  if(id===null||id===undefined){
+    editingId=null;editingIsNew=true;currentType="text";currentSheet={headers:[],rows:[]};
+    fTitle.value="";fBody.value="";delBtn.style.display="none";
+    setType("text");mask.classList.add("show");
+    setTimeout(()=>{fTitle.focus();},50);
+    return;
+  }
   editingId=id;editingIsNew=false;const node=findNode(root,id);
+  if(!node){toast("找不到这个文件");return;}
   fTitle.value=node.name||"";
   if(node.type==="sheet"){currentType="sheet";currentSheet=JSON.parse(JSON.stringify(node.data||{headers:[],rows:[]}));if(!currentSheet.headers.length)currentSheet={headers:["列1","列2","列3"],rows:[[],[],[]]};}
   else{currentType="text";fBody.value=node.body||"";}
@@ -260,7 +269,7 @@ function saveEditor(){
   save();render();closeEditor();toast("已保存");
 }
 
-document.getElementById("newBtn").onclick=()=>{editingId=null;editingIsNew=true;currentSheet={headers:[],rows:[]};openEditor(null);};
+document.getElementById("newBtn").onclick=()=>openEditor(null);
 document.getElementById("saveBtn").onclick=saveEditor;
 document.getElementById("closeBtn").onclick=closeEditor;
 delBtn.onclick=()=>{if(editingId){const p=findParent(root,editingId);p.children=p.children.filter(x=>x.id!==editingId);save();render();closeEditor();toast("已删除");}};
