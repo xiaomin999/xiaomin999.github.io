@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我的收藏夹 · 预览（文件夹+Excel）</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+  :root{
+    --bg:#eef1f6;--panel:#ffffff;--ink:#1f2430;--ink-soft:#6b7280;
+    --accent:#5b6ef5;--accent-soft:#eceefe;--line:#e4e7ee;
+    --shadow:0 6px 18px rgba(31,36,48,.08);--shadow-hover:0 12px 30px rgba(31,36,48,.14);
+    --xls:#1d9e5a;--xls2:#27b86a;--folder:#f0a830;--folder2:#f6b84a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}html,body{height:100%}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:var(--ink);background:var(--bg);overflow:hidden}
+  .topbar{height:56px;background:var(--panel);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:0 18px;position:relative;z-index:20}
+  .logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:16px}
+  .logo .dot{width:22px;height:22px;border-radius:6px;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px}
+  .spacer{flex:1}
+  .search{display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:7px 11px;width:230px}
+  .search input{border:0;background:transparent;outline:none;font-size:13px;flex:1;color:var(--ink)}
+  .btn{border:0;border-radius:9px;padding:9px 14px;font-size:13px;cursor:pointer;font-weight:600;display:inline-flex;align-items:center;gap:6px;transition:.15s}
+  .btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:#4a5ce0}
+  .btn-ghost{background:var(--bg);color:var(--ink-soft)}.btn-ghost:hover{background:#e3e7f0;color:var(--ink)}
+  .btn-folder{background:var(--folder);color:#fff}.btn-folder:hover{background:#d98f1f}
+
+  .crumbs{height:40px;background:var(--panel);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:4px;padding:0 18px;font-size:13px;position:relative;z-index:15;overflow-x:auto;white-space:nowrap}
+  .crumbs .c{color:var(--accent);cursor:pointer;padding:4px 8px;border-radius:7px}
+  .crumbs .c:hover{background:var(--accent-soft)}
+  .crumbs .c.cur{color:var(--ink);font-weight:600;cursor:default}
+  .crumbs .c.cur:hover{background:transparent}
+  .crumbs .sep{color:var(--ink-soft);opacity:.5}
+
+  .canvas{position:absolute;top:96px;left:0;right:0;bottom:0;background-color:var(--bg);background-image:radial-gradient(circle,#d4d9e4 1px,transparent 1px);background-size:22px 22px;overflow:hidden}
+  .empty{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;color:var(--ink-soft);pointer-events:none}
+  .empty svg{opacity:.25;margin-bottom:10px}.empty p{font-size:14px}.empty span{font-size:12px;display:block;margin-top:4px;opacity:.8}
+
+  .card{position:absolute;width:188px;background:var(--panel);border-radius:12px;box-shadow:var(--shadow);cursor:default;user-select:none;border:1px solid var(--line);transition:box-shadow .15s}
+  .card:hover{box-shadow:var(--shadow-hover)}.card.dragging{box-shadow:var(--shadow-hover);cursor:grabbing;z-index:999!important}
+  .card .grip{display:flex;align-items:center;gap:8px;padding:12px 12px 8px;cursor:grab}
+  .icon{width:34px;height:42px;flex:none;border-radius:5px;position:relative}
+  .icon.txt{background:linear-gradient(160deg,#6f80f7,#5b6ef5)}
+  .icon.xls{background:linear-gradient(160deg,var(--xls2),var(--xls))}
+  .icon.folder{background:linear-gradient(160deg,var(--folder2),var(--folder));height:34px;border-radius:5px 5px 3px 3px}
+  .icon.folder::before{content:"";position:absolute;top:-6px;left:0;width:16px;height:7px;background:var(--folder);border-radius:4px 4px 0 0}
+  .icon span{position:absolute;bottom:6px;left:0;right:0;text-align:center;color:#fff;font-size:9px;font-weight:700;letter-spacing:.5px}
+  .icon.folder span{bottom:8px}
+  .card .title{font-size:13px;font-weight:600;line-height:1.3;word-break:break-all;max-height:34px;overflow:hidden}
+  .card .meta{font-size:11px;color:var(--ink-soft);padding:0 12px 4px}
+  .card .snippet{font-size:12px;color:var(--ink-soft);line-height:1.45;padding:6px 12px 14px;max-height:62px;overflow:hidden;white-space:pre-wrap;word-break:break-all;border-top:1px dashed var(--line);margin-top:6px}
+  .card .mini{position:absolute;top:6px;right:6px;display:none;gap:4px}
+  .card:hover .mini{display:flex}
+  .card .mini button{width:22px;height:22px;border-radius:6px;background:rgba(255,255,255,.92);border:0;cursor:pointer;font-size:13px;line-height:1;display:flex;align-items:center;justify-content:center;color:var(--ink-soft)}
+  .card .mini button:hover{background:#eef1f6}
+  .card .mini .rdel{color:#ee5a5a}
+
+  .mask{position:fixed;inset:0;background:rgba(20,24,33,.35);backdrop-filter:blur(2px);display:none;align-items:center;justify-content:center;z-index:1000}
+  .mask.show{display:flex}
+  .editor{width:620px;max-width:94vw;max-height:90vh;overflow:auto;background:var(--panel);border-radius:14px;box-shadow:0 24px 60px rgba(0,0,0,.25);padding:20px;animation:pop .16s ease}
+  @keyframes pop{from{transform:scale(.96);opacity:0}to{transform:scale(1);opacity:1}}
+  .editor h3{font-size:15px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+  .seg{display:flex;background:var(--bg);border-radius:10px;padding:4px;margin-bottom:14px;gap:4px}
+  .seg button{flex:1;border:0;background:transparent;padding:8px;border-radius:7px;font-size:13px;font-weight:600;color:var(--ink-soft);cursor:pointer}
+  .seg button.active{background:#fff;color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+  .field{margin-bottom:12px}.field label{display:block;font-size:12px;color:var(--ink-soft);margin-bottom:6px}
+  .editor input[type=text],.editor textarea{width:100%;border:1px solid var(--line);border-radius:9px;padding:10px 12px;font-size:14px;font-family:inherit;outline:none;color:var(--ink);resize:vertical;background:#fbfbfd}
+  .editor input:focus,.editor textarea:focus{border-color:var(--accent);background:#fff}
+  .editor textarea{min-height:200px;line-height:1.6}
+  .actions{display:flex;justify-content:space-between;margin-top:16px}.actions .right{display:flex;gap:10px}
+  .hint{font-size:11px;color:var(--ink-soft);text-align:center;margin-top:10px}
+
+  .sheet-toolbar{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+  .sheet-toolbar .grow{flex:1}
+  .sheet-toolbar button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 11px;font-size:12px;cursor:pointer;font-weight:600;color:var(--ink)}
+  .sheet-toolbar button:hover{background:var(--bg)}
+  .sheet-toolbar .exp{background:var(--xls);color:#fff;border-color:var(--xls)}.sheet-toolbar .exp:hover{background:#178049}
+  .grid{width:100%;border-collapse:collapse;font-size:13px;background:#fff}
+  .grid th,.grid td{border:1px solid var(--line);padding:0;position:relative}
+  .grid input{border:0;width:100%;min-width:70px;padding:8px 9px;font-size:13px;font-family:inherit;outline:none;background:transparent}
+  .grid thead input{font-weight:700;background:#f4f7fb}
+  .grid input:focus{background:var(--accent-soft)}
+  .grid .rn{width:34px;text-align:center;color:var(--ink-soft);background:#fafbfd;font-size:11px;position:relative}
+  .grid .cdel,.grid .rdel{position:absolute;top:-9px;width:18px;height:18px;border-radius:50%;background:#ee5a5a;color:#fff;border:0;font-size:11px;line-height:1;cursor:pointer;display:none;align-items:center;justify-content:center}
+  .grid th:hover .cdel,.grid tr:hover .rdel{display:flex}
+  .grid .cdel{right:-9px;z-index:2}.grid .rdel{left:50%;transform:translateX(-50%)}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1f2430;color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;opacity:0;transition:.2s;z-index:2000;pointer-events:none}
+  .toast.show{opacity:1}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo"><div class="dot">★</div>我的收藏夹</div>
+  <div class="search">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9aa3b2" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+    <input id="search" placeholder="搜索当前文件夹…" />
+  </div>
+  <div class="spacer"></div>
+  <button class="btn btn-folder" id="newFolderBtn">+ 新建文件夹</button>
+  <button class="btn btn-ghost" id="impTop">导入 Excel</button>
+  <button class="btn btn-primary" id="newBtn">+ 新建文件</button>
+</div>
+
+<div class="crumbs" id="crumbs"></div>
+
+<div class="canvas" id="canvas">
+  <div class="empty" id="empty">
+    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#9aa3b2" stroke-width="1.5"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+    <p>这个文件夹是空的</p>
+    <span>新建文件 / 文件夹，或导入 Excel</span>
+  </div>
+</div>
+
+<div class="mask" id="mask">
+  <div class="editor">
+    <h3><span style="color:var(--accent)">✎</span> 编辑文件</h3>
+    <div class="seg">
+      <button data-type="text" class="seg-btn active" id="segText">文本</button>
+      <button data-type="sheet" class="seg-btn" id="segSheet">表格（Excel）</button>
+    </div>
+    <div class="field"><label>标题</label><input type="text" id="fTitle" placeholder="给这份文件起个名字…" /></div>
+    <div id="textPane"><div class="field"><label>内容</label><textarea id="fBody" placeholder="在这里写你想记下的文字…"></textarea></div></div>
+    <div id="sheetPane" style="display:none">
+      <div class="sheet-toolbar">
+        <button id="addRow">+ 行</button><button id="addCol">+ 列</button>
+        <span class="grow"></span><button id="impBtn">导入</button><button class="exp" id="expBtn">导出 Excel</button>
+      </div>
+      <div id="sheetWrap" style="max-height:46vh;overflow:auto"></div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-ghost" id="delBtn" style="color:#ee5a5a">删除</button>
+      <div class="right"><button class="btn btn-ghost" id="closeBtn">取消</button><button class="btn btn-primary" id="saveBtn">保存</button></div>
+    </div>
+    <div class="hint">保存后文件卡片出现在当前文件夹，可拖动摆放，双击重新打开</div>
+  </div>
+</div>
+
+<input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display:none">
+<div class="toast" id="toast"></div>
+
+<script>
+const KEY="favorites_preview_v3";
+let root=JSON.parse(localStorage.getItem(KEY));
+if(!root) root={id:"root",type:"folder",name:"我的收藏夹",children:[
+  {id:uid(),type:"folder",name:"工作资料",children:[],x:60,y:60,ts:Date.now()},
+  {id:uid(),type:"text",name:"随手记",body:"在这里写点什么都可以～",x:280,y:60,ts:Date.now()},
+  {id:uid(),type:"sheet",name:"开销清单",data:{headers:["日期","项目","金额"],rows:[["10-01","咖啡","28"],["10-02","午餐","42"]]},x:500,y:60,ts:Date.now()}
+]};
+let currentPath=["root"], editingId=null, editingIsNew=false, currentType="text", currentSheet={headers:[],rows:[]}, zTop=10;
+
+const canvas=document.getElementById("canvas"),empty=document.getElementById("empty"),mask=document.getElementById("mask");
+const fTitle=document.getElementById("fTitle"),fBody=document.getElementById("fBody");
+const delBtn=document.getElementById("delBtn"),textPane=document.getElementById("textPane"),sheetPane=document.getElementById("sheetPane");
+const sheetWrap=document.getElementById("sheetWrap"),crumbs=document.getElementById("crumbs");
+
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+function toast(m){const t=document.getElementById("toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1600);}
+function save(){localStorage.setItem(KEY,JSON.stringify(root));}
+function findNode(folder,id){if(folder.id===id)return folder;for(const c of folder.children){if(c.id===id)return c;if(c.children){const r=findNode(c,id);if(r)return r;}}return null;}
+function findParent(folder,id){for(const c of folder.children){if(c.id===id)return folder;if(c.children){const r=findParent(c,id);if(r)return r;}}return null;}
+function currentFolder(){let f=root;for(let i=1;i<currentPath.length;i++)f=f.children.find(c=>c.id===currentPath[i]);return f;}
+function esc(s){return (s==null?"":String(s)).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+/* 面包屑 */
+function renderCrumbs(){
+  let f=root, html='<span class="c '+(currentPath.length===1?"cur":"")+'" data-i="0">我的收藏夹</span>';
+  for(let i=1;i<currentPath.length;i++){
+    f=f.children.find(c=>c.id===currentPath[i]);
+    html+='<span class="sep">›</span><span class="c '+(i===currentPath.length-1?"cur":"")+'" data-i="'+i+'">'+esc(f.name)+'</span>';
+  }
+  crumbs.innerHTML=html;
+  crumbs.querySelectorAll(".c").forEach(c=>c.onclick=()=>{const i=+c.dataset.i;currentPath=currentPath.slice(0,i+1);render();});
+}
+
+function render(){
+  canvas.querySelectorAll(".card").forEach(c=>c.remove());
+  const f=currentFolder();
+  empty.style.display=f.children.length?"none":"block";
+  f.children.forEach(ch=>canvas.appendChild(makeCard(ch)));
+  renderCrumbs();
+}
+
+function makeCard(node){
+  const card=document.createElement("div");
+  card.className="card";card.dataset.id=node.id;
+  card.style.left=(node.x||40)+"px";card.style.top=(node.y||40)+"px";card.style.zIndex=++zTop;
+  let iconClass,tag,snippet;
+  if(node.type==="folder"){iconClass="folder";tag="";snippet=(node.children?node.children.length:0)+" 个项目";}
+  else if(node.type==="sheet"){iconClass="xls";tag="XLSX";const r=node.data?node.data.rows.length:0,c=node.data?node.data.headers.length:0;snippet="▦ "+r+" 行 × "+c+" 列";}
+  else{iconClass="txt";tag="TXT";snippet=(node.body||"").replace(/\n/g," ").slice(0,60)||"（空白内容）";}
+  card.innerHTML=`
+    <div class="mini"><button class="ren" title="重命名">✎</button><button class="rdel" title="删除">×</button></div>
+    <div class="grip"><div class="icon ${iconClass}"><span>${tag}</span></div><div class="title"></div></div>
+    <div class="meta">${node.type==="folder"?"📁":"🕒 "+fmtTime(node.ts)}</div>
+    <div class="snippet"></div>`;
+  card.querySelector(".title").textContent=node.name||"未命名";
+  card.querySelector(".snippet").textContent=snippet;
+  card.querySelector(".grip").addEventListener("pointerdown",e=>startDrag(e,card,node));
+  card.addEventListener("dblclick",e=>{
+    if(e.target.closest(".mini"))return;
+    if(node.type==="folder"){currentPath.push(node.id);render();}
+    else openEditor(node.id);
+  });
+  card.querySelector(".ren").onclick=e=>{e.stopPropagation();const n=prompt("重命名：",node.name);if(n&&n.trim()){node.name=n.trim();save();render();}};
+  card.querySelector(".rdel").onclick=e=>{e.stopPropagation();if(confirm("确定删除「"+(node.name||"未命名")+"」？")){const p=findParent(root,node.id);p.children=p.children.filter(x=>x.id!==node.id);save();render();toast("已删除");}};
+  card.addEventListener("pointerdown",()=>{card.style.zIndex=++zTop;});
+  return card;
+}
+function fmtTime(ts){const d=new Date(ts);return `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;}
+
+function startDrag(e,card,node){
+  e.preventDefault();card.classList.add("dragging");
+  const sx=e.clientX,sy=e.clientY,ox=card.offsetLeft,oy=card.offsetTop;
+  function mv(ev){card.style.left=Math.max(0,ox+ev.clientX-sx)+"px";card.style.top=Math.max(0,oy+ev.clientY-sy)+"px";}
+  function up(){card.classList.remove("dragging");node.x=card.offsetLeft;node.y=card.offsetTop;save();window.removeEventListener("pointermove",mv);window.removeEventListener("pointerup",up);}
+  window.addEventListener("pointermove",mv);window.addEventListener("pointerup",up);
+}
+
+function setType(t){
+  currentType=t;
+  document.getElementById("segText").classList.toggle("active",t==="text");
+  document.getElementById("segSheet").classList.toggle("active",t==="sheet");
+  textPane.style.display=t==="text"?"":"none";sheetPane.style.display=t==="sheet"?"":"none";
+}
+document.getElementById("segText").onclick=()=>setType("text");
+document.getElementById("segSheet").onclick=()=>{if(!currentSheet.headers.length)currentSheet={headers:["列1","列2","列3"],rows:[[],[],[]]};setType("sheet");renderSheet();};
+
+function renderSheet(){
+  const d=currentSheet;let html='<table class="grid"><thead><tr><th class="rn"></th>';
+  d.headers.forEach((h,i)=>{html+=`<th><input data-h="${i}" value="${esc(h)}"><button class="cdel" data-c="${i}">×</button></th>`;});
+  html+='</tr></thead><tbody>';
+  d.rows.forEach((r,ri)=>{html+=`<tr><td class="rn">${ri+1}<button class="rdel" data-r="${ri}">×</button></td>`;for(let ci=0;ci<d.headers.length;ci++)html+=`<td><input data-r="${ri}" data-c="${ci}" value="${esc(r[ci]||'')}"></td>`;html+='</tr>';});
+  html+='</tbody></table>';sheetWrap.innerHTML=html;
+  sheetWrap.querySelectorAll("input").forEach(inp=>inp.addEventListener("input",()=>{const r=inp.dataset.r,c=inp.dataset.c,h=inp.dataset.h;if(h!==undefined)d.headers[+h]=inp.value;else d.rows[+r][+c]=inp.value;}));
+  sheetWrap.querySelectorAll(".cdel").forEach(b=>b.onclick=()=>{const c=+b.dataset.c;d.headers.splice(c,1);d.rows.forEach(r=>r.splice(c,1));renderSheet();});
+  sheetWrap.querySelectorAll(".rdel").forEach(b=>b.onclick=()=>{d.rows.splice(+b.dataset.r,1);renderSheet();});
+}
+document.getElementById("addRow").onclick=()=>{currentSheet.rows.push(new Array(currentSheet.headers.length).fill(""));renderSheet();};
+document.getElementById("addCol").onclick=()=>{currentSheet.headers.push("列"+(currentSheet.headers.length+1));currentSheet.rows.forEach(r=>r.push(""));renderSheet();};
+
+function openEditor(id){
+  editingId=id;editingIsNew=false;const node=findNode(root,id);
+  fTitle.value=node.name||"";
+  if(node.type==="sheet"){currentType="sheet";currentSheet=JSON.parse(JSON.stringify(node.data||{headers:[],rows:[]}));if(!currentSheet.headers.length)currentSheet={headers:["列1","列2","列3"],rows:[[],[],[]]};}
+  else{currentType="text";fBody.value=node.body||"";}
+  delBtn.style.display="inline-flex";setType(currentType);if(currentType==="sheet")renderSheet();
+  mask.classList.add("show");setTimeout(()=>fTitle.focus(),50);
+}
+function closeEditor(){mask.classList.remove("show");editingId=null;}
+function saveEditor(){
+  const title=fTitle.value.trim()||"未命名";
+  if(editingIsNew){
+    if(currentType==="text")currentFolder().children.push({id:uid(),type:"text",name:title,body:fBody.value,ts:Date.now(),x:60+currentFolder().children.length*26%420,y:60+currentFolder().children.length*22%300});
+    else currentFolder().children.push({id:uid(),type:"sheet",name:title,data:currentSheet,ts:Date.now(),x:60+currentFolder().children.length*26%420,y:60+currentFolder().children.length*22%300});
+  }else{
+    const node=findNode(root,editingId);node.name=title;node.ts=Date.now();
+    if(currentType==="text")node.body=fBody.value;else node.data=currentSheet;
+  }
+  save();render();closeEditor();toast("已保存");
+}
+
+document.getElementById("newBtn").onclick=()=>{editingId=null;editingIsNew=true;currentSheet={headers:[],rows:[]};openEditor(null);};
+document.getElementById("saveBtn").onclick=saveEditor;
+document.getElementById("closeBtn").onclick=closeEditor;
+delBtn.onclick=()=>{if(editingId){const p=findParent(root,editingId);p.children=p.children.filter(x=>x.id!==editingId);save();render();closeEditor();toast("已删除");}};
+mask.addEventListener("click",e=>{if(e.target===mask)closeEditor();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&mask.classList.contains("show"))closeEditor();if(e.key==="Enter"&&(e.ctrlKey||e.metaKey)&&mask.classList.contains("show"))saveEditor();});
+
+document.getElementById("newFolderBtn").onclick=()=>{
+  const name=prompt("文件夹名称：","新建文件夹");if(name===null)return;
+  currentFolder().children.push({id:uid(),type:"folder",name:name.trim()||"新建文件夹",children:[],x:60+currentFolder().children.length*26%420,y:60+currentFolder().children.length*22%300,ts:Date.now()});
+  save();render();toast("已新建文件夹");
+};
+
+/* 导入 / 导出 Excel */
+function aoa(){return [currentSheet.headers, ...currentSheet.rows.map(r=>currentSheet.headers.map((_,i)=>r[i]||""))];}
+document.getElementById("expBtn").onclick=()=>{
+  const name=(fTitle.value.trim()||"表格")+".xlsx";
+  if(window.XLSX){const ws=XLSX.utils.aoa_to_sheet(aoa());const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,"Sheet1");XLSX.writeFile(wb,name);toast("已导出 "+name);}
+  else{const csv=aoa().map(r=>r.map(c=>'"'+(c||"").replace(/"/g,'""')+'"').join(",")).join("\n");const blob=new Blob(["\ufeff"+csv],{type:"text/csv"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name.replace(".xlsx",".csv");a.click();toast("已导出 CSV（离线模式）");}
+};
+function parseFile(file){
+  const reader=new FileReader();
+  reader.onload=e=>{
+    let headers=[],rows=[];
+    if(file.name.endsWith(".csv")){
+      const lines=e.target.result.split(/\r?\n/).filter(l=>l.trim()!=="");
+      lines.forEach((ln,i)=>{const cells=(ln.match(/"([^"]*)"|([^,]+)/g)||[]).map(s=>s.replace(/^"|"$/g,"").replace(/""/g,'"'));if(i===0)headers=cells;else rows.push(cells);});
+    }else if(window.XLSX){const wb=XLSX.read(e.target.result,{type:"array"});const ws=wb.Sheets[wb.SheetNames[0]];const a=XLSX.utils.sheet_to_json(ws,{header:1});if(a.length){headers=a[0].map(String);rows=a.slice(1).map(r=>r.map(String));}}
+    else{toast("导入 xlsx 需要联网加载组件");return;}
+    if(!headers.length){toast("未能解析文件");return;}
+    currentFolder().children.push({id:uid(),type:"sheet",name:file.name.replace(/\.(xlsx|xls|csv)$/i,""),data:{headers,rows},ts:Date.now(),x:60+currentFolder().children.length*26%420,y:60+currentFolder().children.length*22%300});
+    save();render();toast("已导入："+file.name);
+  };
+  if(file.name.endsWith(".csv"))reader.readAsText(file,"utf-8");else reader.readAsArrayBuffer(file);
+}
+const fileInput=document.getElementById("fileInput");
+document.getElementById("impTop").onclick=()=>fileInput.click();
+document.getElementById("impBtn").onclick=()=>fileInput.click();
+fileInput.onchange=e=>{if(e.target.files[0])parseFile(e.target.files[0]);fileInput.value="";};
+
+/* 搜索（当前文件夹） */
+document.getElementById("search").addEventListener("input",e=>{
+  const q=e.target.value.trim().toLowerCase();const f=currentFolder();let vis=0;
+  f.children.forEach(node=>{
+    const card=canvas.querySelector('.card[data-id="'+node.id+'"]');if(!card)return;
+    let hit=(node.name||"").toLowerCase().includes(q);
+    if(node.type==="sheet"&&node.data)hit=hit||(node.data.headers.join(" ")+" "+node.data.rows.map(r=>r.join(" ")).join(" ")).toLowerCase().includes(q);
+    else if(node.body)hit=hit||node.body.toLowerCase().includes(q);
+    else if(node.type==="folder")hit=hit||(node.children||[]).length>0&&(node.children.some(c=>(c.name||"").toLowerCase().includes(q)));
+    card.style.display=hit?"":"none";if(hit)vis++;
+  });
+  empty.style.display=(f.children.length&&vis>0)?"none":"block";
+});
+
+render();
+</script>
+</body>
+</html>
