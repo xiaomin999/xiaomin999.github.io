@@ -269,12 +269,29 @@
     );
   }
 
+  function openTaskPreview(t){
+    var T=TYPES[t.type]||TYPES.todo;
+    openModal(
+      '<h3>'+T.emoji+' '+esc(t.title)+'</h3>'
+      +'<div class="r-meta" style="margin-bottom:14px">'
+      +'<span class="chip '+T.cls+'">'+T.label+'</span>'
+      +'<span class="chip">📅 '+esc(t.date)+(t.time?' '+esc(t.time):'')+'</span>'
+      +(t.done?'<span class="chip green">已发</span>':'<span class="chip yellow">待写</span>')
+      +'</div>'
+      +'<div class="form-row"><label>备注 / 灵感</label>'
+      +'<div style="font-size:14.5px;color:var(--ink);line-height:1.9;white-space:pre-wrap;word-break:break-word;background:#faf7fc;border-radius:14px;padding:14px">'+(t.note?esc(t.note):'（还没有写备注）')+'</div></div>'
+      +'<div class="modal-actions">'
+      +'<button class="btn ghost" data-act="close-modal">关闭</button>'
+      +'<button class="btn" data-act="task-edit" data-id="'+t.id+'">✎ 编辑</button></div>'
+    );
+  }
+
   /* ===================== 公众号 ===================== */
   function renderGzh(){
     var items=store.tasks.filter(function(t){return t.type==='gzh';}).slice().sort(function(a,b){return a.date.localeCompare(b.date);});
     var body = items.length
       ? items.map(function(t){
-          return '<div class="row"><div class="r-main"><div class="r-title">'+esc(t.title)+'</div>'
+          return '<div class="row clickable" data-act="task-view" data-id="'+t.id+'"><div class="r-main"><div class="r-title">'+esc(t.title)+'</div>'
             +(t.note?'<div class="r-note">'+esc(t.note)+'</div>':'')
             +'<div class="r-meta"><span class="chip purple">📅 '+t.date+(t.time?' '+esc(t.time):'')+'</span>'
             +(t.done?'<span class="chip green">已发</span>':'<span class="chip">待写</span>')+'</div></div>'
@@ -285,7 +302,7 @@
       : '<div class="empty"><b>还没有公众号选题 📝</b>点右边「新建选题」，提前把每天要写的题目标进日历</div>';
     $('#view').innerHTML='<div class="view-head"><h2>📝 公众号选题</h2><span class="sub">日更节奏 · 提前规划</span>'
       +'<button class="btn" style="margin-left:auto" data-act="gzh-new">➕ 新建选题</button></div>'
-      +'<div class="sec-note">所有选题都会同步显示在「日历 / 发布排期」对应日期上。</div>'
+      +'<div class="sec-note">所有选题都会同步显示在「日历 / 发布排期」对应日期上。💡 点击卡片可预览，点 ✎ 按钮才进入编辑。</div>'
       +'<div class="list">'+body+'</div>';
   }
 
@@ -307,7 +324,7 @@
     var arr=store.xhsProducts;
     var body = arr.length
       ? arr.map(function(p){
-          return '<div class="row"><div class="r-main"><div class="r-title">'+esc(p.name)+'</div>'
+          return '<div class="row clickable" data-act="prod-view" data-id="'+p.id+'"><div class="r-main"><div class="r-title">'+esc(p.name)+'</div>'
             +(p.note?'<div class="r-note">'+esc(p.note)+'</div>':'')
             +'<div class="r-meta">'+(p.cat?'<span class="chip pink">'+esc(p.cat)+'</span>':'')
             +(p.shot?'<span class="chip green">已拍</span>':'<span class="chip">待拍</span>')+'</div></div>'
@@ -316,7 +333,7 @@
             +'<button class="icon-btn" data-act="prod-del" data-id="'+p.id+'">🗑</button></div></div>';
         }).join('')
       : '<div class="empty"><b>还没有摆拍产品 🛍️</b>把要拍的产品记下来，拍完一键标记</div>';
-    $('#xhs-products').innerHTML='<div class="sec-note">记录要拍摄/摆拍的产品，拍完标记「已拍」，避免漏拍。</div>'
+    $('#xhs-products').innerHTML='<div class="sec-note">记录要拍摄/摆拍的产品，拍完标记「已拍」，避免漏拍。💡 点击卡片可预览拍摄备注，点 ✎ 按钮才进入编辑。</div>'
       +'<div style="margin-bottom:12px"><button class="btn" data-act="prod-new">➕ 添加产品</button></div>'
       +'<div class="list">'+body+'</div>';
   }
@@ -324,13 +341,13 @@
     var arr=store.xhsCopyTypes;
     var body = arr.length
       ? arr.map(function(c){
-          return '<div class="row"><div class="r-main"><div class="r-title">'+esc(c.name)+'</div>'
+          return '<div class="row clickable" data-act="ctype-view" data-id="'+c.id+'"><div class="r-main"><div class="r-title">'+esc(c.name)+'</div>'
             +(c.desc?'<div class="r-note">'+esc(c.desc)+'</div>':'')+'</div>'
             +'<div class="r-actions"><button class="icon-btn" data-act="ctype-edit" data-id="'+c.id+'">✎</button>'
             +'<button class="icon-btn" data-act="ctype-del" data-id="'+c.id+'">🗑</button></div></div>';
         }).join('')
       : '<div class="empty"><b>还没有文案类型 🏷️</b>先定义你常发的几种文案类型</div>';
-    $('#xhs-types').innerHTML='<div class="sec-note">规划你「每天发什么类型的文案」（种草/测评/穿搭）。写文案时可一键选类型。</div>'
+    $('#xhs-types').innerHTML='<div class="sec-note">规划你「每天发什么类型的文案」（种草/测评/穿搭）。写文案时可一键选类型。💡 点击卡片可预览说明，点 ✎ 按钮才进入编辑。</div>'
       +'<div style="margin-bottom:12px"><button class="btn" data-act="ctype-new">➕ 添加类型</button></div>'
       +'<div class="list">'+body+'</div>';
   }
@@ -600,12 +617,37 @@
       +'<div class="form-row"><label>备注（可选）</label><textarea class="textarea" id="p-note" placeholder="拍摄角度、数量…">'+esc(o.note)+'</textarea></div>'
       +'<div class="modal-actions"><button class="btn ghost" data-act="close-modal">取消</button><button class="btn" data-act="prod-save" data-id="'+o.id+'">保存</button></div>');
   }
+  function openProdPreview(p){
+    openModal(
+      '<h3>🛍️ '+esc(p.name)+'</h3>'
+      +'<div class="r-meta" style="margin-bottom:14px">'
+      +(p.cat?'<span class="chip pink">'+esc(p.cat)+'</span>':'<span class="chip">未分类</span>')
+      +(p.shot?'<span class="chip green">已拍</span>':'<span class="chip yellow">待拍</span>')
+      +'</div>'
+      +'<div class="form-row"><label>拍摄备注</label>'
+      +'<div style="font-size:14.5px;color:var(--ink);line-height:1.9;white-space:pre-wrap;word-break:break-word;background:#faf7fc;border-radius:14px;padding:14px">'+(p.note?esc(p.note):'（还没有写拍摄备注）')+'</div></div>'
+      +'<div class="modal-actions">'
+      +'<button class="btn ghost" data-act="close-modal">关闭</button>'
+      +'<button class="btn" data-act="prod-edit" data-id="'+p.id+'">✎ 编辑</button></div>'
+    );
+  }
   function openCtypeModal(c){
     var isEdit=!!c, o=c||{id:'',name:'',desc:''};
     openModal('<h3>'+(isEdit?'✎ 编辑类型':'➕ 添加文案类型')+'</h3>'
       +'<div class="form-row"><label>类型名称</label><input class="input" id="ct-name" value="'+esc(o.name)+'" placeholder="种草测评"></div>'
       +'<div class="form-row"><label>说明（可选）</label><textarea class="textarea" id="ct-desc" placeholder="这个类型怎么写…">'+esc(o.desc)+'</textarea></div>'
       +'<div class="modal-actions"><button class="btn ghost" data-act="close-modal">取消</button><button class="btn" data-act="ctype-save" data-id="'+o.id+'">保存</button></div>');
+  }
+
+  function openCtypePreview(c){
+    openModal(
+      '<h3>🏷️ '+esc(c.name)+'</h3>'
+      +'<div class="form-row"><label>类型说明</label>'
+      +'<div style="font-size:14.5px;color:var(--ink);line-height:1.9;white-space:pre-wrap;word-break:break-word;background:#faf7fc;border-radius:14px;padding:14px">'+(c.desc?esc(c.desc):'（还没有写类型说明）')+'</div></div>'
+      +'<div class="modal-actions">'
+      +'<button class="btn ghost" data-act="close-modal">关闭</button>'
+      +'<button class="btn" data-act="ctype-edit" data-id="'+c.id+'">✎ 编辑</button></div>'
+    );
   }
 
   /* ===================== 月目标 ===================== */
@@ -743,6 +785,8 @@
 
       case 'task-toggle':
         task=store.tasks.find(function(x){return x.id===id;}); if(task){ task.done=!task.done; save(); refreshCurrent(); } break;
+      case 'task-view':
+        var tv=store.tasks.find(function(x){return x.id===id;}); if(tv) openTaskPreview(tv); break;
       case 'task-edit':
         task=store.tasks.find(function(x){return x.id===id;}); if(task) openTaskModal(task); break;
       case 'task-del':
@@ -758,6 +802,7 @@
 
       case 'xhs-tab': xhsTab=t.dataset.tab; renderXhs(); break;
       case 'prod-toggle': var p=store.xhsProducts.find(function(x){return x.id===id;}); if(p){p.shot=!p.shot; save(); renderXhsProducts();} break;
+      case 'prod-view': var pdv=store.xhsProducts.find(function(x){return x.id===id;}); if(pdv) openProdPreview(pdv); break;
       case 'prod-edit': var pe=store.xhsProducts.find(function(x){return x.id===id;}); if(pe) openProdModal(pe); break;
       case 'prod-del': if(confirm('删除该产品？')){ store.xhsProducts=store.xhsProducts.filter(function(x){return x.id!==id;}); save(); renderXhsProducts(); toast('已删除'); } break;
       case 'prod-new': openProdModal(null); break;
@@ -767,6 +812,7 @@
         else { store.xhsProducts.push({id:uid(), name:pn, cat:$('#p-cat').value.trim(), note:$('#p-note').value.trim(), shot:false}); }
         save(); closeModal(); renderXhsProducts(); toast('已保存 🍬'); break;
 
+      case 'ctype-view': var ctv=store.xhsCopyTypes.find(function(x){return x.id===id;}); if(ctv) openCtypePreview(ctv); break;
       case 'ctype-edit': var ce=store.xhsCopyTypes.find(function(x){return x.id===id;}); if(ce) openCtypeModal(ce); break;
       case 'ctype-del': if(confirm('删除该文案类型？')){ store.xhsCopyTypes=store.xhsCopyTypes.filter(function(x){return x.id!==id;}); save(); renderXhsTypes(); toast('已删除'); } break;
       case 'ctype-new': openCtypeModal(null); break;
