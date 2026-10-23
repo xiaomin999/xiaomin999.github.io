@@ -208,6 +208,41 @@ a{color:inherit;text-decoration:none}
 .scene-table input,.scene-table textarea{width:100%;border:1px solid var(--line);border-radius:8px;padding:6px;font-size:12.5px;font-family:inherit;outline:none}
 .scene-table input:focus,.scene-table textarea:focus{border-color:var(--pink-d)}
 
+/* ===== 周历视图 ===== */
+.cal-cell.wk{min-height:150px}
+.cal-cell.wk .dnum{font-size:12.5px;font-weight:600;color:var(--ink-2)}
+.cal-cell.wk.today .dnum{color:var(--pink-d);font-weight:700}
+.wk-list{display:flex;flex-direction:column;gap:4px;margin-top:3px;overflow:hidden}
+.wk-item{
+  font-size:11.5px;line-height:1.35;color:var(--ink);
+  background:#faf7fc;border-radius:8px;padding:3px 7px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.wk-more{font-size:10.5px;color:var(--ink-2);padding-left:3px}
+.wk-empty{font-size:12px;color:#d8cfe0}
+
+/* ===== 发布排期 ===== */
+.pub-date{font-family:"ZCOOL KuaiLe";font-size:15.5px;color:var(--ink);margin:18px 0 9px;padding-left:2px}
+.pub-date:first-of-type{margin-top:4px}
+.tc-item.done .tt{text-decoration:line-through;color:var(--ink-2)}
+
+/* ===== 月目标 ===== */
+.goal-edit{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:10px 0 12px}
+.goal-inp label{display:block;font-size:12.5px;color:var(--ink-2);margin-bottom:5px}
+.goal-row{margin-bottom:18px}
+.goal-row:last-child{margin-bottom:4px}
+.goal-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:7px;font-size:14px}
+.goal-bar{height:14px;border-radius:999px;background:#f4edf6;overflow:hidden}
+.goal-fill{height:100%;border-radius:999px;transition:width .35s ease}
+.gf-purple{background:linear-gradient(90deg,var(--purple-d),#c9b0ff)}
+.gf-pink{background:linear-gradient(90deg,var(--pink-d),#ffc2d8)}
+.gf-blue{background:linear-gradient(90deg,var(--blue-d),#a8d4ff)}
+.gf-green{background:linear-gradient(90deg,var(--green-d),#9fe6c6)}
+.gf-yellow{background:linear-gradient(90deg,var(--yellow-d),#ffe9a8)}
+.goal-pct{font-size:12px;color:var(--ink-2);margin-top:4px;text-align:right}
+.pub-check{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--ink);margin:6px 0 2px;cursor:pointer;user-select:none}
+.pub-check input{width:17px;height:17px;accent-color:var(--pink-d)}
+
 /* ===== 入口链接 ===== */
 .link-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px}
 .link-card{
