@@ -140,7 +140,7 @@
   document.querySelectorAll('.nav-item,.bnav').forEach(function(b){
     b.addEventListener('click', function(){ switchView(b.dataset.view); });
   });
-  $('#drawerMask').addEventListener('click', closeDrawer);
+  $('#drawerMask').addEventListener('click', function(e){ if(e.target===this) closeDrawer(); });
   $('#modalMask').addEventListener('click', function(e){ if(e.target===this) closeModal(); });
 
   /* ===================== 日历（月历 / 周历 / 发布排期） ===================== */
@@ -340,7 +340,7 @@
     var typeName={}; store.xhsCopyTypes.forEach(function(c){typeName[c.id]=c.name;});
     var body = arr.length
       ? arr.slice().sort(function(a,b){return (b.date||'').localeCompare(a.date||'');}).map(function(c){
-          return '<div class="row"><div class="r-main"><div class="r-title">'+esc(c.title)+'</div>'
+          return '<div class="row clickable" data-act="copy-view" data-id="'+c.id+'"><div class="r-main"><div class="r-title">'+esc(c.title)+'</div>'
             +(c.body?'<div class="r-note">'+esc(c.body)+'</div>':'')
             +'<div class="r-meta">'
             +(c.typeId&&typeName[c.typeId]?'<span class="chip red">'+esc(typeName[c.typeId])+'</span>':'')
@@ -352,9 +352,28 @@
             +'<button class="icon-btn" data-act="copy-del" data-id="'+c.id+'">🗑</button></div></div>';
         }).join('')
       : '<div class="empty"><b>还没有文案记录 📝</b>这里专门存你的小红书文案草稿，之前没建过，现在归位啦</div>';
-    $('#xhs-copies').innerHTML='<div class="sec-note">专属「文案记录」区：标题、类型、关联产品、正文、发布日期、状态一目了然。</div>'
+    $('#xhs-copies').innerHTML='<div class="sec-note">专属「文案记录」区：标题、类型、关联产品、正文、发布日期、状态一目了然。💡 点击卡片可直接预览文案，点 ✎ 按钮才进入编辑。</div>'
       +'<div style="margin-bottom:12px"><button class="btn" data-act="copy-new">➕ 新建文案</button></div>'
       +'<div class="list">'+body+'</div>';
+  }
+  function openCopyPreview(c){
+    var typeName='', prodName='';
+    store.xhsCopyTypes.forEach(function(t){ if(t.id===c.typeId) typeName=t.name; });
+    store.xhsProducts.forEach(function(p){ if(p.id===c.product) prodName=p.name; });
+    openModal(
+      '<h3>📕 '+esc(c.title)+'</h3>'
+      +'<div class="r-meta" style="margin-bottom:14px">'
+      +(typeName?'<span class="chip red">'+esc(typeName)+'</span>':'')
+      +(prodName?'<span class="chip pink">🛍️ '+esc(prodName)+'</span>':'')
+      +(c.date?'<span class="chip">📅 '+esc(c.date)+'</span>':'<span class="chip">未排期</span>')
+      +(c.status==='posted'?'<span class="chip green">已发</span>':'<span class="chip yellow">草稿</span>')
+      +'</div>'
+      +'<div class="form-row"><label>正文 / 文案内容</label>'
+      +'<div style="font-size:14.5px;color:var(--ink);line-height:1.9;white-space:pre-wrap;word-break:break-word;background:#faf7fc;border-radius:14px;padding:14px">'+(c.body?esc(c.body):'（还没有写正文）')+'</div></div>'
+      +'<div class="modal-actions">'
+      +'<button class="btn ghost" data-act="close-modal">关闭</button>'
+      +'<button class="btn" data-act="copy-edit" data-id="'+c.id+'">✎ 编辑</button></div>'
+    );
   }
   function openCopyModal(copy){
     var isEdit=!!copy;
@@ -377,11 +396,126 @@
   }
 
   /* ===================== 抖音 ===================== */
+  /* ---- 一键生成：脚本模板库（分镜 + 话术） ---- */
+  var GEN = {
+    ootd:{ label:'👗 穿搭分享', short:'穿搭分享',
+      hooks:['哈喽宝子们！今天这套{t}真的绝，显高显瘦还好看～','是谁还在为穿什么发愁？这套{t}直接抄作业！','被问爆的{t}来了，通勤约会都能穿！'],
+      middles:[
+        {visual:'全身远景 · 转一圈', line:'先看整体效果，这套{t}的重点是版型，遮肉又显利落。', dur:6},
+        {visual:'中景 · 单品逐一展示', line:'上衣是软糯的针织，垂感很好；裤子选高腰款，腿长两米既视感。', dur:8},
+        {visual:'近景 · 细节特写', line:'细节也很到位，走线工整，这个质感完全不输大牌。', dur:5},
+        {visual:'中景走动 · 场景化', line:'日常通勤、周末约会都能穿，配一双德训鞋舒服一整天。', dur:6}
+      ],
+      extra:{visual:'近景口播 · 互动', line:'很多宝子问链接，都放评论区了，自取不客气～', dur:6},
+      ctas:['关注我看更多穿搭，我们下次见～','喜欢这套的宝子记得点赞收藏，还想看什么风格评论区点菜！'],
+      props:'手机支架、自然光、同色系背景墙、搭配的鞋包配饰',
+      note:'前3秒必须抓眼球；每个单品给足特写；用自然光拍摄，避免顶光。'
+    },
+    review:{ label:'🛍️ 好物测评', short:'好物测评',
+      hooks:['用了整整一个月的{t}，今天来交个真实作业！','别急着买{t}！先看完这条视频再决定。'],
+      middles:[
+        {visual:'开箱 · 俯拍', line:'先开箱，{t}的包装和第一印象还不错。', dur:6},
+        {visual:'使用过程 · 中景', line:'重点说使用感受：操作简单，上手零门槛。', dur:8},
+        {visual:'效果对比 · 分屏', line:'用之前 VS 用一个月，差别真的肉眼可见。', dur:6},
+        {visual:'近景 · 总结', line:'总结一下：值得入手，但这几个点你要提前知道。', dur:5}
+      ],
+      extra:{visual:'近景口播 · 答疑', line:'适合谁、不适合谁，一句话说清楚，对号入座就行。', dur:6},
+      ctas:['真实测评不踩坑，关注我，下期测点别的！','觉得有用就点赞收藏，免得想买的时候找不到～'],
+      props:'产品本体、使用场景布置、分屏对比素材',
+      note:'优缺点都讲才可信；对比画面要有冲击力；价格信息放评论区。'
+    },
+    tutorial:{ label:'📚 教程干货', short:'教程干货',
+      hooks:['3分钟学会{t}，有手就会！','关于{t}，这条视频一口气讲清楚。'],
+      middles:[
+        {visual:'全景 · 准备', line:'先把需要的东西准备好，跟着做就行。', dur:5},
+        {visual:'中景 · 步骤一', line:'第一步很关键，很多人就错在这里。', dur:7},
+        {visual:'近景 · 步骤二', line:'第二步注意细节，慢动作再演示一遍。', dur:7},
+        {visual:'中景 · 成果展示', line:'搞定！看看最终效果，是不是很简单。', dur:5}
+      ],
+      extra:{visual:'近景口播 · 答疑', line:'常见问题也整理好了，评论区置顶自取。', dur:5},
+      ctas:['学会了的宝子点个赞，关注我学更多干货！','收藏起来慢慢做，做完记得来交作业～'],
+      props:'教程所需材料、整齐的操作台面',
+      note:'步骤配字幕；关键步骤放慢并重复；开头先展示成果再讲过程。'
+    },
+    vlog:{ label:'🎬 日常vlog', short:'日常vlog',
+      hooks:['今天是怎么过的？一条{t}治愈你的周五。','记录平凡又闪光的日常，这就是{t}。'],
+      middles:[
+        {visual:'清晨 · 空镜', line:'美好的一天从早餐开始，记录一下生活。', dur:5},
+        {visual:'白天 · 生活片段', line:'白天的日常很充实，忙里偷闲最幸福。', dur:7},
+        {visual:'傍晚 · 氛围镜头', line:'傍晚的光线最好，随手一拍都是大片。', dur:6},
+        {visual:'夜晚 · 口播', line:'平凡的日子也在好好过，这就够了。', dur:5}
+      ],
+      extra:{visual:'混剪 · 高光瞬间', line:'把今天最开心的几个瞬间剪在一起。', dur:6},
+      ctas:['关注我，一起把日子过成想要的样子～','你的今天过得怎么样？评论区聊聊～'],
+      props:'手机、稳定器（可选）、日常场景自然光线',
+      note:'多拍空镜和转场素材；配乐卡点；文案走心不煽情。'
+    }
+  };
+  var genSel={type:'ootd',dur:30}, genTopic='', genScript=null;
+  function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+  function fmtDur(s){ return Math.floor(s/60)+':'+pad(s%60); }
+  function scriptPlainText(s){
+    return '《'+s.title+'》完整口播稿\n\n'+s.scenes.map(function(sc,i){ return '【'+(i+1)+'】'+sc.line; }).join('\n');
+  }
+  function genBuild(topic){
+    var T=GEN[genSel.type]||GEN.ootd;
+    var factor = genSel.dur===15?0.6:(genSel.dur===60?1.8:1);
+    var hook={visual:'近景口播 · 黄金3秒', line:pick(T.hooks), dur:4};
+    var cta={visual:'近景口播 · 结尾号召', line:pick(T.ctas), dur:4};
+    var plan = [hook].concat(T.middles);
+    if(genSel.dur===60) plan.push(T.extra);
+    else if(genSel.dur===15) plan = [hook, T.middles[0], T.middles[1]];
+    plan.push(cta);
+    var scenes = plan.map(function(sc,i){
+      return {visual:sc.visual, line:sc.line.replace(/\{t\}/g,topic),
+        duration:fmtDur(Math.max(2,Math.round(sc.dur*factor))),
+        bgm: i===0?'轻快BGM':(i===plan.length-1?'收尾音效':'同BGM')};
+    });
+    genScript={id:'', title:topic+' · '+T.short, style:'', planDate:'', published:false,
+      scenes:scenes, props:T.props, note:T.note, created:todayStr()};
+  }
+  function openGenModal(){
+    genSel={type:'ootd',dur:30};
+    var typeBtns=''; Object.keys(GEN).forEach(function(k){ typeBtns+='<button class="'+(k===genSel.type?'on':'')+'" data-act="gen-type" data-val="'+k+'">'+GEN[k].label+'</button>'; });
+    var durBtns=[15,30,60].map(function(d){ return '<button class="'+(d===genSel.dur?'on':'')+'" data-act="gen-dur" data-val="'+d+'">'+d+'秒</button>'; }).join('');
+    openModal(
+      '<h3>✨ 一键生成脚本</h3>'
+      +'<div class="sec-note">输入主题，自动生成「分镜脚本 + 口播话术」，生成后还能继续编辑保存。</div>'
+      +'<div class="form-row"><label>视频主题 / 选题</label><input class="input" id="g-topic" placeholder="例如：初秋通勤穿搭、宿舍好物开箱"></div>'
+      +'<div class="form-row"><label>脚本类型</label><div class="seg" id="g-type">'+typeBtns+'</div></div>'
+      +'<div class="form-row"><label>视频时长</label><div class="seg" id="g-dur">'+durBtns+'</div></div>'
+      +'<div class="modal-actions"><button class="btn ghost" data-act="close-modal">取消</button>'
+      +'<button class="btn" data-act="gen-run">🎁 生成脚本</button></div>'
+    );
+    setTimeout(function(){ var t=$('#g-topic'); if(t) t.focus(); },60);
+  }
+  function openGenResult(){
+    var s=genScript;
+    var total=s.scenes.reduce(function(a,sc){ var p=sc.duration.split(':'); return a+(+p[0])*60+(+p[1]); },0);
+    var rows=s.scenes.map(function(sc,i){
+      return '<tr><td style="width:34px;text-align:center;color:var(--ink-2)">'+(i+1)+'</td>'
+      +'<td>'+esc(sc.visual)+'</td><td>'+esc(sc.line)+'</td>'
+      +'<td style="width:56px">'+esc(sc.duration)+'</td></tr>';
+    }).join('');
+    openModal(
+      '<h3>🎁 生成完成</h3>'
+      +'<div class="r-meta" style="margin-bottom:12px"><span class="chip pink">'+esc(s.title)+'</span>'
+      +'<span class="chip">'+s.scenes.length+' 个分镜</span><span class="chip">约 '+total+' 秒</span></div>'
+      +'<div class="form-row"><label>完整口播稿（可整段复制，配合提词器使用）</label>'
+      +'<textarea class="textarea" id="g-copy" style="min-height:150px" readonly>'+esc(scriptPlainText(s))+'</textarea>'
+      +'<button class="btn ghost sm" data-act="gen-copy" style="margin-top:6px">📋 复制口播稿</button></div>'
+      +'<div class="form-row"><label>分镜预览</label>'
+      +'<table class="scene-table"><thead><tr><th>#</th><th>画面</th><th>话术</th><th>时长</th></tr></thead><tbody>'+rows+'</tbody></table></div>'
+      +'<div class="modal-actions"><button class="btn ghost" data-act="gen-again">↻ 换一版</button>'
+      +'<button class="btn ghost" data-act="close-modal">取消</button>'
+      +'<button class="btn" data-act="gen-use">✎ 编辑并保存</button></div>'
+    );
+  }
   function renderDouyin(){
     var arr=store.douyinScripts;
     var body = arr.length
       ? arr.slice().reverse().map(function(s){
-          return '<div class="row"><div class="r-main"><div class="r-title">'+esc(s.title)+'</div>'
+          return '<div class="row clickable" data-act="script-view" data-id="'+s.id+'"><div class="r-main"><div class="r-title">'+esc(s.title)+'</div>'
             +(s.style?'<div class="r-note">风格：'+esc(s.style)+'</div>':'')
             +'<div class="r-meta"><span class="chip blue">🎬 '+s.scenes.length+' 个分镜</span>'
             +(s.planDate?'<span class="chip">📅 '+esc(s.planDate)+'</span>':'')
@@ -392,9 +526,10 @@
             +'<button class="icon-btn" data-act="script-del" data-id="'+s.id+'">🗑</button></div></div>';
         }).join('')
       : '<div class="empty"><b>还没有脚本 🎬</b>先建一个穿搭视频脚本模版</div>';
-    $('#view').innerHTML='<div class="view-head"><h2>🎬 抖音 · 穿搭脚本</h2><span class="sub">脚本模版 + 随手新建</span>'
-      +'<button class="btn" style="margin-left:auto" data-act="script-new">➕ 新建脚本</button></div>'
-      +'<div class="sec-note">内置穿搭视频脚本模版；给脚本填「计划发布日期」后会出现在日历与发布排期里。</div>'
+    $('#view').innerHTML='<div class="view-head"><h2>🎬 抖音 · 穿搭脚本</h2><span class="sub">一键生成 + 脚本模版 + 随手新建</span>'
+      +'<button class="btn green" style="margin-left:auto" data-act="gen-open">✨ 一键生成</button>'
+      +'<button class="btn" data-act="script-new">➕ 新建脚本</button></div>'
+      +'<div class="sec-note">「一键生成」输入主题即可自动生成分镜脚本+口播话术；给脚本填「计划发布日期」后会出现在日历与发布排期里。💡 点击脚本卡片可直接预览完整内容，点 ✎ 按钮才进入编辑。</div>'
       +'<div class="list">'+body+'</div>';
   }
   function openScriptModal(script){
@@ -422,6 +557,34 @@
       +'<label class="pub-check"><input type="checkbox" id="s-pub"'+(s.published?' checked':'')+'> 已发布（计入月目标）</label>'
       +'<div class="modal-actions"><button class="btn ghost" data-act="close-modal">取消</button>'
       +'<button class="btn" data-act="script-save" data-id="'+s.id+'">保存</button></div>'
+    );
+  }
+  function openScriptPreview(s){
+    var rows = s.scenes.map(function(sc,i){
+      return '<tr><td style="width:34px;text-align:center;color:var(--ink-2)">'+(i+1)+'</td>'
+        +'<td>'+esc(sc.visual||'—')+'</td>'
+        +'<td>'+esc(sc.line||'—')+'</td>'
+        +'<td style="width:64px">'+esc(sc.duration||'—')+'</td>'
+        +'<td style="width:80px">'+esc(sc.bgm||'—')+'</td></tr>';
+    }).join('');
+    openModal(
+      '<h3>🎬 '+esc(s.title)+'</h3>'
+      +'<div class="r-meta" style="margin-bottom:14px">'
+      +(s.style?'<span class="chip blue">风格：'+esc(s.style)+'</span>':'')
+      +'<span class="chip">📅 '+(s.planDate?esc(s.planDate):'未排期')+'</span>'
+      +(s.published?'<span class="chip green">已发布</span>':'<span class="chip yellow">待拍</span>')
+      +(s.created?'<span class="chip">建于 '+esc(s.created)+'</span>':'')
+      +'</div>'
+      +'<div class="form-row"><label>分镜脚本（'+s.scenes.length+' 个）</label>'
+      +'<table class="scene-table"><thead><tr><th>#</th><th>景别/画面</th><th>台词/字幕</th><th>时长</th><th>BGM</th></tr></thead><tbody>'+rows+'</tbody></table></div>'
+      +'<div class="form-row"><label>完整口播稿（可复制，配合提词器使用）</label>'
+      +'<textarea class="textarea" id="g-copy" style="min-height:130px" readonly>'+esc(scriptPlainText(s))+'</textarea>'
+      +'<button class="btn ghost sm" data-act="gen-copy" style="margin-top:6px">📋 复制口播稿</button></div>'
+      +(s.props?'<div class="form-row"><label>道具 / 场景</label><div class="r-note">'+esc(s.props)+'</div></div>':'')
+      +(s.note?'<div class="form-row"><label>备注</label><div class="r-note">'+esc(s.note)+'</div></div>':'')
+      +'<div class="modal-actions">'
+      +'<button class="btn ghost" data-act="close-modal">关闭</button>'
+      +'<button class="btn" data-act="script-edit" data-id="'+s.id+'">✎ 编辑</button></div>'
     );
   }
   function readScenes(){
@@ -613,6 +776,7 @@
         else { store.xhsCopyTypes.push({id:uid(), name:cn, desc:$('#ct-desc').value.trim()}); }
         save(); closeModal(); renderXhsTypes(); toast('已保存 🍬'); break;
 
+      case 'copy-view': var cv=store.xhsCopies.find(function(x){return x.id===id;}); if(cv) openCopyPreview(cv); break;
       case 'copy-toggle': var c=store.xhsCopies.find(function(x){return x.id===id;}); if(c){c.status=(c.status==='posted'?'draft':'posted'); save(); renderXhsCopies(); if(currentView==='calendar') renderCalendar();} break;
       case 'copy-edit': var ce2=store.xhsCopies.find(function(x){return x.id===id;}); if(ce2) openCopyModal(ce2); break;
       case 'copy-del': if(confirm('删除该文案？')){ store.xhsCopies=store.xhsCopies.filter(function(x){return x.id!==id;}); save(); renderXhsCopies(); if(currentView==='calendar') renderCalendar(); toast('已删除'); } break;
@@ -627,6 +791,26 @@
         if(confirm('用内置「穿搭视频脚本模版」开始，还是空白新建？\n确定=用模版，取消=空白')){ openScriptModal(null); }
         else { openScriptModal({id:'',title:'',style:'',planDate:'',published:false,scenes:[{visual:'',line:'',duration:'',bgm:''}],props:'',note:''}); }
         break;
+      case 'gen-open': openGenModal(); break;
+      case 'gen-type':
+        genSel.type=t.dataset.val;
+        document.querySelectorAll('#g-type button').forEach(function(b){ b.classList.toggle('on', b.dataset.val===genSel.type); });
+        break;
+      case 'gen-dur':
+        genSel.dur=+t.dataset.val;
+        document.querySelectorAll('#g-dur button').forEach(function(b){ b.classList.toggle('on', +b.dataset.val===genSel.dur); });
+        break;
+      case 'gen-run':
+        genTopic=($('#g-topic').value||'').trim();
+        if(!genTopic){ toast('先填写视频主题'); return; }
+        genBuild(genTopic); openGenResult(); break;
+      case 'gen-again': genBuild(genTopic); openGenResult(); break;
+      case 'gen-use': closeModal(); openScriptModal(genScript); break;
+      case 'gen-copy':
+        var ta=$('#g-copy');
+        if(ta){ ta.select(); try{ document.execCommand('copy'); toast('口播稿已复制 📋'); }catch(e){ toast('复制失败，请手动选择复制'); } }
+        break;
+      case 'script-view': var sv=store.douyinScripts.find(function(x){return x.id===id;}); if(sv) openScriptPreview(sv); break;
       case 'script-toggle':
         var sc=store.douyinScripts.find(function(x){return x.id===id;}); if(sc){sc.published=!sc.published; save(); renderDouyin(); if(currentView==='calendar'||currentView==='goals') refreshCurrent(); else refreshCurrent();} break;
       case 'script-edit': var se=store.douyinScripts.find(function(x){return x.id===id;}); if(se) openScriptModal(se); break;
