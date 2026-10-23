@@ -1,0 +1,17 @@
+{
+  "name": "甜筒工作台 · 副业与内容日程台",
+  "short_name": "甜筒工作台",
+  "description": "可爱风的个人工作平台：日历标注、公众号选题、小红书文案记录、抖音脚本模版，并聚合常用工具入口。",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#fff6fb",
+  "theme_color": "#ffe3ef",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

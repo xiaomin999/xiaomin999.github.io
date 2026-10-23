@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>甜筒工作台 · 副业与内容日程台</title>
+<meta name="description" content="可爱的个人工作平台：日历标注每日待办、公众号选题、小红书文案记录、抖音脚本模版，并聚合常用工具入口。">
+<meta name="theme-color" content="#ffe3ef">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- 背景柔光 -->
+<div class="bg-blob b1"></div>
+<div class="bg-blob b2"></div>
+<div class="bg-blob b3"></div>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="mascot">🍦</div>
+    <div class="brand-txt">
+      <h1>甜筒工作台</h1>
+      <p id="greeting">副业 · 公众号 · 小红书 · 抖音，一页搞定 🍬</p>
+    </div>
+  </div>
+  <div class="top-actions">
+    <button class="pill" id="btnBackup" title="数据备份">⚙️ 备份</button>
+  </div>
+</header>
+
+<div class="layout">
+  <!-- 侧边导航 -->
+  <nav class="sidenav" id="sidenav">
+    <button class="nav-item active" data-view="calendar"><span class="nv">📅</span><span class="nl">日历</span></button>
+    <button class="nav-item" data-view="gzh"><span class="nv">📝</span><span class="nl">公众号</span></button>
+    <button class="nav-item" data-view="xhs"><span class="nv">📕</span><span class="nl">小红书</span></button>
+    <button class="nav-item" data-view="douyin"><span class="nv">🎬</span><span class="nl">抖音</span></button>
+    <button class="nav-item" data-view="links"><span class="nv">🔗</span><span class="nl">入口</span></button>
+  </nav>
+
+  <main class="content" id="view"><!-- 视图由 app.js 渲染 --></main>
+</div>
+
+<!-- 底部移动端导航 -->
+<nav class="bottomnav" id="bottomnav">
+  <button class="bnav active" data-view="calendar"><span>📅</span>日历</button>
+  <button class="bnav" data-view="gzh"><span>📝</span>公众号</button>
+  <button class="bnav" data-view="xhs"><span>📕</span>小红书</button>
+  <button class="bnav" data-view="douyin"><span>🎬</span>抖音</button>
+  <button class="bnav" data-view="links"><span>🔗</span>入口</button>
+</nav>
+
+<!-- 日详情抽屉 -->
+<div class="drawer-mask" id="drawerMask"></div>
+<aside class="drawer" id="drawer" aria-hidden="true"></aside>
+
+<!-- 通用弹窗 -->
+<div class="modal-mask" id="modalMask"></div>
+<div class="modal" id="modal" role="dialog" aria-modal="true"></div>
+
+<!-- 提示 -->
+<div class="toast" id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
