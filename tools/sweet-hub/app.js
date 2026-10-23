@@ -187,7 +187,7 @@
     var todayItems=all.filter(function(it){return it.date===tStr;});
     var todayHtml = todayItems.length ? todayItems.map(pubItemRow).join('')
       : '<div class="empty"><b>今天还没有安排 🍬</b>点下方日历格子，把待办标上去吧</div>';
-    return '<div class="card today-card"><div class="tc-head"><div><b style="font-family:ZCOOL KuaiLe;font-size:17px">今天 · '+((new Date()).getMonth()+1)+'月'+((new Date()).getDate())+'日 周'+DOW[(new Date()).getDay()]+'</b></div>'
+    return '<div class="card today-card"><div class="tc-head"><div><b style="font-size:17px">今天 · '+((new Date()).getMonth()+1)+'月'+((new Date()).getDate())+'日 周'+DOW[(new Date()).getDay()]+'</b></div>'
       +'<span class="chip green">'+todayItems.length+' 项</span></div><div class="tc-list">'+todayHtml+'</div></div>'
       +'<div class="cal-grid"><div class="cal-dow">日</div><div class="cal-dow">一</div><div class="cal-dow">二</div><div class="cal-dow">三</div><div class="cal-dow">四</div><div class="cal-dow">五</div><div class="cal-dow">六</div>'+cells+'</div>';
   }
@@ -686,9 +686,9 @@
     openModal(
       '<h3>⚙️ 数据备份</h3>'
       +'<div class="sec-note">所有数据都存在本机浏览器（localStorage）。换设备或清缓存前，建议导出备份；误删也能导入恢复。</div>'
-      +'<div class="form-row"><b style="font-family:ZCOOL KuaiLe">导出备份</b><div class="r-note">下载一个 JSON 文件，安全保存在电脑里。</div>'
+      +'<div class="form-row"><b>导出备份</b><div class="r-note">下载一个 JSON 文件，安全保存在电脑里。</div>'
       +'<button class="btn" data-act="backup-export" style="margin-top:8px">⬇️ 导出 JSON</button></div>'
-      +'<div class="form-row" style="margin-top:14px"><b style="font-family:ZCOOL KuaiLe">导入恢复</b><div class="r-note">选择之前导出的 JSON，会覆盖当前数据（请先导出再导入）。</div>'
+      +'<div class="form-row" style="margin-top:14px"><b>导入恢复</b><div class="r-note">选择之前导出的 JSON，会覆盖当前数据（请先导出再导入）。</div>'
       +'<input type="file" id="backup-file" accept="application/json,.json" style="margin-top:8px">'
       +'<button class="btn ghost" data-act="backup-import" style="margin-top:8px">⬆️ 导入并覆盖</button></div>'
     );
