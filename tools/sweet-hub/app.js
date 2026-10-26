@@ -10,12 +10,12 @@
     todo:   {label:'通用待办',   emoji:'✅', cls:'green'}
   };
   var PRESET = {
-    pink:   ['#ffd0e4','#ff8fb8'],
-    red:    ['#ffd6e8','#ff6b8b'],
-    green:  ['#d4f3e0','#56c596'],
-    blue:   ['#d6ecff','#5aa9f0'],
-    purple: ['#e7dcff','#a07cff'],
-    yellow: ['#fff2cf','#f5c84b']
+    pink:   ['#ece0db','#a28276'],
+    red:    ['#ead9d9','#a87e88'],
+    green:  ['#dfe9e0','#6f8a76'],
+    blue:   ['#dde5eb','#74879b'],
+    purple: ['#e4dee9','#857796'],
+    yellow: ['#eee7d6','#a08a5f']
   };
   var DOW = ['日','一','二','三','四','五','六'];
 
@@ -279,7 +279,7 @@
       +(t.done?'<span class="chip green">已发</span>':'<span class="chip yellow">待写</span>')
       +'</div>'
       +'<div class="form-row"><label>备注 / 灵感</label>'
-      +'<div style="font-size:14.5px;color:var(--ink);line-height:1.9;white-space:pre-wrap;word-break:break-word;background:#faf7fc;border-radius:14px;padding:14px">'+(t.note?esc(t.note):'（还没有写备注）')+'</div></div>'
+      +'<div style="font-size:14.5px;color:var(--ink);line-height:1.9;white-space:pre-wrap;word-break:break-word;background:#f7f5f1;border-radius:14px;padding:14px">'+(t.note?esc(t.note):'（还没有写备注）')+'</div></div>'
       +'<div class="modal-actions">'
       +'<button class="btn ghost" data-act="close-modal">关闭</button>'
       +'<button class="btn" data-act="task-edit" data-id="'+t.id+'">✎ 编辑</button></div>'
@@ -386,7 +386,7 @@
       +(c.status==='posted'?'<span class="chip green">已发</span>':'<span class="chip yellow">草稿</span>')
       +'</div>'
       +'<div class="form-row"><label>正文 / 文案内容</label>'
-      +'<div style="font-size:14.5px;color:var(--ink);line-height:1.9;white-space:pre-wrap;word-break:break-word;background:#faf7fc;border-radius:14px;padding:14px">'+(c.body?esc(c.body):'（还没有写正文）')+'</div></div>'
+      +'<div style="font-size:14.5px;color:var(--ink);line-height:1.9;white-space:pre-wrap;word-break:break-word;background:#f7f5f1;border-radius:14px;padding:14px">'+(c.body?esc(c.body):'（还没有写正文）')+'</div></div>'
       +'<div class="modal-actions">'
       +'<button class="btn ghost" data-act="close-modal">关闭</button>'
       +'<button class="btn" data-act="copy-edit" data-id="'+c.id+'">✎ 编辑</button></div>'
@@ -625,7 +625,7 @@
       +(p.shot?'<span class="chip green">已拍</span>':'<span class="chip yellow">待拍</span>')
       +'</div>'
       +'<div class="form-row"><label>拍摄备注</label>'
-      +'<div style="font-size:14.5px;color:var(--ink);line-height:1.9;white-space:pre-wrap;word-break:break-word;background:#faf7fc;border-radius:14px;padding:14px">'+(p.note?esc(p.note):'（还没有写拍摄备注）')+'</div></div>'
+      +'<div style="font-size:14.5px;color:var(--ink);line-height:1.9;white-space:pre-wrap;word-break:break-word;background:#f7f5f1;border-radius:14px;padding:14px">'+(p.note?esc(p.note):'（还没有写拍摄备注）')+'</div></div>'
       +'<div class="modal-actions">'
       +'<button class="btn ghost" data-act="close-modal">关闭</button>'
       +'<button class="btn" data-act="prod-edit" data-id="'+p.id+'">✎ 编辑</button></div>'
@@ -643,7 +643,7 @@
     openModal(
       '<h3>🏷️ '+esc(c.name)+'</h3>'
       +'<div class="form-row"><label>类型说明</label>'
-      +'<div style="font-size:14.5px;color:var(--ink);line-height:1.9;white-space:pre-wrap;word-break:break-word;background:#faf7fc;border-radius:14px;padding:14px">'+(c.desc?esc(c.desc):'（还没有写类型说明）')+'</div></div>'
+      +'<div style="font-size:14.5px;color:var(--ink);line-height:1.9;white-space:pre-wrap;word-break:break-word;background:#f7f5f1;border-radius:14px;padding:14px">'+(c.desc?esc(c.desc):'（还没有写类型说明）')+'</div></div>'
       +'<div class="modal-actions">'
       +'<button class="btn ghost" data-act="close-modal">关闭</button>'
       +'<button class="btn" data-act="ctype-edit" data-id="'+c.id+'">✎ 编辑</button></div>'
