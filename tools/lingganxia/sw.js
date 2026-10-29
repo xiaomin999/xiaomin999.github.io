@@ -1,5 +1,5 @@
 // 灵感匣 · Service Worker（离线缓存应用外壳）
-const CACHE = "linggan-v4";
+const CACHE = "linggan-v5";
 const ASSETS = [
   "./",
   "./index.html",

@@ -48,9 +48,15 @@ a{color:var(--accent)}
   background:linear-gradient(160deg,#eef2ff,#ffffff 60%);padding:20px;
 }
 .auth-card{
+  position:relative;
   width:100%;max-width:380px;background:#fff;border:1px solid var(--border);
   border-radius:20px;padding:34px 28px;box-shadow:var(--shadow);text-align:center;
 }
+.auth-gear{
+  position:absolute;top:12px;right:12px;background:none;border:none;
+  font-size:20px;line-height:1;padding:8px;cursor:pointer;opacity:.45;border-radius:8px;
+}
+.auth-gear:hover{opacity:1;background:#f3f4f6}
 .auth-logo{display:flex;justify-content:center;margin-bottom:8px}
 .auth-card h1{margin:6px 0 2px;font-size:24px}
 .auth-sub{margin:0 0 22px;color:var(--text-soft);font-size:14px}

@@ -566,6 +566,8 @@
   /* ---------------- 事件绑定 ---------------- */
   function bindEvents() {
     $("#auth-form").addEventListener("submit", doAuth);
+    const gearBtn = $("#auth-settings");
+    if (gearBtn) gearBtn.addEventListener("click", () => openSettings(false));
     $("#auth-toggle").addEventListener("click", (e) => {
       e.preventDefault();
       setAuthMode(State.authMode === "signin" ? "signup" : "signin");

@@ -1,7 +1,5 @@
-// 灵感匣 · 配置
-// 优先读取：浏览器「设置」页保存的 localStorage 覆盖；
-// 若未填写，则可在此直接填入你的 Supabase 项目信息（留空则打开后需在设置页填写）。
+// 灵感匣 · 配置（已指向新项目 hialdedlgtqvvddxllsg）
 window.LINGGAN_CONFIG = {
-  SUPABASE_URL: "",
-  SUPABASE_ANON_KEY: ""
+  SUPABASE_URL: "https://hialdedlgtqvvddxllsg.supabase.co",
+  SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpYWxkZWRsZ3RxdnZkZHhsbHNnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUxMDQ5ODgsImV4cCI6MjEwMDY4MDk4OH0.yhuamgynQV8mm0u67OdyGAkEtiXCbCELU3M4msvLlLE"
 };
