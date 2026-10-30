@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <meta name="format-detection" content="telephone=no" />
+  <title>操作视频速查</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="app">
+
+    <!-- 列表页 -->
+    <section id="view-list" class="view active">
+      <header class="topbar">
+        <h1>操作视频速查</h1>
+        <p class="sub">按问题找视频，不再重复教</p>
+      </header>
+      <div class="search">
+        <input id="searchInput" type="search" placeholder="搜问题，如：怎么发红包" />
+      </div>
+      <div id="catChips" class="chips"></div>
+      <div id="guideList" class="list"></div>
+      <div id="emptyHint" class="empty">还没有记录。点右下角 + 添加第一条操作视频。</div>
+      <button id="fabAdd" class="fab" aria-label="添加">+</button>
+    </section>
+
+    <!-- 详情页 -->
+    <section id="view-detail" class="view">
+      <header class="topbar sub-bar">
+        <button id="btnBack" class="back">&lt; 返回</button>
+      </header>
+      <div class="detail">
+        <video id="detailVideo" controls playsinline webkit-playsinline preload="metadata"></video>
+        <h2 id="detailQuestion"></h2>
+        <span id="detailCat" class="tag"></span>
+        <p id="detailNote" class="note"></p>
+        <button id="btnDelete" class="btn-danger">删除这条</button>
+      </div>
+    </section>
+
+    <!-- 添加弹层 -->
+    <section id="view-add" class="modal">
+      <div class="sheet">
+        <div class="sheet-head">
+          <h2>添加操作视频</h2>
+          <button id="btnCloseAdd" class="close">&times;</button>
+        </div>
+        <label class="field">
+          <span>问题 *</span>
+          <input id="inQuestion" type="text" placeholder="如：微信怎么发红包" />
+        </label>
+        <label class="field">
+          <span>分类（可选，用于分组，如：微信 / 手机设置）</span>
+          <input id="inCategory" type="text" placeholder="留空则归入「未分类」" />
+        </label>
+        <label class="field">
+          <span>补充说明（可选）</span>
+          <textarea id="inNote" rows="3" placeholder="一句话讲重点，或注意事项"></textarea>
+        </label>
+        <label class="field">
+          <span>视频 *（手机里已录好的操作录屏/录像）</span>
+          <input id="inVideo" type="file" accept="video/*" />
+        </label>
+        <video id="addPreview" class="preview" controls playsinline webkit-playsinline hidden></video>
+        <div id="uploadStatus" class="status"></div>
+        <div class="sheet-actions">
+          <button id="btnCancelAdd" class="btn-ghost">取消</button>
+          <button id="btnSave" class="btn-primary">保存</button>
+        </div>
+      </div>
+    </section>
+
+    <div id="toast" class="toast"></div>
+    <div id="netWarn" class="netwarn" hidden>⚠ 无法连接云端，显示的是本地缓存（可能不全）。</div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
