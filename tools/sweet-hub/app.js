@@ -509,74 +509,149 @@
   };
 
   /* ---- 抖音：分镜模板库（框架化话术，围绕 {t} 展开） ---- */
+
+  /* ===================== 抖音：贴题化生成（专家版） =====================
+     原则：不编造内容。先清洗主题、识别叙事类型，再把「内容要点」按顺序落进分镜。
+     长主题自动拆成真实要点；短主题给【待补】占位，创作者补细节即可开拍。 */
   var GEN = {
     ootd:{ label:'👗 穿搭分享', short:'穿搭分享',
-      hooks:['哈喽宝子们！今天这套{t}真的绝，显高显瘦还好看～','是谁还在为穿什么发愁？这套{t}直接抄作业！','被问爆的{t}来了，通勤约会都能穿！'],
+      hooks:['今天这套{t}真的绝，显高显瘦还好看～','还在为穿什么发愁？这套{t}直接抄作业！','被问爆的{t}来了，通勤约会都能穿！'],
       middles:[
-        {visual:'全身远景 · 转一圈', line:'先看整体效果，这套{t}的重点在版型，遮肉又显利落。', dur:6},
-        {visual:'中景 · 单品逐一展示', line:'把每个单品单独给镜头，说清楚是什么、搭的什么。', dur:8},
-        {visual:'近景 · 细节特写', line:'细节放大给大家看，走线和质感是判断值不值的关键。', dur:5},
-        {visual:'中景走动 · 场景化', line:'回到真实场景里走两步，让这套搭配活起来。', dur:6}
+        {visual:'全身远景 · 转一圈', line:'先看整体：{p}', dur:6},
+        {visual:'中景 · 单品逐一展示', line:'{p}', dur:8},
+        {visual:'近景 · 细节特写', line:'细节放大看：{p}', dur:5},
+        {visual:'中景走动 · 场景化', line:'{p}', dur:6}
       ],
-      extra:{visual:'近景口播 · 互动', line:'很多宝子问链接和尺码，都放评论区了，自取不客气～', dur:6},
-      ctas:['关注我看更多穿搭，我们下次见～','喜欢这套的宝子记得点赞收藏，还想看什么风格评论区点菜！'],
+      extra:{visual:'近景口播 · 互动', line:'链接和尺码都放评论区了，自取不客气～', dur:6},
+      ctas:['关注我看更多穿搭，我们下次见～','喜欢这套记得点赞收藏，还想看什么风格评论区点菜！'],
+      prompts:['这套搭配的整体思路（风格/场合）','上身单品逐件说清楚','最值得看的细节（版型、面料、走线）','走动或通勤场景下的真实效果'],
       props:'手机支架、自然光、同色系背景墙、搭配的鞋包配饰',
-      note:'前3秒必须抓眼球；每个单品给足特写；用自然光拍摄，避免顶光。'
+      note:'前3秒抓眼球；每个单品给足特写；自然光拍摄，避免顶光。'
     },
     review:{ label:'🛍️ 好物测评', short:'好物测评',
-      hooks:['用了整整一个月的{t}，今天来交个真实作业！','别急着买{t}！先看完这条视频再决定。'],
+      hooks:['用了整整一个月的{t}，今天来交个真实作业！','别急着买{t}！先看完这条再决定。'],
       middles:[
-        {visual:'开箱 · 俯拍', line:'先开箱，{t}的包装和第一印象先打个分。', dur:6},
-        {visual:'使用过程 · 中景', line:'重点说使用感受：操作简单，上手基本零门槛。', dur:8},
-        {visual:'效果对比 · 分屏', line:'用之前 VS 用一个月，差别真的肉眼可见。', dur:6},
-        {visual:'近景 · 总结', line:'总结一下：值不值得入手，这几个点你要提前知道。', dur:5}
+        {visual:'开箱 · 俯拍', line:'先开箱：{p}', dur:6},
+        {visual:'使用过程 · 中景', line:'实际用起来：{p}', dur:8},
+        {visual:'效果对比 · 分屏', line:'对比一下：{p}', dur:6},
+        {visual:'近景 · 总结', line:'{p}', dur:5}
       ],
       extra:{visual:'近景口播 · 答疑', line:'适合谁、不适合谁，一句话说清楚，对号入座就行。', dur:6},
       ctas:['真实测评不踩坑，关注我，下期测点别的！','觉得有用就点赞收藏，免得想买的时候找不到～'],
+      prompts:['第一印象和包装细节','真实使用过程（多久、怎么用）','用之前和之后的差别','优点和不避讳的缺点','到底适合谁买'],
       props:'产品本体、使用场景布置、分屏对比素材',
       note:'优缺点都讲才可信；对比画面要有冲击力；价格信息放评论区。'
     },
     tutorial:{ label:'📚 教程干货', short:'教程干货',
       hooks:['3分钟学会{t}，有手就会！','关于{t}，这条视频一口气讲清楚。'],
       middles:[
-        {visual:'全景 · 准备', line:'先把需要的东西准备好，跟着做就行。', dur:5},
-        {visual:'中景 · 步骤一', line:'第一步很关键，很多人就错在这里，看仔细。', dur:7},
-        {visual:'近景 · 步骤二', line:'第二步注意细节，慢动作再演示一遍。', dur:7},
-        {visual:'中景 · 成果展示', line:'搞定！看看最终效果，是不是很简单。', dur:5}
+        {visual:'全景 · 准备', line:'先备好东西：{p}', dur:5},
+        {visual:'中景 · 步骤一', line:'{p}', dur:7},
+        {visual:'近景 · 步骤二', line:'{p}', dur:7},
+        {visual:'中景 · 成果展示', line:'{p}', dur:5}
       ],
-      extra:{visual:'近景口播 · 答疑', line:'常见问题也整理好了，评论区置顶自取。', dur:5},
+      extra:{visual:'近景口播 · 答疑', line:'常见问题整理好了，评论区置顶自取。', dur:5},
       ctas:['学会了的宝子点个赞，关注我学更多干货！','收藏起来慢慢做，做完记得来交作业～'],
+      prompts:['需要准备的材料/工具','第一步怎么做（最容易错的点）','第二步的关键细节','做完怎么检查效果'],
       props:'教程所需材料、整齐的操作台面',
       note:'步骤配字幕；关键步骤放慢并重复；开头先展示成果再讲过程。'
     },
     vlog:{ label:'🎬 日常vlog', short:'日常vlog',
-      hooks:['今天是怎么过的？一条{t}治愈你的周五。','记录平凡又闪光的日常，这就是{t}。'],
+      hooks:['今天是怎么过的？记录一下{t}。','平凡又闪光的一天，这就是{t}。'],
       middles:[
-        {visual:'清晨 · 空镜', line:'美好的一天从早餐开始，记录一下生活。', dur:5},
-        {visual:'白天 · 生活片段', line:'白天的日常很充实，忙里偷闲最幸福。', dur:7},
-        {visual:'傍晚 · 氛围镜头', line:'傍晚的光线最好，随手一拍都是大片。', dur:6},
-        {visual:'夜晚 · 口播', line:'平凡的日子也在好好过，这就够了。', dur:5}
+        {visual:'清晨 · 空镜', line:'{p}', dur:5},
+        {visual:'白天 · 生活片段', line:'{p}', dur:7},
+        {visual:'傍晚 · 氛围镜头', line:'{p}', dur:6},
+        {visual:'夜晚 · 口播', line:'{p}', dur:5}
       ],
-      extra:{visual:'混剪 · 高光瞬间', line:'把今天最开心的几个瞬间剪在一起。', dur:6},
+      extra:{visual:'混剪 · 高光瞬间', line:'把今天最想记住的几个瞬间剪在一起。', dur:6},
       ctas:['关注我，一起把日子过成想要的样子～','你的今天过得怎么样？评论区聊聊～'],
+      prompts:['早上从哪里开始（一句话交代）','白天主要做了什么','傍晚最有氛围的一个画面','晚上回看这天的一点感受'],
       props:'手机、稳定器（可选）、日常场景自然光线',
       note:'多拍空镜和转场素材；配乐卡点；文案走心不煽情。'
+    },
+    emotion:{ label:'💭 情绪 / 关系叙事', short:'情绪叙事',
+      hooks:['有件事憋了挺久，今天想好好说说：{t}。','{t}——这句话我花了好几周才说得出口。','如果你最近也在经历{t}，这条视频陪你坐一会儿。'],
+      middles:[
+        {visual:'近景口播 · 起因', line:'先把背景交代清楚：{p}', dur:8},
+        {visual:'空镜 · 当时的状态', line:'{p}', dur:7},
+        {visual:'中景 · 转折', line:'后来让我慢慢松口气的，是{p}', dur:8},
+        {visual:'近景口播 · 现在', line:'{p}', dur:7},
+        {visual:'特写 · 一句收尾', line:'{p}', dur:6}
+      ],
+      extra:{visual:'近景口播 · 给观众', line:'如果你也在类似的阶段，别急着逼自己，慢一点也没关系。', dur:6},
+      ctas:['如果你也有类似的时刻，评论区聊聊，我都在。','愿我们都能慢慢把日子过顺，关注我，下次继续聊。'],
+      prompts:['当时具体发生了什么（时间、谁在场）','那段时间最真实的感受','是什么让你开始想改变','现在的状态变成了什么样','回头看最想说的一句话'],
+      props:'安静室内、自然光、有故事的道具（旧照片/聊天记录注意打码）',
+      note:'情绪类靠真实细节取胜，不说教；先讲发生了什么，再讲感受怎么变的；涉及他人注意隐私。'
     }
   };
-  var genSel={type:'ootd',dur:30}, genTopic='', genScript=null;
+  var genSel={type:'vlog',dur:30}, genTopic='', genScript=null, genTypeTouched=false;
+  var genPoints=[], genPointSource='';
   var gzhGen={topic:'',crowd:'',results:[]};
-  var xhsGen={topic:'',typeId:'',product:'',titles:[],picked:0,body:'',tags:''};
+  var xhsGen={topic:'',typeId:'',product:'',titles:[],picked:0,body:'',tags:'',points:[]};
   function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
   function fmtDur(s){ return Math.floor(s/60)+':'+pad(s%60); }
+
+  /* ---- 主题清洗：剥离类型后缀、去掉重复段、取核心短语 ---- */
+  function cleanTopic(raw){
+    var src=(raw||'').trim();
+    var parts=src.split(/[·｜|]/).map(function(x){return x.trim();}).filter(function(x){return x;});
+    var out=[]; parts.forEach(function(p){ if(out[out.length-1]!==p) out.push(p); });
+    var junk=['日常vlog','穿搭分享','好物测评','教程干货','情绪叙事','vlog','穿搭','测评','教程','种草','ootd','日常'];
+    out=out.filter(function(p){ return junk.indexOf(p.toLowerCase().replace(/ /g,''))<0; });
+    var full=out.join('，')||src;
+    var first=full;
+    ['，','。','；','！','？',',','.',';','!','?'].forEach(function(c){ var i=first.indexOf(c); if(i>=0) first=first.slice(0,i); });
+    var short=(first.trim()||full).slice(0,16);
+    return {full:full, short:short};
+  }
+  /* ---- 意图识别：决定用哪套叙事结构 ---- */
+  function detectIntent(t){
+    var K=[
+      ['emotion',['家人','父母','妈妈','爸爸','吵架','大哭','闹别扭','情绪','内耗','焦虑','难过','委屈','关系','和好','联系','孤独','治愈','分手','朋友','压力','崩溃','恢复','想通']],
+      ['ootd',['穿搭','搭配','衣服','裙','外套','显瘦','ootd','单品']],
+      ['review',['测评','好物','开箱','回购','踩坑','值得买','使用感','实测']],
+      ['tutorial',['教程','怎么做','步骤','方法','技巧','学会','攻略','新手','教学']],
+      ['vlog',['vlog','日常','一天','周末','记录','生活','旅行','出门']]
+    ];
+    for(var i=0;i<K.length;i++){
+      for(var j=0;j<K[i][1].length;j++){ if(t.indexOf(K[i][1][j])>=0) return K[i][0]; }
+    }
+    return '';
+  }
+  /* ---- 要点解析（用户输入：一行一条，也支持逗号/分号） ---- */
+  function parsePoints(str){
+    var arr=(str||'').split(String.fromCharCode(10));
+    ['，',',','；',';'].forEach(function(c){
+      var nx=[]; arr.forEach(function(x){ x.split(c).forEach(function(y){ if(y.trim()) nx.push(y.trim()); }); }); arr=nx;
+    });
+    return arr.filter(function(x){return x.length>=2;}).slice(0,6);
+  }
+  /* ---- 自动要点：长主题拆真实片段；短主题给明确占位 ---- */
+  function autoPoints(full,T){
+    var arr=[full];
+    ['，','。','；','、','！','？',',','.',';','!','?'].forEach(function(c){
+      var nx=[]; arr.forEach(function(x){ x.split(c).forEach(function(y){ if(y.trim()) nx.push(y.trim()); }); }); arr=nx;
+    });
+    arr=arr.filter(function(x){ return x.length>=3; });
+    if(arr.length>=2) return arr.slice(0,5);
+    return (T.prompts||[]).map(function(p){ return '【待补：'+p+'】'; });
+  }
   function scriptPlainText(s){
     return '《'+s.title+'》完整口播稿\n\n'+s.scenes.map(function(sc,i){ return '【'+(i+1)+'】'+sc.line; }).join('\n');
   }
   function genBuild(topic){
-    var T=GEN[genSel.type]||GEN.ootd;
+    var c=cleanTopic(topic);
+    var intent=detectIntent(c.full);
+    if(!genTypeTouched && intent && GEN[intent]) genSel.type=intent;
+    var T=GEN[genSel.type]||GEN.vlog;
     var target=genSel.dur;
     var mids = target===15 ? T.middles.slice(0,2)
              : target===60 ? T.middles.concat([T.extra])
              : T.middles.slice(0,3);
+    var pts=genPoints.length?genPoints.slice():autoPoints(c.full,T);
+    genPointSource=genPoints.length?'你填的内容要点':'从主题自动拆出的要点';
     var hook={visual:'近景口播 · 黄金3秒', line:pick(T.hooks), dur:4};
     var cta={visual:'近景口播 · 结尾号召', line:pick(T.ctas), dur:4};
     var plan=[hook].concat(mids,[cta]);
@@ -585,24 +660,38 @@
     var scaled=raw.map(function(d){return Math.max(2,Math.round(d*target/sum));});
     var diff=target-scaled.reduce(function(a,b){return a+b;},0);
     if(diff!==0){ var mi=scaled.indexOf(Math.max.apply(null,scaled)); scaled[mi]=Math.max(2,scaled[mi]+diff); }
+    var midIdx=0;
     var scenes=plan.map(function(sc,i){
-      return {visual:sc.visual, line:sc.line.replace(/\{t\}/g,topic),
+      var line=sc.line.split('{t}').join(c.short);
+      if(line.indexOf('{p}')>=0){
+        var p = midIdx<pts.length ? pts[midIdx]
+              : '【待补：'+(T.prompts[(midIdx-pts.length)%T.prompts.length]||'这里补一个真实细节')+'】';
+        line=line.split('{p}').join(p);
+        midIdx++;
+      }
+      return {visual:sc.visual, line:line,
         duration:fmtDur(scaled[i]),
         bgm: i===0?'轻快BGM':(i===plan.length-1?'收尾音效':'同BGM')};
     });
-    genScript={id:'', title:topic+' · '+T.short, style:'', planDate:'', published:false,
-      scenes:scenes, props:T.props, note:T.note, created:todayStr()};
+    var title=c.short+(c.short.indexOf(T.short)>=0?'':' · '+T.short);
+    genScript={id:'', title:title, style:'', planDate:'', published:false,
+      scenes:scenes, props:T.props, note:T.note, created:todayStr(),
+      intent:T.label, structure:'黄金3秒钩子 → '+mids.length+' 个要点分镜 → 结尾号召',
+      pointSource:genPointSource, brief:c.full,
+      autoType:intent&&!genTypeTouched?'根据主题自动推荐':'你手动选择'};
   }
   /* ---- 抖音生成 UI ---- */
   function openGenModal(){
-    genSel={type:'ootd',dur:30};
+    genSel={type:'vlog',dur:30}; genTypeTouched=false; genPoints=[]; genPointSource='';
     var typeBtns=''; Object.keys(GEN).forEach(function(k){ typeBtns+='<button class="'+(k===genSel.type?'on':'')+'" data-act="gen-type" data-val="'+k+'">'+GEN[k].label+'</button>'; });
     var durBtns=[15,30,60].map(function(d){ return '<button class="'+(d===genSel.dur?'on':'')+'" data-act="gen-dur" data-val="'+d+'">'+d+'秒</button>'; }).join('');
     openModal(
       '<h3>✨ 一键生成脚本</h3>'
-      +'<div class="sec-note">按「黄金3秒钩子 → 框架化分镜 → 结尾号召」的结构生成，时长自动对齐目标，生成后还能继续编辑保存。</div>'
-      +'<div class="form-row"><label>视频主题 / 选题</label><input class="input" id="g-topic" placeholder="例如：初秋通勤穿搭、宿舍好物开箱"></div>'
-      +'<div class="form-row"><label>脚本类型</label><div class="seg" id="g-type">'+typeBtns+'</div></div>'
+      +'<div class="sec-note">先识别主题属于哪类叙事，再把「内容要点」按顺序写进分镜。长主题会自动拆成要点；短主题给出【待补】提示，不替你编故事。</div>'
+      +'<div class="form-row"><label>视频主题 / 选题</label><input class="input" id="g-topic" placeholder="例如：初秋通勤穿搭；也可以直接粘一整段真实经历"></div>'
+      +'<div class="form-row"><label>内容要点（可选，一行一条；不填则从主题自动提取）</label>'
+      +'<textarea class="textarea" id="g-points" style="min-height:76px" placeholder="例如：\n前几周跟家人闹了两次\n慢慢有了自己的周末\n状态恢复后才想联系"></textarea></div>'
+      +'<div class="form-row"><label>脚本类型（按主题自动推荐，可手动改）</label><div class="seg" id="g-type">'+typeBtns+'</div></div>'
       +'<div class="form-row"><label>视频时长</label><div class="seg" id="g-dur">'+durBtns+'</div></div>'
       +'<div class="modal-actions"><button class="btn ghost" data-act="close-modal">取消</button>'
       +'<button class="btn" data-act="gen-run">🎁 生成脚本</button></div>'
@@ -617,9 +706,10 @@
       +'<td>'+esc(sc.visual)+'</td><td>'+esc(sc.line)+'</td>'
       +'<td style="width:56px">'+esc(sc.duration)+'</td></tr>';
     }).join('');
-    var struct=['黄金3秒钩子','框架化分镜','结尾号召'].map(function(x){return '<span class="chip blue">'+x+'</span>';}).join('');
+    var struct=['黄金3秒钩子','要点分镜','结尾号召'].map(function(x){return '<span class="chip blue">'+x+'</span>';}).join('');
+    var insight='<div class="sec-note">🧠 识别为「'+esc(s.intent||'')+'」（'+esc(s.autoType||'')+'），'+esc(s.pointSource||'')+'；按「'+esc(s.structure||'')+'」编排，总时长对齐 '+total+' 秒。带【待补】的句子补上真实细节就能直接拍。</div>';
     openModal(
-      '<h3>🎁 生成完成</h3>'
+      '<h3>🎁 生成完成</h3>'+insight
       +'<div class="r-meta" style="margin-bottom:12px">'+struct
       +'<span class="chip pink">'+esc(s.title)+'</span>'
       +'<span class="chip">'+s.scenes.length+' 个分镜</span><span class="chip">约 '+total+' 秒</span></div>'
@@ -636,7 +726,7 @@
 
   /* ---- 公众号选题生成（人群 × 痛点 × 场景 × 利益承诺） ---- */
   function gzhGenBuild(){
-    var t=gzhGen.topic, crowd=gzhGen.crowd;
+    var c=cleanTopic(gzhGen.topic), t=c.short, crowd=gzhGen.crowd;
     var full = crowd ? (crowd+'，'+t) : t;
     var F=GENX.gzh.formulas.slice();
     var chosen=[];
@@ -650,7 +740,7 @@
     gzhGen={topic:'',crowd:'',results:[]};
     openModal(
       '<h3>✨ 一键生成选题</h3>'
-      +'<div class="sec-note">按「人群 × 痛点 × 场景 × 利益承诺」的选题逻辑，用 6 种标题公式生成候选，每个都附切入角度说明。</div>'
+      +'<div class="sec-note">按「人群 × 痛点 × 场景 × 利益承诺」的选题逻辑生成候选；过长的主题会自动取核心短语，避免标题变成一整段话。每个候选都附切入角度说明。</div>'
       +'<div class="form-row"><label>想写的主题 / 领域</label><input class="input" id="gg-topic" placeholder="例如：通勤穿搭、租房改造、副业赚钱"></div>'
       +'<div class="form-row"><label>目标人群（可选，写进标题更抓人）</label><input class="input" id="gg-crowd" placeholder="例如：职场新人、小个子女生、新手妈妈"></div>'
       +'<div class="modal-actions"><button class="btn ghost" data-act="close-modal">取消</button>'
@@ -681,31 +771,37 @@
     return S || GENX.xhs.generic;
   }
   function xhsGenBuild(){
-    var t=xhsGen.topic;
+    var t=cleanTopic(xhsGen.topic).short;
     var typeName=''; store.xhsCopyTypes.forEach(function(c){ if(c.id===xhsGen.typeId) typeName=c.name; });
     var prodName=''; store.xhsProducts.forEach(function(p){ if(p.id===xhsGen.product) prodName=p.name; });
     var F=GENX.xhs.titleFormulas.slice(), titles=[];
     while(titles.length<3 && F.length){ titles.push(F.splice(Math.floor(Math.random()*F.length),1)[0](t)); }
     var body='# '+titles[0]+'\n\n';
+    var pts=xhsGen.points||[];
     xhsSkeleton(typeName).forEach(function(st){
       var para=st.p(t);
       if(prodName && st.h.indexOf('第一印象')>=0) para='这次主角是'+prodName+'，'+para;
+      if(pts.length && st.h.indexOf('核心内容')>=0){
+        para+='\n'+pts.map(function(p,i){return (i+1)+'. '+p;}).join('\n');
+      }
       body+=st.h+'\n'+para+'\n\n';
     });
     var pool=GENX.xhs.tagPool.slice(), tags=[];
     while(tags.length<4 && pool.length){ tags.push(pool.splice(Math.floor(Math.random()*pool.length),1)[0]); }
-    tags.unshift(t.replace(/\s+/g,''));
+    tags.unshift(t.replace(/ /g,''));
     xhsGen.titles=titles; xhsGen.picked=0; xhsGen.body=body.trim();
     xhsGen.tags=tags.map(function(x){return '#'+x;}).join(' ');
   }
   function openXhsGenModal(){
-    xhsGen={topic:'',typeId:'',product:'',titles:[],picked:0,body:'',tags:''};
+    xhsGen={topic:'',typeId:'',product:'',titles:[],picked:0,body:'',tags:'',points:[]};
     var typeOpts='<option value="">（不选，用通用结构）</option>'+store.xhsCopyTypes.map(function(t){return '<option value="'+t.id+'">'+esc(t.name)+'</option>';}).join('');
     var prodOpts='<option value="">（不关联）</option>'+store.xhsProducts.map(function(p){return '<option value="'+p.id+'">'+esc(p.name)+'</option>';}).join('');
     openModal(
       '<h3>✨ 一键生成文案</h3>'
       +'<div class="sec-note">按小红书笔记结构生成：标题公式（备选3个）+ 按文案类型分段的正文骨架 + 话题标签，生成后可编辑再存。</div>'
       +'<div class="form-row"><label>文案主题</label><input class="input" id="xg-topic" placeholder="例如：秋冬身体护理、租房好物、通勤妆容"></div>'
+      +'<div class="form-row"><label>内容要点（可选，一行一条；会写进正文核心段）</label>'
+      +'<textarea class="textarea" id="xg-points" style="min-height:70px" placeholder="例如：\n干燥起皮最严重的是小腿\n换过三款身体乳的对比\n坚持两周后的变化"></textarea></div>'
       +'<div class="form-row"><label>文案类型（决定正文骨架）</label><select class="select" id="xg-type">'+typeOpts+'</select></div>'
       +'<div class="form-row"><label>关联摆拍产品（可选）</label><select class="select" id="xg-product">'+prodOpts+'</select></div>'
       +'<div class="modal-actions"><button class="btn ghost" data-act="close-modal">取消</button>'
@@ -1041,7 +1137,7 @@
         break;
       case 'gen-open': openGenModal(); break;
       case 'gen-type':
-        genSel.type=t.dataset.val;
+        genSel.type=t.dataset.val; genTypeTouched=true;
         document.querySelectorAll('#g-type button').forEach(function(b){ b.classList.toggle('on', b.dataset.val===genSel.type); });
         break;
       case 'gen-dur':
@@ -1051,6 +1147,7 @@
       case 'gen-run':
         genTopic=($('#g-topic').value||'').trim();
         if(!genTopic){ toast('先填写视频主题'); return; }
+        genPoints=parsePoints($('#g-points')?$('#g-points').value:'');
         genBuild(genTopic); openGenResult(); break;
       case 'gen-again': genBuild(genTopic); openGenResult(); break;
       case 'gen-use': closeModal(); openScriptModal(genScript); break;
@@ -1062,7 +1159,7 @@
       case 'gzh-gen-run':
         var gt=($('#gg-topic').value||'').trim();
         if(!gt){ toast('先填写想写的主题'); return; }
-        gzhGen.topic=gt; gzhGen.crowd=($('#gg-crowd').value||'').trim();
+        gzhGen.topic=cleanTopic(gt).short; gzhGen.crowd=($('#gg-crowd').value||'').trim();
         gzhGenBuild(); openGzhGenResult(); break;
       case 'gzh-gen-pick':
         var gi=+t.dataset.idx, gr=gzhGen.results[gi];
@@ -1077,7 +1174,8 @@
       case 'xhs-gen-run':
         var xt=($('#xg-topic').value||'').trim();
         if(!xt){ toast('先填写文案主题'); return; }
-        xhsGen.topic=xt; xhsGen.typeId=$('#xg-type').value; xhsGen.product=$('#xg-product').value;
+        xhsGen.topic=cleanTopic(xt).short; xhsGen.typeId=$('#xg-type').value; xhsGen.product=$('#xg-product').value;
+        xhsGen.points=parsePoints($('#xg-points')?$('#xg-points').value:'');
         xhsGenBuild(); openXhsGenResult(); break;
       case 'xhs-gen-save':
         var xr0=document.querySelector('input[name="xg-title"]:checked');
