@@ -301,8 +301,8 @@
         }).join('')
       : '<div class="empty"><b>还没有公众号选题 📝</b>点右边「新建选题」，提前把每天要写的题目标进日历</div>';
     $('#view').innerHTML='<div class="view-head"><h2>📝 公众号选题</h2><span class="sub">日更节奏 · 提前规划</span>'
-      +'<button class="btn" style="margin-left:auto" data-act="gzh-new">➕ 新建选题</button></div>'
-      +'<div class="sec-note">所有选题都会同步显示在「日历 / 发布排期」对应日期上。💡 点击卡片可预览，点 ✎ 按钮才进入编辑。</div>'
+      +'<div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap">'+'<button class="btn ghost" data-act="gzh-gen-open">✨ 一键生成</button>'+'<button class="btn" data-act="gzh-new">➕ 新建选题</button></div></div>'
+      +'<div class="sec-note">「✨ 一键生成」按「人群 × 痛点 × 场景 × 利益承诺」的选题公式批量产出候选，选用即入库；所有选题都会同步显示在「日历 / 发布排期」对应日期上。💡 点击卡片可预览，点 ✎ 按钮才进入编辑。</div>'
       +'<div class="list">'+body+'</div>';
   }
 
@@ -369,8 +369,8 @@
             +'<button class="icon-btn" data-act="copy-del" data-id="'+c.id+'">🗑</button></div></div>';
         }).join('')
       : '<div class="empty"><b>还没有文案记录 📝</b>这里专门存你的小红书文案草稿，之前没建过，现在归位啦</div>';
-    $('#xhs-copies').innerHTML='<div class="sec-note">专属「文案记录」区：标题、类型、关联产品、正文、发布日期、状态一目了然。💡 点击卡片可直接预览文案，点 ✎ 按钮才进入编辑。</div>'
-      +'<div style="margin-bottom:12px"><button class="btn" data-act="copy-new">➕ 新建文案</button></div>'
+    $('#xhs-copies').innerHTML='<div class="sec-note">专属「文案记录」区：标题、类型、关联产品、正文、发布日期、状态一目了然。「✨ 一键生成」按标题公式 + 分类型正文骨架 + 话题标签产出草稿，可带入编辑或直接存草稿。💡 点击卡片可直接预览文案，点 ✎ 按钮才进入编辑。</div>'
+      +'<div style="margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap">'+'<button class="btn ghost" data-act="xhs-gen-open">✨ 一键生成</button>'+'<button class="btn" data-act="copy-new">➕ 新建文案</button></div>'
       +'<div class="list">'+body+'</div>';
   }
   function openCopyPreview(c){
@@ -413,17 +413,112 @@
   }
 
   /* ===================== 抖音 ===================== */
-  /* ---- 一键生成：脚本模板库（分镜 + 话术） ---- */
+
+  /* ===================== 一键生成 · 内容方法论库 ===================== */
+  /* 专家设计原则：
+     公众号选题 = 人群 × 痛点 × 场景 × 利益承诺 → 6 种标题公式 + 切入角度
+     小红书文案 = 标题公式 + 按文案类型分骨架的正文 + 话题标签
+     抖音脚本 = 黄金3秒钩子 → 框架化分镜（围绕主题，不写死商品）→ 结尾CTA，时长归一化
+  */
+  var GENX = {
+    gzh:{
+      formulas:[
+        {name:'数字清单', build:function(t,n){ return '关于'+t+'，这'+n+'件事越早知道越好'; },
+         angle:'干货清单型，收藏率高，适合把经验系统化输出，长尾搜索流量稳定。'},
+        {name:'痛点提问', build:function(t,n){ return '为什么你的'+t+'总是没效果？问题大多出在这几点'; },
+         angle:'直击痛点、标题自带悬念，评论区互动率通常最高，适合抛观点引讨论。'},
+        {name:'反常识劝退', build:function(t,n){ return '别再盲目'+t+'了，真正有用的方法其实是这样'; },
+         angle:'反观点切入容易引发争论和转发，最好有真实数据和结果兜底再写。'},
+        {name:'身份对标', build:function(t,n){ return '给正在'+t+'的你：一份可以直接抄的作业'; },
+         angle:'精准人群代入，粉丝粘性高，适合作为系列内容的第一篇立住人设。'},
+        {name:'经历复盘', build:function(t,n){ return '坚持'+t+'一个月，我踩过的坑和真实的改变'; },
+         angle:'第一人称真实感，信任度最高，把个人经历提炼成可复制的方法论。'},
+        {name:'节点借势', build:function(t,n){ return '2026年，'+t+'的新玩法（建议收藏）'; },
+         angle:'带年份关键词吃搜索长尾流量，适合平台算法偏好时效内容的窗口期。'}
+      ],
+      nums:[3,4,5,6]
+    },
+    xhs:{
+      titleFormulas:[
+        function(t){ return t+'｜真的后悔没有早点发现'; },
+        function(t){ return '谁懂啊，'+t+'也太好用了吧😭'; },
+        function(t){ return t+'测评｜看完再买不吃亏'; },
+        function(t){ return '整理了'+pick([3,4,5,6,8])+'个'+t+'的小技巧，建议收藏⭐'; },
+        function(t){ return t+'避坑指南，新手必看！'; },
+        function(t){ return '亲测'+t+'一个月，说几句大实话'; }
+      ],
+      tagPool:['好物分享','避坑指南','新手必看','干货分享','亲测有效','测评','我的宝藏','自我提升','生活方式','日常碎片','实用好物'],
+      skeletons:{
+        '种草测评':[
+          {h:'📌 先说结论', p:function(t){ return '纠结'+t+'的宝子看这篇就够，真实体验和优缺点都整理好了，看完再决定入不入手。'; }},
+          {h:'🎯 为什么需要', p:function(t){ return '之前一直被这个问题困扰，试过几种方法都不太行，直到认真做了功课重新选。'; }},
+          {h:'📦 第一印象', p:function(t){ return '刚拿到手的感觉：包装、质感、细节都在线，第一眼印象加分。'; }},
+          {h:'⏳ 真实体验', p:function(t){ return '重点说使用过程：操作简单上手快，日常使用频率很高，不是三分钟热度的那种。'; }},
+          {h:'✅ 优点', p:function(t){ return '最打动我的点：一是真正解决了问题，二是细节做工经得起细看，三是这个价位很难挑。'; }},
+          {h:'⚠️ 缺点也说', p:function(t){ return '客观讲两个小缺点：前期需要一点适应成本；另外配件建议一次买齐，分开买反而贵。'; }},
+          {h:'👤 适合谁', p:function(t){ return '预算有限又不想将就的宝子可以冲；追求一步到位的建议直接上高配版。'; }}
+        ],
+        '好物清单':[
+          {h:'📌 清单概览', p:function(t){ return '这份'+t+'清单按场景分好了类，都是自用回购款，照着买不踩雷。'; }},
+          {h:'1️⃣ 第一件', p:function(t){ return '使用频率最高的一件，一句话理由+适用场景，闭眼入。'; }},
+          {h:'2️⃣ 第二件', p:function(t){ return '颜值和实力并存，放在家里/办公室里每天都用得上。'; }},
+          {h:'3️⃣ 第三件', p:function(t){ return '被低估的冷门好物，知道的人不多但真的好用。'; }},
+          {h:'💡 选购思路', p:function(t){ return '挑这类东西记住三点：看口碑、看细节、看售后，比来比去不如看长期评价。'; }},
+          {h:'⚠️ 避坑提醒', p:function(t){ return '别被颜值忽悠，先想清楚自己的使用场景再下单。'; }}
+        ],
+        '穿搭分享':[
+          {h:'📌 今日OOTD', p:function(t){ return '今天这套'+t+'可以直接抄作业，显高显瘦，通勤约会都能穿。'; }},
+          {h:'👗 单品解析', p:function(t){ return '逐件说：版型怎么选、尺码怎么挑、不同身材的适配度，都标清楚了。'; }},
+          {h:'💡 搭配思路', p:function(t){ return '为什么这样搭：色彩做减法、比例靠高腰线、配饰点到为止，普通人也能复制。'; }},
+          {h:'🔄 一衣多穿', p:function(t){ return '换个组合还能再搭两套，一件顶三件，性价比直接拉满。'; }},
+          {h:'⚠️ 常见错误', p:function(t){ return '这类搭配最容易翻车的点：颜色超过三种、上下都宽松，避开就赢了一半。'; }},
+          {h:'👤 适合人群', p:function(t){ return '小个子和微胖宝子都能参考，照抄没问题。'; }}
+        ],
+        '教程干货':[
+          {h:'📌 学会什么', p:function(t){ return '看完这条'+t+'教程，你能完整跟做一遍，新手也不会翻车。'; }},
+          {h:'📋 准备清单', p:function(t){ return '需要的东西就这几样，提前准备好，跟着步骤走就行。'; }},
+          {h:'👣 步骤拆解', p:function(t){ return '第一步是基础，很多人错在这；第二步注意手法细节；第三步检查收尾。'; }},
+          {h:'⚠️ 常见错误', p:function(t){ return '新手最容易翻车的一步：急着跳步骤，慢一点反而更快。'; }},
+          {h:'🎯 效果检查', p:function(t){ return '怎么判断做对了：对照这三个标准自查，全中就达标。'; }},
+          {h:'📎 进阶技巧', p:function(t){ return '熟手可以试试这个优化思路，效果还能再上一个档。'; }}
+        ],
+        '日常vlog':[
+          {h:'📌 今天主题', p:function(t){ return '记录普通又闪光的一天，这就是生活本来的样子。'; }},
+          {h:'🌅 上午', p:function(t){ return '从一顿认真的早餐开始，慢下来的早晨最治愈。'; }},
+          {h:'☀️ 下午', p:function(t){ return '下午专注做事，忙里偷闲的片刻最珍贵。'; }},
+          {h:'🌙 晚上', p:function(t){ return '傍晚的光线最好，随手一拍都是生活感。'; }},
+          {h:'✨ 高光时刻', p:function(t){ return '今天最值得记下来的瞬间，是一个小小的进步。'; }},
+          {h:'💭 一点感悟', p:function(t){ return '平凡的日子也在好好过，把节奏握在自己手里就很踏实。'; }}
+        ],
+        '避坑指南':[
+          {h:'📌 避坑总览', p:function(t){ return '关于'+t+'的这些坑我全踩过，整理出来帮你省时间和钱。'; }},
+          {h:'❌ 坑一', p:function(t){ return '最常见的坑：被表面参数忽悠，实际体验完全两回事。正确做法是看长期真实评价。'; }},
+          {h:'❌ 坑二', p:function(t){ return '跟风买爆款，根本不适合自己的情况。先明确需求再掏钱。'; }},
+          {h:'❌ 坑三', p:function(t){ return '贪便宜买低价版，后期维护成本反而更高。该省的省，该花的别省。'; }},
+          {h:'✅ 正确姿势', p:function(t){ return '一句话总结：明确预算和场景，对照真实口碑，选售后稳的。'; }}
+        ]
+      },
+      generic:[
+        {h:'📌 主题引入', p:function(t){ return '这篇聊聊'+t+'，把核心方法和注意事项一次说清楚。'; }},
+        {h:'🎯 痛点场景', p:function(t){ return '先对号入座：你是不是也遇到过这些情况？'; }},
+        {h:'📦 核心内容', p:function(t){ return '分三点讲：第一点是基础，第二点是关键，第三点是进阶，按需取用。'; }},
+        {h:'💡 方法总结', p:function(t){ return '把上面的内容浓缩成一句可执行的话，收藏起来随时看。'; }},
+        {h:'👤 适合人群', p:function(t){ return '有同样困扰的宝子都可以试试，欢迎对号入座。'; }}
+      ]
+    }
+  };
+
+  /* ---- 抖音：分镜模板库（框架化话术，围绕 {t} 展开） ---- */
   var GEN = {
     ootd:{ label:'👗 穿搭分享', short:'穿搭分享',
       hooks:['哈喽宝子们！今天这套{t}真的绝，显高显瘦还好看～','是谁还在为穿什么发愁？这套{t}直接抄作业！','被问爆的{t}来了，通勤约会都能穿！'],
       middles:[
-        {visual:'全身远景 · 转一圈', line:'先看整体效果，这套{t}的重点是版型，遮肉又显利落。', dur:6},
-        {visual:'中景 · 单品逐一展示', line:'上衣是软糯的针织，垂感很好；裤子选高腰款，腿长两米既视感。', dur:8},
-        {visual:'近景 · 细节特写', line:'细节也很到位，走线工整，这个质感完全不输大牌。', dur:5},
-        {visual:'中景走动 · 场景化', line:'日常通勤、周末约会都能穿，配一双德训鞋舒服一整天。', dur:6}
+        {visual:'全身远景 · 转一圈', line:'先看整体效果，这套{t}的重点在版型，遮肉又显利落。', dur:6},
+        {visual:'中景 · 单品逐一展示', line:'把每个单品单独给镜头，说清楚是什么、搭的什么。', dur:8},
+        {visual:'近景 · 细节特写', line:'细节放大给大家看，走线和质感是判断值不值的关键。', dur:5},
+        {visual:'中景走动 · 场景化', line:'回到真实场景里走两步，让这套搭配活起来。', dur:6}
       ],
-      extra:{visual:'近景口播 · 互动', line:'很多宝子问链接，都放评论区了，自取不客气～', dur:6},
+      extra:{visual:'近景口播 · 互动', line:'很多宝子问链接和尺码，都放评论区了，自取不客气～', dur:6},
       ctas:['关注我看更多穿搭，我们下次见～','喜欢这套的宝子记得点赞收藏，还想看什么风格评论区点菜！'],
       props:'手机支架、自然光、同色系背景墙、搭配的鞋包配饰',
       note:'前3秒必须抓眼球；每个单品给足特写；用自然光拍摄，避免顶光。'
@@ -431,10 +526,10 @@
     review:{ label:'🛍️ 好物测评', short:'好物测评',
       hooks:['用了整整一个月的{t}，今天来交个真实作业！','别急着买{t}！先看完这条视频再决定。'],
       middles:[
-        {visual:'开箱 · 俯拍', line:'先开箱，{t}的包装和第一印象还不错。', dur:6},
-        {visual:'使用过程 · 中景', line:'重点说使用感受：操作简单，上手零门槛。', dur:8},
+        {visual:'开箱 · 俯拍', line:'先开箱，{t}的包装和第一印象先打个分。', dur:6},
+        {visual:'使用过程 · 中景', line:'重点说使用感受：操作简单，上手基本零门槛。', dur:8},
         {visual:'效果对比 · 分屏', line:'用之前 VS 用一个月，差别真的肉眼可见。', dur:6},
-        {visual:'近景 · 总结', line:'总结一下：值得入手，但这几个点你要提前知道。', dur:5}
+        {visual:'近景 · 总结', line:'总结一下：值不值得入手，这几个点你要提前知道。', dur:5}
       ],
       extra:{visual:'近景口播 · 答疑', line:'适合谁、不适合谁，一句话说清楚，对号入座就行。', dur:6},
       ctas:['真实测评不踩坑，关注我，下期测点别的！','觉得有用就点赞收藏，免得想买的时候找不到～'],
@@ -445,7 +540,7 @@
       hooks:['3分钟学会{t}，有手就会！','关于{t}，这条视频一口气讲清楚。'],
       middles:[
         {visual:'全景 · 准备', line:'先把需要的东西准备好，跟着做就行。', dur:5},
-        {visual:'中景 · 步骤一', line:'第一步很关键，很多人就错在这里。', dur:7},
+        {visual:'中景 · 步骤一', line:'第一步很关键，很多人就错在这里，看仔细。', dur:7},
         {visual:'近景 · 步骤二', line:'第二步注意细节，慢动作再演示一遍。', dur:7},
         {visual:'中景 · 成果展示', line:'搞定！看看最终效果，是不是很简单。', dur:5}
       ],
@@ -469,6 +564,8 @@
     }
   };
   var genSel={type:'ootd',dur:30}, genTopic='', genScript=null;
+  var gzhGen={topic:'',crowd:'',results:[]};
+  var xhsGen={topic:'',typeId:'',product:'',titles:[],picked:0,body:'',tags:''};
   function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
   function fmtDur(s){ return Math.floor(s/60)+':'+pad(s%60); }
   function scriptPlainText(s){
@@ -476,28 +573,34 @@
   }
   function genBuild(topic){
     var T=GEN[genSel.type]||GEN.ootd;
-    var factor = genSel.dur===15?0.6:(genSel.dur===60?1.8:1);
+    var target=genSel.dur;
+    var mids = target===15 ? T.middles.slice(0,2)
+             : target===60 ? T.middles.concat([T.extra])
+             : T.middles.slice(0,3);
     var hook={visual:'近景口播 · 黄金3秒', line:pick(T.hooks), dur:4};
     var cta={visual:'近景口播 · 结尾号召', line:pick(T.ctas), dur:4};
-    var plan = [hook].concat(T.middles);
-    if(genSel.dur===60) plan.push(T.extra);
-    else if(genSel.dur===15) plan = [hook, T.middles[0], T.middles[1]];
-    plan.push(cta);
-    var scenes = plan.map(function(sc,i){
+    var plan=[hook].concat(mids,[cta]);
+    var raw=plan.map(function(sc){return sc.dur;});
+    var sum=raw.reduce(function(a,b){return a+b;},0);
+    var scaled=raw.map(function(d){return Math.max(2,Math.round(d*target/sum));});
+    var diff=target-scaled.reduce(function(a,b){return a+b;},0);
+    if(diff!==0){ var mi=scaled.indexOf(Math.max.apply(null,scaled)); scaled[mi]=Math.max(2,scaled[mi]+diff); }
+    var scenes=plan.map(function(sc,i){
       return {visual:sc.visual, line:sc.line.replace(/\{t\}/g,topic),
-        duration:fmtDur(Math.max(2,Math.round(sc.dur*factor))),
+        duration:fmtDur(scaled[i]),
         bgm: i===0?'轻快BGM':(i===plan.length-1?'收尾音效':'同BGM')};
     });
     genScript={id:'', title:topic+' · '+T.short, style:'', planDate:'', published:false,
       scenes:scenes, props:T.props, note:T.note, created:todayStr()};
   }
+  /* ---- 抖音生成 UI ---- */
   function openGenModal(){
     genSel={type:'ootd',dur:30};
     var typeBtns=''; Object.keys(GEN).forEach(function(k){ typeBtns+='<button class="'+(k===genSel.type?'on':'')+'" data-act="gen-type" data-val="'+k+'">'+GEN[k].label+'</button>'; });
     var durBtns=[15,30,60].map(function(d){ return '<button class="'+(d===genSel.dur?'on':'')+'" data-act="gen-dur" data-val="'+d+'">'+d+'秒</button>'; }).join('');
     openModal(
       '<h3>✨ 一键生成脚本</h3>'
-      +'<div class="sec-note">输入主题，自动生成「分镜脚本 + 口播话术」，生成后还能继续编辑保存。</div>'
+      +'<div class="sec-note">按「黄金3秒钩子 → 框架化分镜 → 结尾号召」的结构生成，时长自动对齐目标，生成后还能继续编辑保存。</div>'
       +'<div class="form-row"><label>视频主题 / 选题</label><input class="input" id="g-topic" placeholder="例如：初秋通勤穿搭、宿舍好物开箱"></div>'
       +'<div class="form-row"><label>脚本类型</label><div class="seg" id="g-type">'+typeBtns+'</div></div>'
       +'<div class="form-row"><label>视频时长</label><div class="seg" id="g-dur">'+durBtns+'</div></div>'
@@ -514,9 +617,11 @@
       +'<td>'+esc(sc.visual)+'</td><td>'+esc(sc.line)+'</td>'
       +'<td style="width:56px">'+esc(sc.duration)+'</td></tr>';
     }).join('');
+    var struct=['黄金3秒钩子','框架化分镜','结尾号召'].map(function(x){return '<span class="chip blue">'+x+'</span>';}).join('');
     openModal(
       '<h3>🎁 生成完成</h3>'
-      +'<div class="r-meta" style="margin-bottom:12px"><span class="chip pink">'+esc(s.title)+'</span>'
+      +'<div class="r-meta" style="margin-bottom:12px">'+struct
+      +'<span class="chip pink">'+esc(s.title)+'</span>'
       +'<span class="chip">'+s.scenes.length+' 个分镜</span><span class="chip">约 '+total+' 秒</span></div>'
       +'<div class="form-row"><label>完整口播稿（可整段复制，配合提词器使用）</label>'
       +'<textarea class="textarea" id="g-copy" style="min-height:150px" readonly>'+esc(scriptPlainText(s))+'</textarea>'
@@ -528,6 +633,103 @@
       +'<button class="btn" data-act="gen-use">✎ 编辑并保存</button></div>'
     );
   }
+
+  /* ---- 公众号选题生成（人群 × 痛点 × 场景 × 利益承诺） ---- */
+  function gzhGenBuild(){
+    var t=gzhGen.topic, crowd=gzhGen.crowd;
+    var full = crowd ? (crowd+'，'+t) : t;
+    var F=GENX.gzh.formulas.slice();
+    var chosen=[];
+    while(chosen.length<5 && F.length){ chosen.push(F.splice(Math.floor(Math.random()*F.length),1)[0]); }
+    gzhGen.results=chosen.map(function(f){
+      var n=pick(GENX.gzh.nums);
+      return {formula:f.name, title:f.build(full,n), angle:f.angle};
+    });
+  }
+  function openGzhGenModal(){
+    gzhGen={topic:'',crowd:'',results:[]};
+    openModal(
+      '<h3>✨ 一键生成选题</h3>'
+      +'<div class="sec-note">按「人群 × 痛点 × 场景 × 利益承诺」的选题逻辑，用 6 种标题公式生成候选，每个都附切入角度说明。</div>'
+      +'<div class="form-row"><label>想写的主题 / 领域</label><input class="input" id="gg-topic" placeholder="例如：通勤穿搭、租房改造、副业赚钱"></div>'
+      +'<div class="form-row"><label>目标人群（可选，写进标题更抓人）</label><input class="input" id="gg-crowd" placeholder="例如：职场新人、小个子女生、新手妈妈"></div>'
+      +'<div class="modal-actions"><button class="btn ghost" data-act="close-modal">取消</button>'
+      +'<button class="btn" data-act="gzh-gen-run">🎁 生成选题</button></div>'
+    );
+    setTimeout(function(){ var t=$('#gg-topic'); if(t) t.focus(); },60);
+  }
+  function openGzhGenResult(){
+    var cards=gzhGen.results.map(function(r,i){
+      return '<div class="row" style="align-items:center">'
+        +'<div class="r-main"><div class="r-title">'+esc(r.title)+'</div>'
+        +'<div class="r-note">💡 '+esc(r.angle)+'</div>'
+        +'<div class="r-meta"><span class="chip purple">'+esc(r.formula)+'</span></div></div>'
+        +'<div class="r-actions"><button class="btn sm" data-act="gzh-gen-pick" data-idx="'+i+'">选用</button></div></div>';
+    }).join('');
+    openModal(
+      '<h3>🎁 选题候选</h3>'
+      +'<div class="sec-note">主题「'+esc(gzhGen.topic)+(gzhGen.crowd?'」· 人群「'+esc(gzhGen.crowd):'')+'」。选用后自动加入公众号选题列表，日期默认今天，可再编辑调整。</div>'
+      +'<div class="list">'+cards+'</div>'
+      +'<div class="modal-actions"><button class="btn ghost" data-act="gzh-gen-run">↻ 换一批</button>'
+      +'<button class="btn ghost" data-act="close-modal">取消</button></div>'
+    );
+  }
+
+  /* ---- 小红书文案生成（标题公式 + 分类型正文骨架 + 标签） ---- */
+  function xhsSkeleton(typeName){
+    var S=GENX.xhs.skeletons[typeName];
+    return S || GENX.xhs.generic;
+  }
+  function xhsGenBuild(){
+    var t=xhsGen.topic;
+    var typeName=''; store.xhsCopyTypes.forEach(function(c){ if(c.id===xhsGen.typeId) typeName=c.name; });
+    var prodName=''; store.xhsProducts.forEach(function(p){ if(p.id===xhsGen.product) prodName=p.name; });
+    var F=GENX.xhs.titleFormulas.slice(), titles=[];
+    while(titles.length<3 && F.length){ titles.push(F.splice(Math.floor(Math.random()*F.length),1)[0](t)); }
+    var body='# '+titles[0]+'\n\n';
+    xhsSkeleton(typeName).forEach(function(st){
+      var para=st.p(t);
+      if(prodName && st.h.indexOf('第一印象')>=0) para='这次主角是'+prodName+'，'+para;
+      body+=st.h+'\n'+para+'\n\n';
+    });
+    var pool=GENX.xhs.tagPool.slice(), tags=[];
+    while(tags.length<4 && pool.length){ tags.push(pool.splice(Math.floor(Math.random()*pool.length),1)[0]); }
+    tags.unshift(t.replace(/\s+/g,''));
+    xhsGen.titles=titles; xhsGen.picked=0; xhsGen.body=body.trim();
+    xhsGen.tags=tags.map(function(x){return '#'+x;}).join(' ');
+  }
+  function openXhsGenModal(){
+    xhsGen={topic:'',typeId:'',product:'',titles:[],picked:0,body:'',tags:''};
+    var typeOpts='<option value="">（不选，用通用结构）</option>'+store.xhsCopyTypes.map(function(t){return '<option value="'+t.id+'">'+esc(t.name)+'</option>';}).join('');
+    var prodOpts='<option value="">（不关联）</option>'+store.xhsProducts.map(function(p){return '<option value="'+p.id+'">'+esc(p.name)+'</option>';}).join('');
+    openModal(
+      '<h3>✨ 一键生成文案</h3>'
+      +'<div class="sec-note">按小红书笔记结构生成：标题公式（备选3个）+ 按文案类型分段的正文骨架 + 话题标签，生成后可编辑再存。</div>'
+      +'<div class="form-row"><label>文案主题</label><input class="input" id="xg-topic" placeholder="例如：秋冬身体护理、租房好物、通勤妆容"></div>'
+      +'<div class="form-row"><label>文案类型（决定正文骨架）</label><select class="select" id="xg-type">'+typeOpts+'</select></div>'
+      +'<div class="form-row"><label>关联摆拍产品（可选）</label><select class="select" id="xg-product">'+prodOpts+'</select></div>'
+      +'<div class="modal-actions"><button class="btn ghost" data-act="close-modal">取消</button>'
+      +'<button class="btn" data-act="xhs-gen-run">🎁 生成文案</button></div>'
+    );
+    setTimeout(function(){ var t=$('#xg-topic'); if(t) t.focus(); },60);
+  }
+  function openXhsGenResult(){
+    var radios=xhsGen.titles.map(function(tt,i){
+      return '<label class="pub-check" style="margin:4px 0"><input type="radio" name="xg-title" value="'+i+'"'+(i===xhsGen.picked?' checked':'')+'> '+esc(tt)+'</label>';
+    }).join('');
+    openModal(
+      '<h3>🎁 文案草稿</h3>'
+      +'<div class="sec-note">标题三选一，正文可直接改。确认后「带入编辑」精修，或直接存为草稿。</div>'
+      +'<div class="form-row"><label>标题（选一个）</label>'+radios+'</div>'
+      +'<div class="form-row"><label>正文</label><textarea class="textarea" id="xg-body" style="min-height:220px">'+esc(xhsGen.body)+'</textarea></div>'
+      +'<div class="form-row"><label>话题标签</label><input class="input" id="xg-tags" value="'+esc(xhsGen.tags)+'"></div>'
+      +'<div class="modal-actions"><button class="btn ghost" data-act="xhs-gen-run">↻ 换一版</button>'
+      +'<button class="btn ghost" data-act="close-modal">取消</button>'
+      +'<button class="btn" data-act="xhs-gen-save">💾 存为草稿</button>'
+      +'<button class="btn green" data-act="xhs-gen-use">✎ 带入编辑</button></div>'
+    );
+  }
+
   function renderDouyin(){
     var arr=store.douyinScripts;
     var body = arr.length
@@ -855,6 +1057,45 @@
       case 'gen-copy':
         var ta=$('#g-copy');
         if(ta){ ta.select(); try{ document.execCommand('copy'); toast('口播稿已复制 📋'); }catch(e){ toast('复制失败，请手动选择复制'); } }
+        break;
+      case 'gzh-gen-open': openGzhGenModal(); break;
+      case 'gzh-gen-run':
+        var gt=($('#gg-topic').value||'').trim();
+        if(!gt){ toast('先填写想写的主题'); return; }
+        gzhGen.topic=gt; gzhGen.crowd=($('#gg-crowd').value||'').trim();
+        gzhGenBuild(); openGzhGenResult(); break;
+      case 'gzh-gen-pick':
+        var gi=+t.dataset.idx, gr=gzhGen.results[gi];
+        if(gr){
+          store.tasks.push({id:uid(), type:'gzh', title:gr.title, date:todayStr(), time:'', done:false,
+            note:'【切入角度】'+gr.angle+'\n【标题公式】'+gr.formula+'（一键生成于 '+todayStr()+'，可按需调整）'});
+          save(); closeModal(); renderGzh(); if(currentView==='calendar') renderCalendar();
+          toast('已加入选题列表 📝');
+        }
+        break;
+      case 'xhs-gen-open': openXhsGenModal(); break;
+      case 'xhs-gen-run':
+        var xt=($('#xg-topic').value||'').trim();
+        if(!xt){ toast('先填写文案主题'); return; }
+        xhsGen.topic=xt; xhsGen.typeId=$('#xg-type').value; xhsGen.product=$('#xg-product').value;
+        xhsGenBuild(); openXhsGenResult(); break;
+      case 'xhs-gen-save':
+        var xr0=document.querySelector('input[name="xg-title"]:checked');
+        var xti0=xr0?xhsGen.titles[+xr0.value]:xhsGen.titles[0];
+        var xb0=($('#xg-body').value||'').trim();
+        var xg0=($('#xg-tags').value||'').trim();
+        if(!xti0){ toast('标题不能为空'); return; }
+        store.xhsCopies.push({id:uid(), title:xti0, typeId:xhsGen.typeId, product:xhsGen.product,
+          body:xb0+(xg0?('\n\n'+xg0):''), date:'', status:'draft'});
+        save(); closeModal(); renderXhsCopies(); toast('已存为草稿 📝'); break;
+      case 'xhs-gen-use':
+        var xr1=document.querySelector('input[name="xg-title"]:checked');
+        var xti1=xr1?xhsGen.titles[+xr1.value]:xhsGen.titles[0];
+        var xb1=($('#xg-body').value||'').trim();
+        var xg1=($('#xg-tags').value||'').trim();
+        closeModal();
+        openCopyModal({id:'', title:xti1, typeId:xhsGen.typeId, product:xhsGen.product,
+          body:xb1+(xg1?('\n\n'+xg1):''), date:'', status:'draft'});
         break;
       case 'script-view': var sv=store.douyinScripts.find(function(x){return x.id===id;}); if(sv) openScriptPreview(sv); break;
       case 'script-toggle':
