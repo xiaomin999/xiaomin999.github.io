@@ -45,6 +45,9 @@ button{font-family:inherit;cursor:pointer}
 .nav-item:hover{background:var(--accent-soft)}
 .nav-item.active{background:var(--accent);color:#fff;font-weight:600}
 .nav-item.active .ni{filter:brightness(1.1)}
+.nav-item.pipeline-entry{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.nav-item.pipeline-entry .nl{color:inherit}
+.nav-item.pipeline-entry:hover{background:var(--accent);color:#fff}
 .sidebar.collapsed .nav-item{justify-content:center;padding:11px 0}
 .toggle .ni{transition:transform .22s}
 

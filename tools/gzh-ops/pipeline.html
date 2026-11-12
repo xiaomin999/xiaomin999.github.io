@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>公众号创作流水线 · 7步出稿</title>
+<style>
+  :root{
+    --bg:#f5f6f8; --card:#fff; --ink:#242424; --muted:#7a8290;
+    --line:#e7e9ee; --accent:#2b6cb0; --accent-soft:#e8f0fc; --accent-ink:#1b3a5b;
+    --red:#c62828; --green:#2f9e6b; --amber:#e08a00; --radius:14px;
+    --shadow:0 1px 3px rgba(20,30,50,.06),0 6px 20px rgba(20,30,50,.05);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg);color:var(--ink);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;
+    padding:12px 18px;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line)}
+  .topbar h1{font-size:16px;margin:0;font-weight:700;letter-spacing:.5px}
+  .topbar .sub{font-size:11.5px;color:var(--muted)}
+  .topbar .spacer{flex:1}
+  .pill{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;padding:3px 9px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent-ink);font-weight:600}
+  .pill.demo{background:#fff3e0;color:var(--amber)}
+  .pill.live{background:#e7f6ee;color:var(--green)}
+  .btn{appearance:none;border:1px solid var(--accent);background:var(--accent);color:#fff;font-weight:600;
+    padding:9px 14px;border-radius:10px;cursor:pointer;font-size:13.5px;transition:.15s}
+  .btn:hover{filter:brightness(1.05)}
+  .btn:disabled{opacity:.55;cursor:default}
+  .btn.ghost{background:#fff;color:var(--accent);}
+  .btn.soft{background:var(--accent-soft);border-color:var(--accent-soft);color:var(--accent-ink)}
+  .btn.sm{padding:6px 11px;font-size:12.5px;border-radius:8px}
+  .btn.mini{padding:4px 9px;font-size:12px;border-radius:7px}
+  .icon-btn{appearance:none;border:1px solid var(--line);background:#fff;color:var(--muted);
+    width:36px;height:36px;border-radius:9px;cursor:pointer;font-size:16px}
+  .icon-btn:hover{color:var(--accent);border-color:var(--accent)}
+  .back-link{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;font-weight:600;
+    color:var(--accent-ink);background:var(--accent-soft);border:1px solid #cfe0f7;
+    padding:7px 12px;border-radius:9px;text-decoration:none;white-space:nowrap;transition:.15s}
+  .back-link:hover{background:#dbe8fa}
+
+  /* stepper */
+  .stepper{display:flex;gap:6px;overflow-x:auto;padding:12px 18px 4px;scrollbar-width:none}
+  .stepper::-webkit-scrollbar{display:none}
+  .step{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:64px;
+    padding:8px 6px;border-radius:12px;cursor:pointer;border:1px solid transparent;transition:.15s}
+  .step .em{font-size:20px;line-height:1;filter:grayscale(.3)}
+  .step .nm{font-size:11.5px;color:var(--muted);font-weight:600;white-space:nowrap}
+  .step.active{background:var(--accent-soft);border-color:#cfe0f7}
+  .step.active .nm{color:var(--accent-ink)}
+  .step.done .em::after{content:"✓";font-size:10px;background:var(--green);color:#fff;border-radius:50%;
+    padding:1px 4px;margin-left:2px;vertical-align:top}
+  .step.locked{opacity:.55}
+
+  .wrap{max-width:920px;margin:0 auto;padding:14px 18px 60px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:16px 18px;box-shadow:var(--shadow);margin-bottom:14px}
+  .card .st{font-size:15px;font-weight:700;margin:0 0 4px}
+  .card .st .n{display:inline-flex;width:22px;height:22px;border-radius:50%;background:var(--accent);
+    color:#fff;font-size:12px;align-items:center;justify-content:center;margin-right:8px;vertical-align:middle}
+  .muted{color:var(--muted)}
+  .hint{font-size:12.5px;color:var(--muted);margin:4px 0 12px}
+  label.field{display:block;font-size:12.5px;color:var(--muted);margin:10px 0 4px;font-weight:600}
+  input.field,textarea.field,select.field{width:100%;border:1px solid var(--line);border-radius:9px;
+    padding:9px 11px;font-size:14px;font-family:inherit;background:#fff;color:var(--ink)}
+  textarea.field{resize:vertical;min-height:88px;line-height:1.6}
+  input.field:focus,textarea.field:focus,select.field:focus{outline:none;border-color:var(--accent);
+    box-shadow:0 0 0 3px var(--accent-soft)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+  @media(max-width:640px){.grid2,.grid3{grid-template-columns:1fr}}
+  .row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .row.end{justify-content:flex-end}
+  .spacer{flex:1}
+
+  .item{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px;background:#fff}
+  .item.active{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  .item .top{display:flex;align-items:center;gap:8px}
+  .item .title{font-weight:700;font-size:14.5px}
+  .item .meta{font-size:12.5px;color:var(--muted);margin-top:4px}
+  .badge{font-size:11px;padding:2px 8px;border-radius:999px;font-weight:600}
+  .badge.候选{background:#eef2f7;color:#5a6675}
+  .badge.采纳{background:#e7f6ee;color:var(--green)}
+  .badge.弃用{background:#fdecec;color:var(--red)}
+  .mc{margin:6px 0 0;padding-left:18px;font-size:13px}
+  .mc li{margin:2px 0}
+  .tag{display:inline-block;font-size:11px;background:var(--accent-soft);color:var(--accent-ink);
+    padding:1px 7px;border-radius:6px;margin-right:4px}
+  .empty{border:1.5px dashed var(--line);border-radius:12px;padding:28px;text-align:center;color:var(--muted);font-size:13px}
+
+  .spin{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.5);
+    border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;vertical-align:-2px;margin-right:5px}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);
+    background:#222;color:#fff;padding:10px 16px;border-radius:10px;font-size:13px;opacity:0;
+    pointer-events:none;transition:.25s;z-index:60;max-width:88vw;text-align:center}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* modal */
+  .mask{position:fixed;inset:0;background:rgba(20,30,50,.35);z-index:50;display:none}
+  .mask.show{display:block}
+  .modal{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(460px,92vw);
+    background:#fff;border-radius:16px;padding:20px;z-index:51;box-shadow:var(--shadow);display:none}
+  .modal.show{display:block}
+  .modal h3{margin:0 0 12px;font-size:16px}
+  .presets{display:flex;gap:6px;margin:6px 0 0;flex-wrap:wrap}
+  .preset{border:1px solid var(--line);background:#fff;border-radius:8px;padding:5px 10px;font-size:12px;cursor:pointer}
+  .preset:hover{border-color:var(--accent);color:var(--accent)}
+  .navlink{color:var(--accent);cursor:pointer;font-weight:600}
+  .navlink:hover{text-decoration:underline}
+  .upbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+  .ok{color:var(--green)}
+
+  /* Phase B 新增样式 */
+  .paper{background:#fcfcfe;border:1px solid var(--line);border-radius:10px;padding:14px 16px;line-height:1.85;font-size:14.5px;white-space:pre-wrap;word-break:break-word}
+  .annot{display:flex;gap:8px;align-items:flex-start;padding:8px 10px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:#fff}
+  .annot .seg{font-size:13.5px;flex:1}
+  .badge.新增{background:#e7f6ee;color:var(--green)}
+  .badge.改写{background:#fff3e0;color:var(--amber)}
+  .risk{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px dashed var(--line)}
+  .risk:last-child{border-bottom:none}
+  .lvl{font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;flex:0 0 auto;margin-top:1px}
+  .lvl.高{background:#fdecec;color:var(--red)} .lvl.中{background:#fff3e0;color:var(--amber)} .lvl.低{background:#eef2f7;color:#5a6675}
+  .rbody{flex:1} .rt{font-weight:600;font-size:13.5px}
+  .oview{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 10px}
+  .ov{flex:1;min-width:88px;background:#f7f9fc;border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center}
+  .ov .num{display:block;font-size:22px;font-weight:800;color:var(--accent-ink)} .ov .lbl{font-size:12px;color:var(--muted)}
+  .bar{height:12px;background:#eef2f7;border-radius:999px;overflow:hidden;margin:6px 0}
+  .barfill{height:100%;border-radius:999px;transition:width .4s}
+  .wxprev{background:#fff;border:1px solid var(--line);border-radius:10px;padding:18px;max-width:680px;margin:0 auto}
+  .wxprev h1,.wxprev h2{margin-top:0}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a class="back-link" href="index.html" title="返回门户">← 门户</a>
+  <div>
+    <h1>公众号创作流水线</h1>
+    <div class="sub">7 步出稿 · 题材→爆款→选题→润色→合规→排版→封面</div>
+  </div>
+  <div class="spacer"></div>
+  <span id="aiStatus" class="pill demo">DEMO</span>
+  <button class="icon-btn" id="syncBtn" title="云同步">☁️</button>
+  <button class="icon-btn" id="setBtn" title="AI 设置">⚙️</button>
+</div>
+
+<div class="stepper" id="stepper"></div>
+
+<div class="wrap">
+  <div id="syncbar" class="card" style="display:none">
+    <div class="st">☁️ 云同步（与主站共用 Supabase）</div>
+    <div class="hint">同步码与主站一致即可多端共享数据。上传＝合并后推云端；下载＝把云端合并回本地（不覆盖本地独有内容）。</div>
+    <div class="row">
+      <input class="field" id="syncKey" placeholder="输入同步码（与主站相同）" style="max-width:240px" />
+      <button class="btn sm" id="syncUp">⬆ 上传</button>
+      <button class="btn sm ghost" id="syncDown">⬇ 下载</button>
+      <button class="btn sm soft" id="syncExp">导出</button>
+      <button class="btn sm soft" id="syncImp">导入</button>
+      <input type="file" id="syncFile" accept=".json" style="display:none" />
+    </div>
+    <div id="syncStatus" class="upbar" style="margin-top:8px"></div>
+  </div>
+
+  <div id="content"></div>
+</div>
+
+<!-- settings modal -->
+<div class="mask" id="setMask"></div>
+<div class="modal" id="setModal">
+  <h3>⚙️ AI 接入（与主站共用 gzh_ai）</h3>
+  <div class="hint">填了密钥即用真实模型；留空则全程 DEMO 示例。配置会自动同步给主站《公众号助推助手》。</div>
+  <label class="field">接口地址（完整 chat/completions URL）</label>
+  <input class="field" id="setEndpoint" placeholder="https://api.openai.com/v1/chat/completions" />
+  <div class="presets">
+    <span class="preset" data-p="deepseek">DeepSeek</span>
+    <span class="preset" data-p="qwen">通义千问</span>
+    <span class="preset" data-p="openai">OpenAI</span>
+  </div>
+  <label class="field">API Key</label>
+  <input class="field" id="setKey" type="password" placeholder="sk-..." />
+  <label class="field">模型名</label>
+  <input class="field" id="setModel" placeholder="deepseek-chat" />
+  <div class="row" style="margin-top:14px">
+    <button class="btn" id="setSave">保存</button>
+    <button class="btn ghost" id="setClose">关闭</button>
+    <span id="setMsg" class="muted"></span>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+/* ============ 数据层（复用主站 gzh_ 前缀；pipeline 数据用 gzh_pipe_*） ============ */
+const PS = {
+  get(k,def){ try{ const v=localStorage.getItem('gzh_'+k); return v?JSON.parse(v):def; }catch(e){ return def; } },
+  set(k,v){ localStorage.setItem('gzh_'+k, JSON.stringify(v)); },
+  del(k){ localStorage.removeItem('gzh_'+k); }
+};
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const todayStr=()=>new Date().toISOString().slice(0,10);
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ============ AI 客户端（读主站 gzh_ai） ============ */
+function aiCfg(){ return PS.get('ai',{endpoint:'',key:'',model:''}); }
+function aiLive(){ const c=aiCfg(); return !!(c.endpoint&&c.key&&c.model); }
+function refreshAiStatus(){
+  const el=$('#aiStatus');
+  if(aiLive()){ el.textContent='AI 已接入'; el.className='pill live'; }
+  else { el.textContent='DEMO 模式'; el.className='pill demo'; }
+}
+async function pipeChat(system,user,temp,demoFn){
+  temp=temp||0.7; const c=aiCfg();
+  if(!aiLive()) return (demoFn||pipeDemo)(system,user);
+  try{
+    const r=await fetch(c.endpoint,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+c.key},
+      body:JSON.stringify({model:c.model,temperature:temp,messages:[{role:'system',content:system},{role:'user',content:user}]})});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const j=await r.json();
+    return (j.choices&&j.choices[0]&&j.choices[0].message.content)||'';
+  }catch(e){ toast('接口失败，已回退 DEMO：'+e.message); return pipeDemo(system,user); }
+}
+function pipeDemo(system,user){
+  const genre=(user.match(/题材[：:]\s*(.+)/)||[])[1]||'你的题材';
+  const srcRaw=(user.match(/竞品素材[：:]\s*([\s\S]*)/)||[])[1]||'';
+  const src=srcRaw.split('\n').map(s=>s.trim()).filter(Boolean).slice(0,5);
+  const base=[
+    {title:`「${genre}」别等准备好了：先做完这 3 件小事`,
+     mainContent:['从你自己的起步犹豫写起，制造真实反差','给 3 个今天就能做的最小动作','结尾留一个可立刻照做的召唤'],
+     angle:'第一人称真实经历 + 反差钩子', whyHot:'命中「真实经历 + 具体数字 + 行动召唤」爆款因子',
+     source: src.length?('参考你粘贴的：'+src[0]):'DEMO 生成（接入 API 后基于真实竞品）'},
+    {title:`一个人做 ${genre} 一年没起色，换个方法 30 天翻盘`,
+     mainContent:['对比「断更期」与「方法升级后」的每天流程','把可复制的清单落成步骤','用具体时间/数字增强可信'],
+     angle:'痛点共鸣 + 具体数字', whyHot:'痛点+数字组合，点击率更高',
+     source: src.length?('参考：'+src.slice(-1)[0]):'DEMO 生成'},
+    {title:`8:30 的书桌、写作业的娃、和一篇发出去的 ${genre} 文章`,
+     mainContent:['把「每天坐下来」的仪式感写成画面','给读者一个同款节奏模板','结尾点出坚持本身的价值'],
+     angle:'画面感 + 情绪共鸣', whyHot:'场景化开头，手机阅读友好', source:'DEMO 生成'}
+  ];
+  return JSON.stringify(base,null,2);
+}
+
+/* ============ 解析 AI 返回的 JSON 数组 ============ */
+function parseJsonArr(t){
+  t=(t||'').replace(/```json|```/g,'').trim();
+  try{ const j=JSON.parse(t); if(Array.isArray(j)) return j; if(j&&Array.isArray(j.topics)) return j.topics; }catch(e){}
+  const s=t.indexOf('['), e=t.lastIndexOf(']');
+  if(s>=0&&e>s){ try{ return JSON.parse(t.slice(s,e+1)); }catch(e2){} }
+  return [];
+}
+
+/* ============ 解析 AI 返回的 JSON 对象 ============ */
+function parseJsonObj(t){
+  t=(t||'').replace(/```json|```/g,'').trim();
+  try{ const j=JSON.parse(t); if(j&&typeof j==='object'&&!Array.isArray(j)) return j; }catch(e){}
+  const s=t.indexOf('{'), e=t.lastIndexOf('}');
+  if(s>=0&&e>s){ try{ return JSON.parse(t.slice(s,e+1)); }catch(e2){} }
+  return null;
+}
+
+/* ============ DEMO：润色 / 检查（无 API 时示例输出） ============ */
+function demoPolish(system,user){
+  const orig=(user.match(/初稿：\n([\s\S]*)/)||[])[1]||'（示例初稿）你今天想聊聊减肥这件事。';
+  const polished='（DEMO 成稿示例）\n\n八点半的书桌前，娃在写作业，我盯着碗里的半根玉米——这就是我普通一天里最真实的「减肥现场」。\n\n今天不想讲大道理，就聊一件小事：把晚餐的主食换成半根玉米。上周我称量停在 63.5kg，没靠饿，就靠这种不费力的替换。\n\n很多人卡在「开始」两个字。其实不用等准备好了，今晚先把这一顿换掉，就算你开始了。';
+  const annotations=[
+    {type:'改写',segment:'原开头「你今天想聊聊减肥这件事」',reason:'改为画面化场景切入，前 3 秒抓住读者'},
+    {type:'新增',segment:'补充「称量 63.5kg」的真实数字',reason:'用具体数据增强可信与真实感'},
+    {type:'新增',segment:'结尾行动召唤「今晚先换一顿」',reason:'给读者一个低门槛的下一步'}
+  ];
+  return JSON.stringify({polished,annotations,summary:'主要做了场景化开头 + 两处真实细节补充，未改变核心观点。'});
+}
+function demoCheck(system,user){
+  return JSON.stringify({
+    copyright:[{level:'中',point:'开头「30天瘦8斤」式数字钩子与同类爆款结构相似',detail:'数字+天数钩子在同类文中高频出现，易被判定套路化',suggestion:'改用你自己的真实起点数字与心情，弱化模板感'}],
+    adLaw:[{level:'高',word:'最省事',suggestion:'改为「相对省心」，避免绝对化用语'},{level:'低',word:'绝对',suggestion:'视语境替换为「通常」'}],
+    aiSmell:[{issue:'连续三段以「首先/其次/最后」排比',fix:'改为更自然的口语过渡'},{issue:'出现「在这个快节奏的时代」等空泛套话',fix:'删去，用具体场景替代'}],
+    aiScore:42,
+    summary:'存在 1 处版权套路风险与 2 处广告法极限词，AI 味中等，建议改完再发。'
+  });
+}
+
+/* ============ Supabase 同步（复用主站机制，URL/anon key 已内置） ============ */
+const SYNC_CTRL=['gzh_sync_key','gzh_sync_last','gzh_meta','gzh_ai'];
+const isDataKey=full=>typeof full==='string'&&full.startsWith('gzh_')&&!SYNC_CTRL.includes(full);
+function getMeta(){ try{ return JSON.parse(localStorage.getItem('gzh_meta')||'{}'); }catch(e){ return {}; } }
+function collectAll(){ const out={}; for(let i=0;i<localStorage.length;i++){ const k=localStorage.key(i);
+  if(isDataKey(k)){ try{ out[k]=JSON.parse(localStorage.getItem(k)); }catch(e){ out[k]=localStorage.getItem(k); } } } return out; }
+function canon(x){
+  if(x===null||typeof x!=='object') return JSON.stringify(x);
+  if(Array.isArray(x)) return '['+x.map(canon).join(',')+']';
+  const ks=Object.keys(x).sort(); return '{'+ks.map(k=>JSON.stringify(k)+':'+canon(x[k])).join(',')+'}';
+}
+function mergeArr(l,r,lt,rt,tomb){
+  let res; const lId=l.length>0&&l.every(x=>x&&typeof x==='object'&&x.id);
+  const rId=r.length>0&&r.every(x=>x&&typeof x==='object'&&x.id);
+  if(lId&&rId){ const map={}; const order=(rt>=lt)?[...l,...r]:[...r,...l]; order.forEach(x=>{ if(x&&x.id) map[x.id]=x; }); res=Object.values(map); }
+  else { const seen=new Set(); res=[]; [...l,...r].forEach(x=>{ const key=(x&&typeof x==='object')?canon(x):String(x); if(!seen.has(key)){ seen.add(key); res.push(x); } }); }
+  if(tomb&&Object.keys(tomb).length) res=res.filter(x=>!(x&&x.id&&tomb[x.id]));
+  return res;
+}
+function mergeSync(L,Lm,R,Rm){
+  const out={}; const keys=new Set([...Object.keys(L||{}),...Object.keys(R||{})]);
+  const dl={}; const Ldl=(L&&L['gzh_del_log'])||{}, Rdl=(R&&R['gzh_del_log'])||{};
+  new Set([...Object.keys(Ldl),...Object.keys(Rdl)]).forEach(sk=>{ const m=Object.assign({},Ldl[sk]||{});
+    Object.keys(Rdl[sk]||{}).forEach(id=>{ m[id]=Math.max(m[id]||0,Rdl[sk][id]); }); dl[sk]=m; });
+  if(Object.keys(dl).length) out['gzh_del_log']=dl;
+  const tomb=sk=>{ const s=String(sk||''); return (dl[s]||dl[s.replace(/^gzh_/,'')]||{}); };
+  keys.forEach(k=>{ if(!isDataKey(k)||k==='gzh_del_log') return;
+    const l=L?L[k]:undefined, r=R?R[k]:undefined;
+    if(l===undefined&&r===undefined) return;
+    if(Array.isArray(l)&&Array.isArray(r)) out[k]=mergeArr(l,r,(Lm&&Lm[k])||0,(Rm&&Rm[k])||0,tomb(k));
+    else if(Array.isArray(l)&&r===undefined) out[k]=l.filter(x=>!(x&&x.id&&tomb(k)[x.id]));
+    else if(Array.isArray(r)&&l===undefined) out[k]=r.filter(x=>!(x&&x.id&&tomb(k)[x.id]));
+    else { const lt=(Lm&&Lm[k])||0, rt=(Rm&&Rm[k])||0; out[k]=(rt>=lt)?r:l; }
+  });
+  return out;
+}
+function markDeleted(storeKey,ids){
+  try{ const log=PS.get('del_log',{}); const m=log[storeKey]||(log[storeKey]={}); const t=Date.now();
+    (Array.isArray(ids)?ids:[ids]).forEach(id=>{ if(id) m[id]=t; }); PS.set('del_log',log); }catch(e){}
+}
+function persistMerged(merged,mMeta){
+  Object.keys(merged).forEach(k=>{ if(isDataKey(k)) localStorage.setItem(k,JSON.stringify(merged[k])); });
+  const local=getMeta(); Object.keys(mMeta||{}).forEach(k=>{ if(isDataKey(k)) local[k]=Math.max(local[k]||0,mMeta[k]||0); });
+  localStorage.setItem('gzh_meta',JSON.stringify(local));
+}
+const SB={ url:'https://rbmxgcholrcwjyzwnqmv.supabase.co',
+  key:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJibXhnY2hvbHJjd2p5enducW12Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc1NjAyNzQsImV4cCI6MjEwMzEzNjI3NH0.q0iqUzOAGc1YuOUY9vb8sf4fl7JxTqg9BvHLc5xLP14',
+  headers(){ return {'apikey':this.key,'Authorization':'Bearer '+this.key,'Content-Type':'application/json'}; } };
+function syncKey(){ return ($('#syncKey').value||'').trim(); }
+async function pushMerged(merged,mMeta){
+  const payload=Object.assign({},merged); payload._meta=mMeta||{};
+  const r=await fetch(SB.url+'/rest/v1/gzh_sync',{method:'POST',
+    headers:Object.assign(SB.headers(),{'Prefer':'resolution=merge-duplicates'}),
+    body:JSON.stringify({code:syncKey(),data:payload})});
+  if(!r.ok) throw new Error('HTTP '+r.status+' '+((await r.text()).slice(0,120)));
+}
+async function readRemote(){
+  const rd={data:{},meta:{}};
+  try{ const r=await fetch(SB.url+'/rest/v1/gzh_sync?code=eq.'+encodeURIComponent(syncKey())+'&select=code,data',{headers:SB.headers()});
+    if(r.ok){ const arr=await r.json(); if(arr.length&&arr[0].data){ const d=arr[0].data; rd.meta=d._meta||{}; delete d._meta; rd.data=d; } } }catch(e){}
+  return rd;
+}
+async function syncUpload(){
+  const key=syncKey(); if(!key){ $('#syncStatus').innerHTML='<span style="color:var(--red)">先填同步码</span>'; return; }
+  $('#syncStatus').textContent='上传中（先与云端合并）…';
+  try{ const remote=await readRemote(); const L=collectAll(), Lm=getMeta();
+    const merged=mergeSync(L,Lm,remote.data,remote.meta);
+    const mMeta=Object.assign({},Lm); Object.keys(remote.meta||{}).forEach(k=>{ if(isDataKey(k)) mMeta[k]=Math.max(mMeta[k]||0,remote.meta[k]||0); });
+    await pushMerged(merged,mMeta); PS.set('sync_last',Date.now());
+    $('#syncStatus').innerHTML='<span class="ok">已上传（已与云端合并）· '+new Date().toLocaleString()+'</span>'; toast('已与云端合并上传');
+  }catch(e){ $('#syncStatus').innerHTML='<span style="color:var(--red)">上传失败：'+e.message+'</span>'; }
+}
+async function syncDownload(){
+  const key=syncKey(); if(!key){ $('#syncStatus').innerHTML='<span style="color:var(--red)">先填同步码</span>'; return; }
+  $('#syncStatus').textContent='下载中（合并到本地）…';
+  try{ const r=await fetch(SB.url+'/rest/v1/gzh_sync?code=eq.'+encodeURIComponent(key)+'&select=code,data',{headers:SB.headers()});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const arr=await r.json(); if(!arr.length||!arr[0].data){ $('#syncStatus').textContent='云端暂无该同步码的数据'; return; }
+    const rd=arr[0].data; const Rm=rd._meta||{}; delete rd._meta; const R=rd;
+    const L=collectAll(), Lm=getMeta(); const merged=mergeSync(L,Lm,R,Rm); const mMeta=Object.assign({},Lm,Rm);
+    persistMerged(merged,mMeta);
+    try{ await pushMerged(merged,mMeta); $('#syncStatus').innerHTML='<span class="ok">已合并（本地+云端已收敛到云端）</span>'; }
+    catch(e){ $('#syncStatus').innerHTML='<span class="ok">已合并到本地</span> <span style="color:var(--red)">（回写云端失败：'+e.message+'，稍后点一次上传即可）</span>'; }
+    toast('已合并云端内容，未覆盖本地'); renderCurrent();
+  }catch(e){ $('#syncStatus').innerHTML='<span style="color:var(--red)">拉取失败：'+e.message+'</span>'; }
+}
+
+/* ============ 业务数据 ============ */
+function projects(){ return PS.get('pipe_projects',[]); }
+function topics(){ return PS.get('pipe_topics',[]); }
+function currentProjectId(){ return PS.get('pipe_current',''); }
+function currentProject(){ return projects().find(p=>p.id===currentProjectId())||null; }
+
+/* ============ 步骤定义 ============ */
+const STEPS=[
+  {id:'genre',   name:'确定题材', icon:'🎯', render:renderGenre},
+  {id:'research',name:'爆款分析', icon:'🔥', render:renderResearch},
+  {id:'topics',  name:'保存选题', icon:'💡', render:renderTopics},
+  {id:'polish',  name:'润色标注', icon:'✍️', render:renderPolish},
+  {id:'check',   name:'合规去AI', icon:'🛡️', render:renderCheck},
+  {id:'layout',  name:'专业排版', icon:'✨', render:renderLayout},
+  {id:'cover',   name:'封面Canva', icon:'🎨', render:renderCover},
+];
+let curStep='genre';
+function renderStepper(){
+  const box=$('#stepper'); if(!box) return;
+  const done=new Set();
+  if(currentProject()){ done.add('genre'); done.add('research'); done.add('topics'); }
+  if(myDrafts().length){ done.add('polish'); done.add('check'); }
+  if(myLayouts().length){ done.add('layout'); }
+  if(myCovers().length){ done.add('cover'); }
+  box.innerHTML=STEPS.map(s=>{
+    const cls=['step']; if(s.id===curStep) cls.push('active'); if(done.has(s.id)) cls.push('done');
+    return `<div class="${cls.join(' ')}" data-step="${s.id}"><span class="em">${s.icon}</span><span class="nm">${s.name}</span></div>`;
+  }).join('');
+  $$('.step').forEach(el=>el.onclick=()=>gotoStep(el.dataset.step));
+}
+function gotoStep(id){
+  curStep=id; const s=STEPS.find(x=>x.id===id); PS.set('pipe_step',id);
+  renderStepper(); $('#content').innerHTML=''; s.render();
+  location.hash=id;
+}
+function renderCurrent(){ const s=STEPS.find(x=>x.id===curStep)||STEPS[0]; s.render(); renderStepper(); }
+
+/* ============ Step 1 确定题材 ============ */
+function renderGenre(){
+  const ps=projects(); const cur=currentProject();
+  let html=`<div class="card">
+    <div class="st"><span class="n">1</span>确定题材</div>
+    <div class="hint">想写什么赛道 / 领域？定好题材后，后续爆款分析、选题、成稿都会挂在它下面。</div>
+    <label class="field">题材名称（必填）</label>
+    <input class="field" id="gName" placeholder="例如：减肥/职场成长/亲子/副业" />
+    <div class="grid2">
+      <div><label class="field">目标读者</label><input class="field" id="gAud" placeholder="例如：25-35岁职场女性" /></div>
+      <div><label class="field">写作目标 / 调性</label><input class="field" id="gGoal" placeholder="例如：真实记录、不鸡汤、能落地" /></div>
+    </div>
+    <div class="row" style="margin-top:12px">
+      <button class="btn" id="gSave">+ 新建题材</button>
+      ${cur?'<span class="ok" style="font-size:12.5px">当前题材：'+esc(cur.name)+'</span>':''}
+    </div>
+  </div>`;
+  html+=`<div class="card"><div class="st">已建题材（${ps.length}）</div>`;
+  if(!ps.length) html+='<div class="empty">还没有题材，先在上面建一个。</div>';
+  else html+=ps.map(p=>`
+    <div class="item ${p.id===currentProjectId()?'active':''}">
+      <div class="top"><span class="title">${esc(p.name)}</span>
+        ${p.id===currentProjectId()?'<span class="badge 采纳">当前</span>':'<span class="badge 候选">备选</span>'}
+        <div class="spacer"></div>
+        <button class="btn mini soft" onclick="pickProject('${p.id}')">选为当前</button>
+        <button class="btn mini ghost" onclick="delProject('${p.id}')">删</button></div>
+      <div class="meta">${p.audience?('读者：'+esc(p.audience)+' · '):''}${p.goal?('调性：'+esc(p.goal)):''}</div>
+      <div class="meta">选题 ${topics().filter(t=>t.projectId===p.id).length} 个 · 创建 ${fmt(p.createdAt)}</div>
+    </div>`).join('');
+  html+='</div>';
+  $('#content').innerHTML=html;
+  $('#gSave').onclick=()=>{
+    const name=$('#gName').value.trim(); if(!name){ toast('填题材名称'); return; }
+    const ps=projects(); const p={id:uid(),name,audience:$('#gAud').value.trim(),goal:$('#gGoal').value.trim(),createdAt:todayStr()};
+    ps.unshift(p); PS.set('pipe_projects',ps); PS.set('pipe_current',p.id);
+    toast('已建题材并设为当前'); renderGenre(); renderStepper();
+  };
+}
+function pickProject(id){ PS.set('pipe_current',id); toast('已切换当前题材'); renderGenre(); renderStepper(); }
+function delProject(id){
+  if(!confirm('删除该题材？其下选题也会一并删除。')) return;
+  PS.set('pipe_projects',projects().filter(p=>p.id!==id));
+  PS.set('pipe_topics',topics().filter(t=>t.projectId!==id));
+  if(currentProjectId()===id) PS.set('pipe_current','');
+  toast('已删除'); renderGenre(); renderStepper();
+}
+
+/* ============ Step 2 爆款分析 ============ */
+function renderResearch(){
+  const cur=currentProject();
+  if(!cur){ $('#content').innerHTML=`<div class="card"><div class="st"><span class="n">2</span>爆款分析</div>
+    <div class="empty">请先在「确定题材」里建一个题材并设为当前。</div>
+    <div class="row"><button class="btn sm" onclick="gotoStep('genre')">去建题材</button></div></div>`; return; }
+  $('#content').innerHTML=`
+  <div class="card">
+    <div class="st"><span class="n">2</span>爆款分析 → 提取选题</div>
+    <div class="hint">说明：静态网站无法直连公众号后台实时检索，这里用两种方式补：① 把你在别处搜到的<b>竞品爆款素材</b>（标题/要点/链接）贴进来，AI 分析共性并产出选题；② 只给题材，AI 按爆款因子脑暴。若要真·实时搜索，可用 WorkBuddy 的「微信公众号创作专家」（带联网）搜完粘贴过来。</div>
+    <label class="field">题材（来自当前题材，可改）</label>
+    <input class="field" id="rGenre" value="${esc(cur.name)}" />
+    <label class="field">竞品爆款素材（可选，每行一条：标题 + 关键要点/链接）</label>
+    <textarea class="field" id="rMat" placeholder="例如：&#10;《30天瘦8斤，我只改了早餐》—— 用具体天数+数字，开头讲自己踩坑&#10;《减肥别吃晚饭？我试了90天》—— 反常识钩子+亲历数据"></textarea>
+    <div class="row" style="margin-top:12px">
+      <button class="btn" id="rGo">⚡ AI 分析并出选题</button>
+      <span class="muted">当前题材：${esc(cur.name)}</span>
+    </div>
+  </div>
+  <div id="rOut"></div>`;
+  $('#rGo').onclick=runResearch;
+}
+async function runResearch(){
+  const cur=currentProject(); if(!cur) return;
+  const genre=$('#rGenre').value.trim()||cur.name;
+  const mat=$('#rMat').value.trim();
+  const btn=$('#rGo'); btn.disabled=true; btn.innerHTML='<span class="spin"></span>分析中…';
+  const sys='你是微信公众号创作专家。基于用户给的题材与（可选的）竞品爆款素材，分析爆款共性，产出 3 个选题。'
+    +'严格只输出 JSON 数组，每项含：title(吸引人标题)、mainContent(数组，3-5个主要内容要点)、angle(写作角度)、whyHot(为什么能火，结合爆款因子)、source(素材来源说明)。';
+  const usr=`题材：${genre}\n竞品素材：${mat||'（无，仅按题材脑暴）'}`;
+  const res=await pipeChat(sys,usr,0.85);
+  const arr=parseJsonArr(res);
+  btn.disabled=false; btn.textContent='⚡ 重新分析';
+  const box=$('#rOut');
+  if(!arr.length){ box.innerHTML='<div class="card"><div class="st">分析结果</div><div class="empty">AI 未返回可解析的选题（DEMO 模式下应正常）。可重试或检查接口。</div></div>'; return; }
+  // 落库为候选选题
+  const ts=topics();
+  arr.forEach(a=>{ ts.unshift({id:uid(),projectId:cur.id,title:a.title||'',mainContent:Array.isArray(a.mainContent)?a.mainContent:[],
+    angle:a.angle||'',whyHot:a.whyHot||'',source:a.source||'',status:'候选',createdAt:todayStr()}); });
+  PS.set('pipe_topics',ts);
+  box.innerHTML='<div class="card"><div class="st">✅ 已生成 '+arr.length+' 个候选选题并存入「保存选题」</div>'
+    +'<div class="hint">下方为本次生成；去「保存选题」可筛选/采纳/弃用/编辑。</div>'
+    +arr.map(a=>`<div class="item"><div class="top"><span class="title">${esc(a.title||'')}</span></div>`
+      +(a.mainContent&&a.mainContent.length?`<ul class="mc">${a.mainContent.map(m=>'<li>'+esc(m)+'</li>').join('')}</ul>`:'')
+      +(a.angle?`<div class="meta"><b>角度：</b>${esc(a.angle)}</div>`:'')
+      +(a.whyHot?`<div class="meta"><b>为什么火：</b>${esc(a.whyHot)}</div>`:'')
+      +(a.source?`<div class="meta"><b>来源：</b>${esc(a.source)}</div>`:'')
+    +`</div>`).join('')
+    +'<div class="row"><button class="btn sm" onclick="gotoStep(\'topics\')">去保存选题 →</button></div></div>';
+  renderStepper();
+  toast('已生成 '+arr.length+' 个选题');
+}
+
+/* ============ Step 3 保存选题 ============ */
+let topicFilter='全部';
+function renderTopics(){
+  const cur=currentProject();
+  if(!cur){ $('#content').innerHTML=`<div class="card"><div class="st"><span class="n">3</span>保存选题</div>
+    <div class="empty">请先在「确定题材」里建一个题材并设为当前。</div></div>`; return; }
+  const all=topics().filter(t=>t.projectId===cur.id);
+  const flt=topicFilter==='全部'?all:all.filter(t=>t.status===topicFilter);
+  const counts={全部:all.length,候选:all.filter(t=>t.status==='候选').length,采纳:all.filter(t=>t.status==='采纳').length,弃用:all.filter(t=>t.status==='弃用').length};
+  let html=`<div class="card">
+    <div class="st"><span class="n">3</span>保存选题（${all.length}）</div>
+    <div class="hint">来自「爆款分析」的候选选题都在这里。可筛选、采纳、弃用、编辑、删除。</div>
+    <div class="row">${['全部','候选','采纳','弃用'].map(f=>`<button class="btn mini ${topicFilter===f?'':'ghost'}" onclick="setTopicFilter('${f}')">${f} ${counts[f]}</button>`).join('')}</div>
+    <div class="row" style="margin-top:10px"><button class="btn sm" onclick="gotoStep('research')">+ 再分析一批选题</button></div>
+  </div>`;
+  if(!flt.length) html+='<div class="empty">该筛选下暂无选题。</div>';
+  else html+=flt.slice().reverse().map(t=>topicCard(t)).join('');
+  $('#content').innerHTML=html;
+}
+function topicCard(t){
+  if(t._edit){ return `<div class="item" data-id="${t.id}">
+    <label class="field">标题</label><input class="field" id="eTitle" value="${esc(t.title)}" />
+    <label class="field">主要内容要点（每行一条）</label><textarea class="field" id="eMc">${esc((t.mainContent||[]).join('\n'))}</textarea>
+    <label class="field">角度</label><input class="field" id="eAngle" value="${esc(t.angle)}" />
+    <label class="field">为什么火</label><input class="field" id="eWhy" value="${esc(t.whyHot)}" />
+    <div class="row" style="margin-top:8px"><button class="btn sm" onclick="saveTopicEdit('${t.id}')">保存</button>
+      <button class="btn sm ghost" onclick="cancelTopicEdit('${t.id}')">取消</button></div>
+  </div>`; }
+  return `<div class="item" data-id="${t.id}">
+    <div class="top"><span class="title">${esc(t.title)}</span><span class="badge ${t.status}">${t.status}</span>
+      <div class="spacer"></div>
+      <button class="btn mini soft" onclick="adoptTopic('${t.id}')">采纳</button>
+      <button class="btn mini ghost" onclick="dropTopic('${t.id}')">弃用</button>
+      <button class="btn mini ghost" onclick="editTopic('${t.id}')">编辑</button>
+      <button class="btn mini ghost" onclick="delTopic('${t.id}')">删</button></div>
+    ${(t.mainContent&&t.mainContent.length)?'<ul class="mc">'+t.mainContent.map(m=>'<li>'+esc(m)+'</li>').join('')+'</ul>':''}
+    ${t.angle?'<div class="meta"><b>角度：</b>'+esc(t.angle)+'</div>':''}
+    ${t.whyHot?'<div class="meta"><b>为什么火：</b>'+esc(t.whyHot)+'</div>':''}
+    ${t.source?'<div class="meta"><b>来源：</b>'+esc(t.source)+'</div>':''}
+    <div class="meta">创建 ${fmt(t.createdAt)}</div>
+  </div>`;
+}
+function setTopicFilter(f){ topicFilter=f; renderTopics(); }
+function adoptTopic(id){ setStatus(id,'采纳'); }
+function dropTopic(id){ setStatus(id,'弃用'); }
+function setStatus(id,st){ const ts=topics(); const t=ts.find(x=>x.id===id); if(t){ t.status=st; PS.set('pipe_topics',ts); toast('已'+st); renderTopics(); renderStepper(); } }
+function editTopic(id){ const ts=topics(); const t=ts.find(x=>x.id===id); if(t){ t._edit=true; PS.set('pipe_topics',ts); renderTopics(); } }
+function cancelTopicEdit(id){ const ts=topics(); const t=ts.find(x=>x.id===id); if(t){ delete t._edit; PS.set('pipe_topics',ts); renderTopics(); } }
+function saveTopicEdit(id){
+  const ts=topics(); const t=ts.find(x=>x.id===id); if(!t) return;
+  t.title=$('#eTitle').value.trim(); t.mainContent=$('#eMc').value.split('\n').map(s=>s.trim()).filter(Boolean);
+  t.angle=$('#eAngle').value.trim(); t.whyHot=$('#eWhy').value.trim(); delete t._edit;
+  PS.set('pipe_topics',ts); toast('已保存'); renderTopics();
+}
+function delTopic(id){
+  if(!confirm('删除该选题？')) return;
+  PS.set('pipe_topics',topics().filter(t=>t.id!==id)); markDeleted('gzh_pipe_topics',[id]);
+  toast('已删除'); renderTopics(); renderStepper();
+}
+
+/* ============ 业务数据：草稿 / 检查 ============ */
+function drafts(){ return PS.get('pipe_drafts',[]); }
+function myDrafts(){ const pid=currentProjectId(); return drafts().filter(d=>d.projectId===pid); }
+function checks(){ return PS.get('pipe_checks',[]); }
+function myChecks(){ const pid=currentProjectId(); return checks().filter(c=>c.projectId===pid); }
+let _lastCheckId='';
+
+/* ============ 通用小工具 ============ */
+function emptyCard(n,title,msg,btn){ return `<div class="card"><div class="st"><span class="n">${n}</span>${title}</div><div class="empty">${msg}</div>${btn||''}</div>`; }
+function copyText(t){
+  const ok=()=>toast('已复制');
+  if(navigator.clipboard&&window.isSecureContext){ navigator.clipboard.writeText(t).then(ok,()=>fbCopy(t,ok)); }
+  else fbCopy(t,ok);
+}
+function fbCopy(t,ok){ const ta=document.createElement('textarea'); ta.value=t; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select();
+  try{ document.execCommand('copy'); ok(); }catch(e){ toast('复制失败，请手动选择'); } document.body.removeChild(ta); }
+
+/* ============ Step 4 润色标注 ============ */
+function renderPolish(){
+  const cur=currentProject();
+  if(!cur){ $('#content').innerHTML=emptyCard('4','润色标注','请先在「确定题材」里建一个题材。'); return; }
+  const ts=topics().filter(t=>t.projectId===cur.id);
+  if(!ts.length){ $('#content').innerHTML=emptyCard('4','润色标注','当前题材还没有选题。请先到「爆款分析」生成，或在「保存选题」里准备一个。'); return; }
+  const ds=myDrafts();
+  let html=`<div class="card">
+    <div class="st"><span class="n">4</span>润色标注</div>
+    <div class="hint">选一个选题 → 贴上你写的初稿 → AI 美化表述，并逐条<b>标注「新增 / 改写」</b>（对应专家人格：公众号内容主编）。每次生成都存为一份草稿，可反复润色。</div>
+    <label class="field">基于选题（建议选「采纳」的）</label>
+    <select class="field" id="pTopic">${ts.map(t=>`<option value="${t.id}">${esc(t.status)} · ${esc(t.title)}</option>`).join('')}</select>
+    <label class="field">你的初稿（必填）</label>
+    <textarea class="field" id="pOrig" style="min-height:200px" placeholder="把你要发的初稿贴进来。保留你的真实语气，AI 只做表述美化与必要增删，并把改动标注出来。"></textarea>
+    <div class="row" style="margin-top:12px"><button class="btn" id="pGo">✨ AI 美化并标注</button><span class="muted" id="pModel"></span></div>
+  </div><div id="pOut"></div>`;
+  if(ds.length){
+    html+=`<div class="card"><div class="st">已存草稿（${ds.length}）</div>`+ds.slice().reverse().map(d=>`<div class="item" data-id="${d.id}"><div class="top"><span class="title">草稿 · ${fmt(d.createdAt)}</span>
+      <div class="spacer"></div><button class="btn mini soft" onclick="viewDraft('${d.id}')">查看</button>
+      <button class="btn mini ghost" onclick="delDraft('${d.id}')">删</button></div>
+      <div class="meta">基于：${esc((topics().find(t=>t.id===d.topicId)||{}).title||'—')} · 改动标注 ${d.annotations?d.annotations.length:0} 条</div></div>`).join('')+`</div>`;
+  }
+  $('#content').innerHTML=html;
+  $('#pModel').textContent=aiLive()?'真实模型':'DEMO 示例';
+  $('#pGo').onclick=runPolish;
+}
+async function runPolish(){
+  const cur=currentProject(); if(!cur) return;
+  const topicId=$('#pTopic').value; const orig=$('#pOrig').value.trim();
+  if(!orig){ toast('请先贴入初稿'); return; }
+  const tp=(topics().find(t=>t.id===topicId)||{}).title||'';
+  const btn=$('#pGo'); btn.disabled=true; btn.innerHTML='<span class="spin"></span>润色中…';
+  const sys='你是公众号内容主编。用户贴一篇初稿与对应选题。请：1) 不改变作者真实意图与语气，优化表述（更顺、更有节奏、更抓人）；2) 必要处做「新增」（补场景/数据/钩子）或「改写」（把生硬/啰嗦处改顺），并说明原因；3) 严格只输出 JSON：{polished:美化后的完整全文（用 \\n\\n 分段）, annotations:[{type:「新增」或「改写」, segment:被标注的片段, reason:为什么这样改}], summary:一句话总结改动}。不要输出 JSON 之外的文字。';
+  const usr=`选题：${tp}\n\n初稿：\n${orig}`;
+  const res=await pipeChat(sys,usr,0.7,demoPolish);
+  const obj=parseJsonObj(res);
+  btn.disabled=false; btn.textContent='✨ 重新润色';
+  const box=$('#pOut');
+  if(!obj||!obj.polished){ box.innerHTML='<div class="card"><div class="st">润色结果</div><div class="empty">AI 未返回可解析结果（DEMO 模式应正常）。可重试。</div></div>'; return; }
+  const ds=drafts(); const d={id:uid(),projectId:cur.id,topicId,original:orig,polished:obj.polished,annotations:obj.annotations||[],summary:obj.summary||'',createdAt:todayStr()};
+  ds.unshift(d); PS.set('pipe_drafts',ds);
+  renderPolishResult(d,box); renderStepper(); toast('已润色并保存草稿');
+}
+function renderPolishResult(d,box){
+  const anns=(d.annotations||[]);
+  let html=`<div class="card"><div class="st">✅ 润色成稿（已存草稿）</div>
+    <div class="hint">${esc(d.summary||'')} · 共标注 ${anns.length} 处</div>
+    <div class="paper">${esc(d.polished)}</div>
+    <div class="row" style="margin-top:10px"><button class="btn sm" onclick="copyDraft('${d.id}')">复制成稿</button>
+      <button class="btn sm ghost" onclick="gotoStep('check')">去合规去AI →</button></div></div>`;
+  if(anns.length){
+    html+=`<div class="card"><div class="st">改动标注（新增 / 改写）</div>`+anns.map(a=>`<div class="annot"><span class="badge ${a.type}">${a.type}</span><span class="seg">${esc(a.segment||'')}</span>${a.reason?`<div class="meta">↳ ${esc(a.reason)}</div>`:''}</div>`).join('')+`</div>`;
+  }
+  box.innerHTML=html;
+}
+function viewDraft(id){ const d=drafts().find(x=>x.id===id); if(!d) return; $('#content').innerHTML=''; renderPolish(); renderPolishResult(d,$('#pOut')); }
+function delDraft(id){ if(!confirm('删除该草稿？')) return; PS.set('pipe_drafts',drafts().filter(d=>d.id!==id)); markDeleted('gzh_pipe_drafts',[id]); toast('已删除'); renderPolish(); renderStepper(); }
+function copyDraft(id){ const d=drafts().find(x=>x.id===id); if(d) copyText(d.polished||''); }
+
+/* ============ Step 5 合规去AI ============ */
+function renderCheck(){
+  const cur=currentProject();
+  if(!cur){ $('#content').innerHTML=emptyCard('5','合规去AI','请先建题材。'); return; }
+  const ds=myDrafts();
+  if(!ds.length){ $('#content').innerHTML=`<div class="card"><div class="st"><span class="n">5</span>合规去AI</div><div class="empty">还没有可检查的成稿。请先到「润色标注」生成一份草稿。</div><div class="row"><button class="btn sm" onclick="gotoStep('polish')">去润色 →</button></div></div>`; return; }
+  const cs=myChecks();
+  let html=`<div class="card"><div class="st"><span class="n">5</span>合规去AI 检查</div>
+    <div class="hint">选一份成稿 → 一键做两项检查：① <b>防侵权/合规</b>（版权洗稿风险、广告法极限词、敏感表述）② <b>去 AI 味</b>自检（列出 AI 痕迹与改进建议）。对应专家人格：文案合规审核官。</div>
+    <label class="field">检查对象（成稿草稿）</label>
+    <select class="field" id="cDraft">${ds.map(d=>`<option value="${d.id}">草稿 · ${fmt(d.createdAt)}（基于 ${esc((topics().find(t=>t.id===d.topicId)||{}).title||'—')}）</option>`).join('')}</select>
+    <div class="row" style="margin-top:12px"><button class="btn" id="cGo">🛡️ 开始检查</button><span class="muted" id="cModel"></span></div></div><div id="cOut"></div>`;
+  if(cs.length){
+    html+=`<div class="card"><div class="st">历史检查（${cs.length}）</div>`+cs.slice().reverse().map(c=>`<div class="item" data-id="${c.id}"><div class="top"><span class="title">检查 · ${fmt(c.createdAt)}</span>
+      <div class="spacer"></div><button class="btn mini soft" onclick="viewCheck('${c.id}')">查看</button>
+      <button class="btn mini ghost" onclick="delCheck('${c.id}')">删</button></div>
+      <div class="meta">${esc((c.result&&c.result.summary)||'')}</div></div>`).join('')+`</div>`;
+  }
+  $('#content').innerHTML=html;
+  $('#cModel').textContent=aiLive()?'真实模型':'DEMO 示例';
+  $('#cGo').onclick=runCheck;
+}
+async function runCheck(){
+  const cur=currentProject(); if(!cur) return;
+  const did=$('#cDraft').value; const d=drafts().find(x=>x.id===did); if(!d) return;
+  const btn=$('#cGo'); btn.disabled=true; btn.innerHTML='<span class="spin"></span>检查中…';
+  const sys='你是文案合规审核官。对给定公众号成稿做两项检查，严格只输出 JSON：{copyright:[{level:「高/中/低」,point:风险点,detail:说明,suggestion:修改建议}],adLaw:[{level,word:命中词,suggestion:替换建议}],aiSmell:[{issue:AI痕迹表现,fix:改进建议}],aiScore:0-100的AI味概率估值(仅启发式参考),summary:一句话总体结论}。广告法重点查「最/第一/国家级/顶级/绝无仅有/万能/最省事」等绝对化用语；版权重点查疑似洗稿/未授权引用/搬运他人案例。不要输出 JSON 之外文字。';
+  const usr=`成稿：\n${d.polished||d.original||''}`;
+  const res=await pipeChat(sys,usr,0.3,demoCheck);
+  const obj=parseJsonObj(res);
+  btn.disabled=false; btn.textContent='🛡️ 重新检查';
+  const box=$('#cOut');
+  if(!obj){ box.innerHTML='<div class="card"><div class="st">检查结果</div><div class="empty">AI 未返回可解析结果（DEMO 模式应正常）。可重试。</div></div>'; return; }
+  const cs=checks(); const cid=uid(); cs.unshift({id:cid,projectId:cur.id,draftId:did,result:obj,createdAt:todayStr()}); PS.set('pipe_checks',cs); _lastCheckId=cid;
+  renderCheckResult(obj,box); renderStepper(); toast('检查完成');
+}
+function renderCheckResult(r,box){
+  const cr=r.copyright||[], ad=r.adLaw||[], ai=r.aiSmell||[];
+  let html=`<div class="card"><div class="st">🛡️ 检查报告</div>
+    <div class="oview"><div class="ov"><span class="num">${cr.length}</span><span class="lbl">版权风险</span></div>
+      <div class="ov"><span class="num">${ad.length}</span><span class="lbl">广告法词</span></div>
+      <div class="ov"><span class="num">${ai.length}</span><span class="lbl">AI痕迹</span></div>
+      <div class="ov"><span class="num">${r.aiScore!=null?r.aiScore:'—'}</span><span class="lbl">AI味估值</span></div></div>
+    <div class="hint">${esc(r.summary||'')} · AI味估值为启发式参考，非权威检测。</div></div>`;
+  if(cr.length){ html+=`<div class="card"><div class="st">① 版权 / 洗稿风险</div>`+cr.map(x=>riskRow(x,false)).join('')+`</div>`; }
+  if(ad.length){ html+=`<div class="card"><div class="st">② 广告法 / 违禁词</div>`+ad.map(x=>riskRow(x,true)).join('')+`</div>`; }
+  if(ai.length){ html+=`<div class="card"><div class="st">③ 去 AI 味自检</div>`+ai.map(x=>`<div class="annot"><span class="badge 改写">AI痕迹</span><span class="seg">${esc(x.issue||'')}</span>${x.fix?`<div class="meta">↳ 改进：${esc(x.fix)}</div>`:''}</div>`).join('')+`</div>`; }
+  if(r.aiScore!=null){ const sc=r.aiScore; const col=sc>=60?'var(--red)':sc>=35?'var(--amber)':'var(--green)';
+    html+=`<div class="card"><div class="st">AI 味概率估值</div><div class="bar"><div class="barfill" style="width:${Math.min(100,Math.max(0,sc))}%;background:${col}"></div></div><div class="hint">估值 ${sc}/100。越低越像人写，建议 &lt; 40 再发布。仅供参考。</div></div>`; }
+  html+=`<div class="row"><button class="btn sm" onclick="copyCheckReport()">复制报告</button><button class="btn sm ghost" onclick="gotoStep('layout')">去排版 →</button></div>`;
+  box.innerHTML=html;
+}
+function riskRow(x,isAd){ return `<div class="risk"><span class="lvl lvl-${x.level}">${x.level}</span><div class="rbody"><div class="rt">${esc(isAd?(x.word||''):(x.point||''))}</div>${isAd?`<div class="meta">${esc(x.suggestion||'')}</div>`:`<div class="meta">${esc(x.detail||'')}</div>`+(x.suggestion?`<div class="meta">↳ 建议：${esc(x.suggestion)}</div>`:'')}</div></div>`; }
+function viewCheck(id){ const c=checks().find(x=>x.id===id); if(!c) return; _lastCheckId=id; $('#content').innerHTML=''; renderCheck(); renderCheckResult(c.result,$('#cOut')); }
+function delCheck(id){ if(!confirm('删除该检查？')) return; PS.set('pipe_checks',checks().filter(c=>c.id!==id)); markDeleted('gzh_pipe_checks',[id]); toast('已删除'); renderCheck(); renderStepper(); }
+function copyCheckReport(){ const c=checks().find(x=>x.id===_lastCheckId); if(c&&c.result) copyText(JSON.stringify(c.result,null,2)); }
+
+/* ============ 业务数据：排版 / 封面 ============ */
+function layouts(){ return PS.get('pipe_layouts',[]); }
+function myLayouts(){ const pid=currentProjectId(); return layouts().filter(x=>x.projectId===pid); }
+function covers(){ return PS.get('pipe_covers',[]); }
+function myCovers(){ const pid=currentProjectId(); return covers().filter(x=>x.projectId===pid); }
+let _lastLayoutId='', _lastCoverId='';
+
+/* ============ Step 6 专业排版（editorial：深蓝小标题 + 黑正文 + 红强调） ============ */
+const WX_H1='<h1 style="color:#1B3A5B;font-size:21px;font-weight:800;text-align:center;margin:0 0 20px;line-height:1.4">';
+const WX_H2='<h2 style="color:#1B3A5B;font-size:17px;font-weight:700;margin:22px 0 10px;border-left:4px solid #1B3A5B;padding-left:10px;line-height:1.45">';
+const WX_P='<p style="color:#242424;font-size:15px;line-height:1.85;margin:0 0 16px;letter-spacing:.3px">';
+function inlineEm(s){ return s.replace(/\*\*(.+?)\*\*/g,'<span style="color:#C62828;font-weight:700">$1</span>'); }
+function mdToInlineWx(title,md){
+  const lines=md.split('\n'); let html=''; let para=[];
+  const flush=()=>{ if(para.length){ html+=WX_P+inlineEm(para.join('<br>'))+'</p>'; para=[]; } };
+  for(let raw of lines){ const line=raw.replace(/\r/g,'');
+    if(/^##\s+/.test(line)){ flush(); html+=WX_H2+inlineEm(esc(line.replace(/^##\s+/,'')))+'</h2>'; }
+    else if(line.trim()===''){ flush(); }
+    else { para.push(inlineEm(esc(line.trim()))); } }
+  flush();
+  const h1=title?WX_H1+inlineEm(esc(title))+'</h1>':'';
+  return h1+html;
+}
+function renderLayout(){
+  const cur=currentProject();
+  if(!cur){ $('#content').innerHTML=emptyCard('6','专业排版','请先建题材。'); return; }
+  const ds=myDrafts();
+  if(!ds.length){ $('#content').innerHTML=`<div class="card"><div class="st"><span class="n">6</span>专业排版</div><div class="empty">还没有可排版的成稿。请先到「润色标注」生成一份草稿。</div><div class="row"><button class="btn sm" onclick="gotoStep('polish')">去润色 →</button></div></div>`; return; }
+  const ls=myLayouts();
+  let html=`<div class="card">
+    <div class="st"><span class="n">6</span>专业排版（editorial 专业风）</div>
+    <div class="hint">规范：<b>深蓝 #1B3A5B 小标题</b> + <b>黑 #242424 正文</b> + <b>红 #C62828 强调</b>。AI 断段、提小标题、标重点，输出可直接粘公众号编辑器的内联样式片段（对应专家：微信公众号创作专家）。</div>
+    <label class="field">文章标题</label>
+    <input class="field" id="lTitle" value="${esc(cur.name)}" />
+    <label class="field">成稿来源</label>
+    <select class="field" id="lSrc">${ds.map(d=>`<option value="${d.id}">草稿 · ${fmt(d.createdAt)}（基于 ${esc((topics().find(t=>t.id===d.topicId)||{}).title||'—')}）</option>`).join('')}</select>
+    <label class="field">正文（可编辑；用 ## 起头写小标题，**文字** 标记红色强调）</label>
+    <textarea class="field" id="lBody" style="min-height:200px"></textarea>
+    <div class="row" style="margin-top:12px"><button class="btn" id="lGo">✨ 一键排版</button><span class="muted" id="lModel"></span></div>
+  </div><div id="lOut"></div>`;
+  if(ls.length){
+    html+=`<div class="card"><div class="st">已存排版（${ls.length}）</div>`+ls.slice().reverse().map(x=>`<div class="item" data-id="${x.id}"><div class="top"><span class="title">${esc(x.title||'未命名')} · ${fmt(x.createdAt)}</span>
+      <div class="spacer"></div><button class="btn mini soft" onclick="viewLayout('${x.id}')">查看</button>
+      <button class="btn mini ghost" onclick="delLayout('${x.id}')">删</button></div></div>`).join('')+`</div>`;
+  }
+  $('#content').innerHTML=html;
+  const fill=()=>{ const d=ds.find(x=>x.id===$('#lSrc').value); if(d){ $('#lBody').value=d.polished||d.original||''; } };
+  fill(); $('#lSrc').onchange=fill;
+  $('#lModel').textContent=aiLive()?'真实模型':'DEMO 示例';
+  $('#lGo').onclick=runLayout;
+}
+async function runLayout(){
+  const cur=currentProject(); if(!cur) return;
+  const title=$('#lTitle').value.trim(); const body=$('#lBody').value.trim();
+  if(!body){ toast('正文为空'); return; }
+  const btn=$('#lGo'); btn.disabled=true; btn.innerHTML='<span class="spin"></span>排版中…';
+  const sys='你是微信公众号排版专家，遵循 editorial 专业排版：深蓝小标题+黑正文+红强调。请把正文整理为排版稿：用「## 」起头写小标题（每个小节一个，简洁有力）；正文自然分段（空行隔开）；把关键信息用「**文字**」包裹（将显示为红色强调）。保留作者原意与口语感，不要过度书面化。只输出排版后的文本，不要解释。';
+  const res=await pipeChat(sys,body,0.5,demoLayout);
+  const md=res&&res.trim()?res:body;
+  btn.disabled=false; btn.textContent='✨ 重新排版';
+  const html=mdToInlineWx(title,md);
+  const ls=layouts(); const id=uid(); ls.unshift({id,projectId:cur.id,title,sourceText:body,html,createdAt:todayStr()}); PS.set('pipe_layouts',ls); _lastLayoutId=id;
+  renderLayoutResult(title,html,$('#lOut')); renderStepper(); toast('已排版');
+}
+function renderLayoutResult(title,html,box){
+  box.innerHTML=`<div class="card"><div class="st">✅ 排版预览（editorial）</div>
+    <div class="hint">下方为渲染效果；点「复制排版HTML」拿到内联样式片段，直接粘进公众号编辑器即可（公众号保留内联样式）。</div>
+    <div class="wxprev">${html}</div>
+    <div class="row" style="margin-top:12px"><button class="btn sm" onclick="copyLayoutHtml()">复制排版HTML</button>
+      <button class="btn sm ghost" onclick="copyLayoutText()">复制纯文本</button>
+      <button class="btn sm ghost" onclick="gotoStep('cover')">去封面 →</button></div></div>`;
+}
+function viewLayout(id){ const x=layouts().find(l=>l.id===id); if(!x) return; _lastLayoutId=id; $('#content').innerHTML=''; renderLayout(); renderLayoutResult(x.title,x.html,$('#lOut')); }
+function delLayout(id){ if(!confirm('删除该排版？')) return; PS.set('pipe_layouts',layouts().filter(l=>l.id!==id)); markDeleted('gzh_pipe_layouts',[id]); toast('已删除'); renderLayout(); renderStepper(); }
+function copyLayoutHtml(){ const x=layouts().find(l=>l.id===_lastLayoutId); if(x) copyText(x.html||''); }
+function copyLayoutText(){ const x=layouts().find(l=>l.id===_lastLayoutId); if(x) copyText(x.sourceText||x.title||''); }
+
+/* ============ Step 7 封面 + Canva ============ */
+function renderCover(){
+  const cur=currentProject();
+  if(!cur){ $('#content').innerHTML=emptyCard('7','封面Canva','请先建题材。'); return; }
+  const cs=myCovers();
+  let html=`<div class="card">
+    <div class="st"><span class="n">7</span>封面方案 + Canva</div>
+    <div class="hint">生成封面主标题/副标题/中文配图提示词 + 配色，推荐<b>免费可商用</b>背景素材源，一键跳 Canva 做图（对应专家：金炼之·生图专家 + Canva）。也可在 WorkBuddy 用「金炼之·生图专家」先出图再传。</div>
+    <label class="field">封面主题（文章标题或核心词）</label>
+    <input class="field" id="cTitle" value="${esc(cur.name)}" />
+    <label class="field">调性 / 风格（可选）</label>
+    <input class="field" id="cVibe" value="${esc(cur.goal||'温暖真实、不鸡汤')}" />
+    <div class="row" style="margin-top:12px"><button class="btn" id="cvGo">🎨 生成封面方案</button><span class="muted" id="cvModel"></span></div>
+  </div><div id="cvOut"></div>`;
+  if(cs.length){
+    html+=`<div class="card"><div class="st">已存封面方案（${cs.length}）</div>`+cs.slice().reverse().map(x=>`<div class="item" data-id="${x.id}"><div class="top"><span class="title">${esc(x.title||'未命名')} · ${fmt(x.createdAt)}</span>
+      <div class="spacer"></div><button class="btn mini soft" onclick="viewCover('${x.id}')">查看</button>
+      <button class="btn mini ghost" onclick="delCover('${x.id}')">删</button></div></div>`).join('')+`</div>`;
+  }
+  $('#content').innerHTML=html;
+  $('#cvModel').textContent=aiLive()?'真实模型':'DEMO 示例';
+  $('#cvGo').onclick=runCover;
+}
+async function runCover(){
+  const cur=currentProject(); if(!cur) return;
+  const title=$('#cTitle').value.trim(); const vibe=$('#cVibe').value.trim();
+  if(!title){ toast('填封面主题'); return; }
+  const btn=$('#cvGo'); btn.disabled=true; btn.innerHTML='<span class="spin"></span>生成中…';
+  const sys='你是封面设计专家。基于文章主题与调性，产出公众号封面方案，严格只输出 JSON：{mainTitle:封面大字标题(≤10字，抓人), subTitle:副标题(≤16字), prompt:可用于生图/Canva的中文配图提示词, palette:配色建议(2-3个色+说明), style:视觉风格一句话, sources:[{name:素材站名,url:官网,desc:用途}]}。sources 必须给 4-5 个真实免费可商用素材站(如 Unsplash/Pexels/Pixabay/Canva免费库/稿定设计)。不要输出 JSON 之外文字。';
+  const usr=`主题：${title}\n调性：${vibe||'温暖真实'}`;
+  const res=await pipeChat(sys,usr,0.8,demoCover);
+  const obj=parseJsonObj(res);
+  btn.disabled=false; btn.textContent='🎨 重新生成';
+  const box=$('#cvOut');
+  if(!obj){ box.innerHTML='<div class="card"><div class="st">封面方案</div><div class="empty">AI 未返回可解析结果（DEMO 模式应正常）。可重试。</div></div>'; return; }
+  const cs=covers(); const id=uid(); cs.unshift({id,projectId:cur.id,title,result:obj,createdAt:todayStr()}); PS.set('pipe_covers',cs); _lastCoverId=id;
+  renderCoverResult(obj,box); renderStepper(); toast('已生成封面方案');
+}
+function renderCoverResult(r,box){
+  const src=(r.sources||[]).map(s=>`<div class="item"><div class="top"><span class="title">${esc(s.name||'')}</span><div class="spacer"></div><a class="navlink" href="${esc(s.url||'#')}" target="_blank" rel="noopener">打开 ↗</a></div><div class="meta">${esc(s.desc||'')}</div></div>`).join('');
+  let html=`<div class="card"><div class="st">🎨 封面方案</div>
+    <div class="grid2">
+      <div><div class="field" style="font-weight:700;color:var(--ink)">主标题（大字）</div><div class="paper">${esc(r.mainTitle||'')}</div></div>
+      <div><div class="field" style="font-weight:700;color:var(--ink)">副标题</div><div class="paper">${esc(r.subTitle||'')}</div></div>
+    </div>
+    <div class="field" style="font-weight:700;color:var(--ink);margin-top:10px">配图提示词（可粘进生图工具 / Canva）</div>
+    <div class="paper">${esc(r.prompt||'')}</div>
+    <div class="row" style="margin-top:8px"><button class="btn sm" onclick="copyCoverPrompt()">复制提示词</button></div>
+    <div class="field" style="font-weight:700;color:var(--ink);margin-top:10px">视觉风格 / 配色</div>
+    <div class="meta">${esc(r.style||'')}</div><div class="meta">${esc(r.palette||'')}</div>
+  </div>`;
+  if(src){ html+=`<div class="card"><div class="st">免费可商用背景素材源</div>${src}<div class="hint">均支持免费可商用（注意个别作者协议），优先选「可商用」筛选。</div></div>`; }
+  html+=`<div class="card"><div class="st">去 Canva 做封面</div>
+    <div class="hint">点下面按钮在浏览器打开 Canva，用上面的主标题/副标题/提示词套模板做图。也可先在 WorkBuddy 用「金炼之·生图专家」出图，再上传到 Canva 或直接用。</div>
+    <div class="row"><button class="btn" onclick="openCanva()">🎨 打开 Canva 做封面</button></div></div>`;
+  box.innerHTML=html;
+}
+function viewCover(id){ const c=covers().find(x=>x.id===id); if(!c) return; _lastCoverId=id; $('#content').innerHTML=''; renderCover(); renderCoverResult(c.result,$('#cvOut')); }
+function delCover(id){ if(!confirm('删除该封面方案？')) return; PS.set('pipe_covers',covers().filter(c=>c.id!==id)); markDeleted('gzh_pipe_covers',[id]); toast('已删除'); renderCover(); renderStepper(); }
+function openCanva(){ window.open('https://www.canva.com/','_blank','noopener'); }
+function copyCoverPrompt(){ const c=covers().find(x=>x.id===_lastCoverId); if(c&&c.result) copyText(c.result.prompt||''); }
+
+/* ============ DEMO：排版 / 封面 ============ */
+function demoLayout(system,user){
+  const body=(user&&user.trim())?user:'（示例正文）今天聊一件小事。';
+  return `## 为什么想聊这个\n${(body.split('\n').filter(Boolean)[0]||'今天的主题')}\n\n其实不用想太复杂，先从一个小动作开始。\n\n## 我自己的做法\n把最容易坚持的一件事放进日常，比如每晚换一顿主食。\n\n## 你可以马上试\n**今晚就先做一步**，比计划一整周更有用。`;
+}
+function demoCover(system,user){
+  return JSON.stringify({
+    mainTitle:'今晚，先换一顿',
+    subTitle:'普通人的不费力改变',
+    prompt:'温暖真实的生活场景封面：木桌上半根玉米与手写笔记本，自然光，低饱和米色与深蓝撞色，留白充足，上方留大字标题空间，胶片质感，极简',
+    palette:'米白 #F5F1EA + 深蓝 #1B3A5B + 番茄红 #C62828 作点缀',
+    style:'editorial 编辑风，大量留白，真实生活感，不堆特效',
+    sources:[
+      {name:'Unsplash',url:'https://unsplash.com/',desc:'高质量免费照片，搜 lifestyle/food 关键词'},
+      {name:'Pexels',url:'https://www.pexels.com/',desc:'免费可商用视频与图片，中文界面友好'},
+      {name:'Pixabay',url:'https://pixabay.com/',desc:'免费可商用，无需署名'},
+      {name:'Canva 免费素材库',url:'https://www.canva.com/',desc:'模板+免费图库，直接套公众号封面模板'},
+      {name:'稿定设计',url:'https://www.gaoding.com/',desc:'国内公众号封面模板多，可商用'}
+    ]
+  });
+}
+
+/* ============ 通用 ============ */
+function fmt(d){ return (d||'').slice(0,10); }
+let toastTimer;
+function toast(msg){ let t=$('#toast'); if(!t){ t=document.createElement('div'); t.id='toast'; t.className='toast'; document.body.appendChild(t); }
+  t.textContent=msg; t.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'),2600); }
+const $=s=>document.querySelector(s);
+const $$=s=>[...document.querySelectorAll(s)];
+
+/* ============ 设置 / 同步 面板 ============ */
+function openSet(){ const c=aiCfg();
+  $('#setEndpoint').value=c.endpoint||''; $('#setKey').value=c.key||''; $('#setModel').value=c.model||'';
+  $('#setMask').classList.add('show'); $('#setModal').classList.add('show'); }
+function closeSet(){ $('#setMask').classList.remove('show'); $('#setModal').classList.remove('show'); }
+function saveSet(){ PS.set('ai',{endpoint:$('#setEndpoint').value.trim(),key:$('#setKey').value.trim(),model:$('#setModel').value.trim()||'deepseek-chat'});
+  refreshAiStatus(); $('#setMsg').textContent='已保存 ✓（主站同步生效）'; toast('AI 设置已保存'); }
+function applyPreset(p){
+  if(p==='deepseek'){ $('#setEndpoint').value='https://api.deepseek.com/chat/completions'; $('#setModel').value='deepseek-chat'; }
+  if(p==='qwen'){ $('#setEndpoint').value='https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions'; $('#setModel').value='qwen-plus'; }
+  if(p==='openai'){ $('#setEndpoint').value='https://api.openai.com/v1/chat/completions'; $('#setModel').value='gpt-4o-mini'; }
+}
+function toggleSyncBar(){ const bar=$('#syncbar'); const show=bar.style.display==='none'; bar.style.display=show?'block':'none';
+  if(show){ $('#syncKey').value=PS.get('sync_key','')||''; } }
+
+/* ============ 启动 ============ */
+function init(){
+  $('#syncKey') && ($('#syncKey').value=PS.get('sync_key','')||'');
+  $('#setBtn').onclick=openSet; $('#setClose').onclick=closeSet; $('#setMask').onclick=closeSet;
+  $('#setSave').onclick=saveSet; $$('.preset').forEach(b=>b.onclick=()=>applyPreset(b.dataset.p));
+  $('#syncBtn').onclick=toggleSyncBar; $('#syncUp').onclick=syncUpload; $('#syncDown').onclick=syncDownload;
+  $('#syncKey').addEventListener('blur',()=>PS.set('sync_key',$('#syncKey').value.trim()));
+  $('#syncExp').onclick=()=>{ const blob=new Blob([JSON.stringify({updatedAt:Date.now(),data:collectAll()},null,2)],{type:'application/json'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='gzh-pipe-backup-'+todayStr()+'.json'; a.click(); };
+  $('#syncImp').onclick=()=>$('#syncFile').click();
+  $('#syncFile').onchange=async e=>{ const f=e.target.files[0]; if(!f) return;
+    try{ const j=JSON.parse(await f.text()); if(!j.data) throw new Error('格式不对');
+      const merged=mergeSync(collectAll(),getMeta(),j.data,{}); persistMerged(merged,getMeta());
+      toast('已合并导入'); renderCurrent(); }catch(err){ toast('导入失败：'+err.message); } e.target.value=''; };
+  refreshAiStatus();
+  const h=location.hash?location.hash.slice(1):''; curStep=STEPS.find(s=>s.id===h)?h:(PS.get('pipe_step','genre')||'genre');
+  renderStepper(); STEPS.find(s=>s.id===curStep).render();
+}
+window.gotoStep=gotoStep; window.pickProject=pickProject; window.delProject=delProject;
+window.setTopicFilter=setTopicFilter; window.adoptTopic=adoptTopic; window.dropTopic=dropTopic;
+window.editTopic=editTopic; window.cancelTopicEdit=cancelTopicEdit; window.saveTopicEdit=saveTopicEdit; window.delTopic=delTopic;
+window.viewDraft=viewDraft; window.delDraft=delDraft; window.copyDraft=copyDraft;
+window.viewCheck=viewCheck; window.delCheck=delCheck; window.copyCheckReport=copyCheckReport; window.copyText=copyText;
+window.viewLayout=viewLayout; window.delLayout=delLayout; window.copyLayoutHtml=copyLayoutHtml; window.copyLayoutText=copyLayoutText;
+window.viewCover=viewCover; window.delCover=delCover; window.openCanva=openCanva; window.copyCoverPrompt=copyCoverPrompt;
+init();
+</script>
+</body>
+</html>

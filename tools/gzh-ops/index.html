@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>公众号运营系统</title>
+<style>
+  :root{
+    --bg:#fbfaf7; --panel:#ffffff; --ink:#2b2722; --muted:#8a8178;
+    --line:#efe9e1; --accent:#e8703a; --accent-soft:#fdeee6; --accent2:#6b8f71;
+    --radius:16px; --shadow:0 6px 22px rgba(60,50,40,.07);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+  .hero{max-width:920px;margin:0 auto;padding:48px 22px 10px;text-align:center}
+  .hero h1{font-size:28px;font-weight:800;margin:0 0 8px;letter-spacing:.5px}
+  .hero p{color:var(--muted);font-size:14.5px;margin:0}
+  .grid{max-width:920px;margin:26px auto 60px;padding:0 22px;display:grid;gap:16px;grid-template-columns:repeat(3,1fr)}
+  @media(max-width:760px){.grid{grid-template-columns:1fr}}
+  a.card{display:block;text-decoration:none;color:inherit;background:var(--panel);
+    border:1px solid var(--line);border-radius:var(--radius);padding:24px 22px;box-shadow:var(--shadow);
+    transition:.16s;position:relative;overflow:hidden}
+  a.card:hover{transform:translateY(-3px);border-color:var(--accent);box-shadow:0 12px 30px rgba(232,112,58,.14)}
+  a.card .em{font-size:34px;line-height:1}
+  a.card h2{font-size:18px;font-weight:800;margin:12px 0 6px}
+  a.card .desc{font-size:13.5px;color:var(--muted);min-height:44px}
+  a.card .tags{margin-top:12px}
+  .tag{display:inline-block;font-size:11.5px;background:var(--accent-soft);color:var(--accent);
+    padding:2px 9px;border-radius:20px;margin:0 5px 5px 0;font-weight:600}
+  .tag.g{background:#e7f3ea;color:var(--accent2)}
+  .flag{position:absolute;top:14px;right:14px;font-size:11px;font-weight:700;color:#fff;
+    background:var(--accent);padding:2px 9px;border-radius:20px}
+  .note{max-width:920px;margin:0 auto 50px;padding:0 22px}
+  .note .box{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:18px 20px;font-size:13px;color:var(--muted)}
+  .note b{color:var(--ink)}
+  .foot{text-align:center;color:var(--muted);font-size:12px;padding:0 0 40px}
+</style>
+</head>
+<body>
+  <div class="hero">
+    <h1>公众号运营系统</h1>
+    <p>来年春不晚 · 从题材到成稿的一条龙工作台</p>
+  </div>
+
+  <div class="grid">
+    <a class="card" href="pipeline.html">
+      <span class="flag">主推</span>
+      <div class="em">🧭</div>
+      <h2>7 步创作流水线</h2>
+      <div class="desc">题材 → 爆款分析 → 选题 → 润色标注 → 合规去AI → 专业排版 → 封面，一条龙出稿。</div>
+      <div class="tags"><span class="tag">新系统</span><span class="tag g">云同步</span></div>
+    </a>
+    <a class="card" href="https://xiaomin999.github.io/tools/gzh-ai-writer/">
+      <div class="em">📝</div>
+      <h2>写作工作台</h2>
+      <div class="desc">知识库喂养、爆款因子库、选题、写稿、配图、复盘、每日节奏打卡。</div>
+      <div class="tags"><span class="tag">本地工具</span></div>
+    </a>
+    <a class="card" href="https://xiaomin999.github.io/gzh-booster/">
+      <div class="em">🚀</div>
+      <h2>全栈助推助手</h2>
+      <div class="desc">老站全部功能与历史数据：选题库、标题、复盘、拆解、策略、数据分析。</div>
+      <div class="tags"><span class="tag g">你的全部老数据</span><span class="tag g">云同步</span></div>
+    </a>
+  </div>
+
+  <div class="note">
+    <div class="box">
+      <b>关于数据：</b>「7 步流水线」和「全栈助推助手」共用同一片<b>云端</b>（Supabase）。
+      在任一站点的 <b>⚙️/☁️ 设置</b>里填入你原来的<b>同步码</b>，就能把 gzh-booster 的历史数据（知识库 / 爆款因子 / 选题 / 草稿）同步过来，多设备通用。
+      「写作工作台」为本地工具（无云端），数据存在当前浏览器，可用其「设置 → 备份/恢复」导出导入。
+    </div>
+  </div>
+
+  <div class="foot">公众号运营系统 · 静态部署于 GitHub Pages</div>
+</body>
+</html>
